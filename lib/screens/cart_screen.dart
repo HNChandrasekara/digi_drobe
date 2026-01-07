@@ -107,12 +107,14 @@ class CartScreen extends StatelessWidget {
       {
         'title': 'Sleek Front-Tie Vest for\nWomen - KHAKI, XS',
         'price': 'Rs.22,000.00',
-        'url': 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&q=80&w=400'
+        'url': 'assets/images/cart_vest.jpg',
+        'isAsset': true,
       },
       {
         'title': 'Ballerina shoes - Red\nVelvet, size 36',
         'price': 'Rs.18,000.00',
-        'url': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=400'
+        'url': 'assets/images/cart_shoes.jpg',
+        'isAsset': true,
       },
     ];
 
@@ -131,7 +133,9 @@ class CartScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: NetworkImage(item['url']!),
+                  image: item['isAsset'] == true 
+                      ? AssetImage(item['url']!) as ImageProvider
+                      : NetworkImage(item['url']!),
                   fit: BoxFit.cover,
                 ),
               ),
