@@ -40,7 +40,7 @@ class CustomHeader extends StatelessWidget {
             children: [
               _buildIconButton(Icons.person_rounded),
               const SizedBox(width: 12),
-              _buildIconButton(Icons.notifications_rounded),
+              _buildIconButton(Icons.tune_rounded),
             ],
           ),
         ],

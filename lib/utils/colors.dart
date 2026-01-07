@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppColors {
   // Apple Inspired Palette
   static const Color appleBlack = Color(0xFF000000);
@@ -11,7 +13,7 @@ class AppColors {
   static const Color accentMaroon = Color(0xFFA52A2A);
   
   // Backgrounds
-  static const Color backgroundLight = Color(0xFFF2F2F7);
+  static const Color backgroundLight = Color(0xFFFDF0E9);
   static const Color surfaceLight = Colors.white;
   
   // Glassmorphism Values

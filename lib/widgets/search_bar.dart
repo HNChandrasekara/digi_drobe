@@ -9,18 +9,25 @@ class DigiSearchBar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Container(
-        height: 44,
+        height: 50,
         decoration: BoxDecoration(
-          color: AppColors.systemGray6,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: const TextField(
           decoration: InputDecoration(
-            hintText: 'Search for clothes, styles...',
+            hintText: 'Search',
             hintStyle: TextStyle(color: AppColors.systemGray, fontSize: 15),
-            prefixIcon: Icon(Icons.search_rounded, color: AppColors.systemGray, size: 20),
+            prefixIcon: Icon(Icons.search_rounded, color: AppColors.primaryMaroon, size: 22),
             border: InputBorder.none,
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
+            contentPadding: EdgeInsets.symmetric(vertical: 13),
           ),
         ),
       ),
