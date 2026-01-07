@@ -55,7 +55,7 @@ class LearnMoreScreen extends StatelessWidget {
           const Expanded(
             child: Text(
               'Learn more',
-              textAlign: Alignment.center,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,

@@ -60,7 +60,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
           const Expanded(
             child: Text(
               'Privacy Policy',
-              textAlign: Alignment.center,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,

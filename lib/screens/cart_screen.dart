@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import 'payments_screen.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -233,7 +234,10 @@ class CartScreen extends StatelessWidget {
             width: 180,
             height: 48,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () => Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => const PaymentsScreen())
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8B1D1D),
                 foregroundColor: Colors.white,

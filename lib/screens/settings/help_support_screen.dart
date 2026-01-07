@@ -39,7 +39,7 @@ class HelpSupportScreen extends StatelessWidget {
           const Expanded(
             child: Text(
               'Help & Support',
-              textAlign: Alignment.center,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
