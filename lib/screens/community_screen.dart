@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import '../utils/colors.dart';
+import '../widgets/custom_header.dart';
+import '../widgets/search_bar.dart';
 import 'chat_screen.dart';
 
 class CommunityScreen extends StatelessWidget {
@@ -76,11 +80,11 @@ class CommunityScreen extends StatelessWidget {
 
   Widget _buildStoriesList() {
     final stories = [
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop',
-      'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop',
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=200',
+      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=200',
+      'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=200',
+      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=200',
+      'https://images.unsplash.com/photo-1516575334481-f85287c2c82d?auto=format&fit=crop&q=80&w=200',
     ];
 
     return SizedBox(

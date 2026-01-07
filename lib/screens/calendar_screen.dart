@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../widgets/custom_header.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
@@ -7,8 +8,220 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Calendar')),
-      body: const Center(child: Text('Coming Soon', style: TextStyle(color: AppColors.textSecondary))),
+      backgroundColor: AppColors.backgroundLight,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const CustomHeader(userName: 'Hirushie'),
+            
+            // Weather Forecast Section
+            _buildWeatherForecast(),
+            
+            const SizedBox(height: 20),
+            
+            // Outfit Grid
+            Expanded(
+              child: _buildOutfitGrid(),
+            ),
+            
+            // Footer Action
+            _buildFooterAction(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeatherForecast() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Weather Forecast',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildWeatherIcon(Icons.wb_sunny_rounded, Colors.orange, null),
+                _buildWeatherIcon(null, null, '25° C'),
+                _buildWeatherIcon(Icons.wb_cloudy_rounded, Colors.grey[700]!, null),
+                _buildWeatherIcon(Icons.ac_unit_rounded, Colors.blue[300]!, null),
+                _buildWeatherIcon(Icons.ac_unit_rounded, Colors.blue[300]!, null),
+                _buildWeatherIcon(null, null, '-2° C'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWeatherIcon(IconData? icon, Color? color, String? temp) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: AppColors.systemGray6,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: icon != null
+            ? Icon(icon, color: color, size: 20)
+            : Text(
+                temp!,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildOutfitGrid() {
+    final days = [
+      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400'},
+      {'date': 'Saturday-Dec 25', 'type': '', 'img': null},
+      {'date': 'Sunday-Dec 26', 'type': '', 'img': null},
+      {'date': 'Monday-Dec 27', 'type': '', 'img': null},
+      {'date': 'Tuesday-Dec 28', 'type': '', 'img': null},
+      {'date': 'Wednesday-Dec 29', 'type': '', 'img': null},
+    ];
+
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.85,
+      ),
+      itemCount: days.length,
+      itemBuilder: (context, index) {
+        final day = days[index];
+        return _buildDayCard(day['date'] as String, day['img'] as String?, day['type'] as String);
+      },
+    );
+  }
+
+  Widget _buildDayCard(String date, String? imgUrl, String type) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            date,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: imgUrl != null
+                ? Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: NetworkImage(imgUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.calendar_today_rounded, size: 14, color: AppColors.systemGray),
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.systemGray6.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+          ),
+          if (type.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              "Today's look-$type",
+              style: const TextStyle(
+                fontSize: 10,
+                color: AppColors.systemGray,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFooterAction() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Text(
+            'Set reminder',
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(width: 20),
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary, size: 28),
+          ),
+        ],
+      ),
     );
   }
 }

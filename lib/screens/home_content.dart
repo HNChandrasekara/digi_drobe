@@ -80,10 +80,10 @@ class _HomeContentState extends State<HomeContent> {
       itemCount: 4,
       itemBuilder: (context, index) {
         final items = [
-          {'title': 'White Top', 'url': 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=200'},
-          {'title': 'Maroon Heels', 'url': 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=200'},
-          {'title': 'Burgundy Bag', 'url': 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=200'},
-          {'title': 'Wide Jeans', 'url': 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=200'},
+          {'title': 'White Top', 'url': 'https://images.unsplash.com/photo-1598554747436-c92900c73229?auto=format&fit=crop&q=80&w=400'},
+          {'title': 'Maroon Heels', 'url': 'https://images.unsplash.com/photo-1596702994291-944ccc40866b?auto=format&fit=crop&q=80&w=400'},
+          {'title': 'Designer Bag', 'url': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=400'},
+          {'title': 'Aesthetic Jeans', 'url': 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?auto=format&fit=crop&q=80&w=400'},
         ];
         return ProductCard(
           title: items[index]['title']!,
