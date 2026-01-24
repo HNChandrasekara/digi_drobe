@@ -4,6 +4,8 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
+import 'product_details_screen.dart';
+import 'chat_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -16,6 +18,36 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   bool _showFeed = true;
+  List<Map<String, String>> _allItems = [];
+  List<Map<String, String>> _filteredItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _allItems = [
+      {'title': 'White Top', 'url': 'https://images.unsplash.com/photo-1598554747436-c92900c73229?auto=format&fit=crop&q=80&w=400'},
+      {'title': 'Maroon Heels', 'url': 'https://images.unsplash.com/photo-1596702994291-944ccc40866b?auto=format&fit=crop&q=80&w=400'},
+      {'title': 'Designer Bag', 'url': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=400'},
+      {'title': 'Aesthetic Jeans', 'url': 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?auto=format&fit=crop&q=80&w=400'},
+      {'title': 'Summer Dress', 'url': 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=400'},
+      {'title': 'Casual Sneakers', 'url': 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=400'},
+    ];
+    _filteredItems = _allItems;
+  }
+
+  void _filterSearchResults(String query) {
+    if (query.isEmpty) {
+      setState(() {
+        _filteredItems = _allItems;
+      });
+      return;
+    }
+    setState(() {
+      _filteredItems = _allItems
+          .where((item) => item['title']!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +55,7 @@ class _HomeContentState extends State<HomeContent> {
       child: Column(
         children: [
           const CustomHeader(userName: 'Hirushie'),
-          const DigiSearchBar(),
+          DigiSearchBar(onChanged: _filterSearchResults),
           
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
@@ -69,28 +101,42 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildProductFeed() {
-    return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: 4,
-      itemBuilder: (context, index) {
-        final items = [
-          {'title': 'White Top', 'url': 'https://images.unsplash.com/photo-1598554747436-c92900c73229?auto=format&fit=crop&q=80&w=400'},
-          {'title': 'Maroon Heels', 'url': 'https://images.unsplash.com/photo-1596702994291-944ccc40866b?auto=format&fit=crop&q=80&w=400'},
-          {'title': 'Designer Bag', 'url': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=400'},
-          {'title': 'Aesthetic Jeans', 'url': 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?auto=format&fit=crop&q=80&w=400'},
-        ];
-        return ProductCard(
-          title: items[index]['title']!,
-          imageUrl: items[index]['url']!,
-        );
-      },
-    );
+    return _filteredItems.isEmpty
+        ? Center(
+            child: Text(
+              'No items found',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          )
+        : GridView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            itemCount: _filteredItems.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetailsScreen(
+                        title: _filteredItems[index]['title']!,
+                        imageUrl: _filteredItems[index]['url']!,
+                      ),
+                    ),
+                  );
+                },
+                child: ProductCard(
+                  title: _filteredItems[index]['title']!,
+                  imageUrl: _filteredItems[index]['url']!,
+                ),
+              );
+            },
+          );
   }
 
   Widget _buildFeatureNavigation() {
@@ -113,19 +159,31 @@ class _HomeContentState extends State<HomeContent> {
           title: 'Virtual Fitting Room',
           subtitle: 'Try on clothes digitally',
           icon: Icons.accessibility_new_rounded,
-          onTap: () {},
+          onTap: () {
+             ScaffoldMessenger.of(context).showSnackBar(
+               const SnackBar(content: Text('Virtual Fitting Room coming soon!')),
+             );
+          },
         ),
         FeatureCard(
           title: 'Thrift Store',
           subtitle: 'Buy and sell pre-loved items',
           icon: Icons.store_rounded,
-          onTap: () {},
+          onTap: () {
+             ScaffoldMessenger.of(context).showSnackBar(
+               const SnackBar(content: Text('Thrift Store coming soon!')),
+             );
+          },
         ),
         FeatureCard(
           title: 'App Goals',
           subtitle: 'What we aim to achieve',
           icon: Icons.flag_rounded,
-          onTap: () {},
+          onTap: () {
+             ScaffoldMessenger.of(context).showSnackBar(
+               const SnackBar(content: Text('Goals feature coming soon!')),
+             );
+          },
         ),
         _buildStylemateCard(),
       ],
@@ -135,64 +193,74 @@ class _HomeContentState extends State<HomeContent> {
   Widget _buildStylemateCard() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.primaryMaroon, AppColors.accentMaroon],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primaryMaroon.withOpacity(0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ChatScreen(channelName: 'StyleMate AI'),
             ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(
-                  color: Colors.white24,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
+          );
+        },
+        child: Container(
+          height: 100,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.primaryMaroon, AppColors.accentMaroon],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryMaroon.withOpacity(0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'STYLEMATE',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 18,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    Text(
-                      'AI Stylist Assistant',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 20),
             ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: const BoxDecoration(
+                    color: Colors.white24,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
+                ),
+                const SizedBox(width: 16),
+                const Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'STYLEMATE',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      Text(
+                        'AI Stylist Assistant',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 20),
+              ],
+            ),
           ),
         ),
       ),
