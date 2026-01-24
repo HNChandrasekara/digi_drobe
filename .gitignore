@@ -43,3 +43,24 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Flutter/Dart/Pub related
+.flutter-plugins
+
+# Android related
+**/android/.gradle
+**/android/local.properties
+**/android/key.properties
+
+# iOS/macOS related
+**/ios/Pods/
+**/ios/Podfile.lock
+**/ios/.generated/
+
+# Platform ephemeral
+**/windows/flutter/ephemeral/
+**/linux/flutter/ephemeral/
+**/macos/flutter/ephemeral/

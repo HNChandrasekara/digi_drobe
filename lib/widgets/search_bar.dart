@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 
 class DigiSearchBar extends StatelessWidget {
-  const DigiSearchBar({super.key});
+  final Function(String)? onChanged;
+
+  const DigiSearchBar({super.key, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +23,9 @@ class DigiSearchBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const TextField(
-          decoration: InputDecoration(
+        child: TextField(
+          onChanged: onChanged,
+          decoration: const InputDecoration(
             hintText: 'Search',
             hintStyle: TextStyle(color: AppColors.systemGray, fontSize: 15),
             prefixIcon: Icon(Icons.search_rounded, color: AppColors.primaryMaroon, size: 22),

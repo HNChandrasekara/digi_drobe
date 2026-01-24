@@ -19,7 +19,7 @@ class CartScreen extends StatelessWidget {
             Expanded(
               child: _buildItemList(),
             ),
-            _buildCheckoutFooter(),
+            _buildCheckoutFooter(context),
           ],
         ),
       ),
@@ -135,8 +135,8 @@ class CartScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
                   image: item['isAsset'] == true 
-                      ? AssetImage(item['url']!) as ImageProvider
-                      : NetworkImage(item['url']!),
+                      ? AssetImage(item['url']! as String) as ImageProvider
+                      : NetworkImage(item['url']! as String),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -148,7 +148,7 @@ class CartScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 10),
                   Text(
-                    item['title']!,
+                    item['title']! as String,
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -158,7 +158,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    item['price']!,
+                    item['price']! as String,
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -178,7 +178,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCheckoutFooter() {
+  Widget _buildCheckoutFooter(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
       decoration: const BoxDecoration(
