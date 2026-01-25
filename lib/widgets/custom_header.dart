@@ -3,8 +3,13 @@ import '../utils/colors.dart';
 
 class CustomHeader extends StatelessWidget {
   final String userName;
+  final VoidCallback? onProfileTap;
 
-  const CustomHeader({super.key, required this.userName});
+  const CustomHeader({
+    super.key, 
+    required this.userName,
+    this.onProfileTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,10 @@ class CustomHeader extends StatelessWidget {
           ),
           Row(
             children: [
-              _buildIconButton(Icons.person_rounded),
+              GestureDetector(
+                onTap: onProfileTap,
+                child: _buildIconButton(Icons.settings_rounded),
+              ),
               const SizedBox(width: 12),
               _buildIconButton(Icons.tune_rounded),
             ],

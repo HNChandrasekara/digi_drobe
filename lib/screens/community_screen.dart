@@ -101,10 +101,7 @@ class CommunityScreen extends StatelessWidget {
               height: 75,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: NetworkImage(stories[index]),
-                  fit: BoxFit.cover,
-                ),
+                color: AppColors.systemGray6,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -112,6 +109,11 @@ class CommunityScreen extends StatelessWidget {
                     offset: const Offset(0, 4),
                   ),
                 ],
+              ),
+              child: const Icon(
+                Icons.person_outline_rounded,
+                color: AppColors.primaryMaroon,
+                size: 35,
               ),
             ),
           );

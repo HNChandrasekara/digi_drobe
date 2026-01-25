@@ -9,8 +9,13 @@ import 'chat_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
+  final VoidCallback? onProfileTap;
 
-  const HomeContent({super.key, required this.onTabChange});
+  const HomeContent({
+    super.key, 
+    required this.onTabChange,
+    this.onProfileTap,
+  });
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -25,12 +30,12 @@ class _HomeContentState extends State<HomeContent> {
   void initState() {
     super.initState();
     _allItems = [
-      {'title': 'White Top', 'url': 'https://images.unsplash.com/photo-1598554747436-c92900c73229?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Maroon Heels', 'url': 'https://images.unsplash.com/photo-1596702994291-944ccc40866b?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Designer Bag', 'url': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Aesthetic Jeans', 'url': 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Summer Dress', 'url': 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Casual Sneakers', 'url': 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=400'},
+      {'title': 'White Top'},
+      {'title': 'Maroon Heels'},
+      {'title': 'Designer Bag'},
+      {'title': 'Aesthetic Jeans'},
+      {'title': 'Summer Dress'},
+      {'title': 'Casual Sneakers'},
     ];
     _filteredItems = _allItems;
   }
@@ -54,7 +59,10 @@ class _HomeContentState extends State<HomeContent> {
     return SafeArea(
       child: Column(
         children: [
-          const CustomHeader(userName: 'Hirushie'),
+          CustomHeader(
+            userName: 'Hirushie',
+            onProfileTap: widget.onProfileTap,
+          ),
           DigiSearchBar(onChanged: _filterSearchResults),
           
           Padding(
@@ -123,16 +131,16 @@ class _HomeContentState extends State<HomeContent> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProductDetailsScreen(
+                  builder: (context) => ProductDetailsScreen(
                         title: _filteredItems[index]['title']!,
-                        imageUrl: _filteredItems[index]['url']!,
+                        imageUrl: '',
                       ),
                     ),
                   );
                 },
                 child: ProductCard(
                   title: _filteredItems[index]['title']!,
-                  imageUrl: _filteredItems[index]['url']!,
+                  imageUrl: '',
                 ),
               );
             },

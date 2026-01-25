@@ -43,6 +43,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                     _buildPaymentMethod('Credit Card', Icons.credit_card_rounded),
                     const SizedBox(height: 12),
                     _buildPaymentMethod('PayPal', Icons.account_balance_wallet_outlined),
+                    const SizedBox(height: 12),
+                    _buildPaymentMethod('PayHere', Icons.payments_rounded),
                     const SizedBox(height: 40),
                   ],
                 ),
