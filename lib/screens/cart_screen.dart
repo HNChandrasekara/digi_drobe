@@ -67,7 +67,7 @@ class CartScreen extends StatelessWidget {
         height: 54,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: const Color(0xFF8B1D1D).withOpacity(0.9),
+          color: const Color(0xFF8B1D1D).withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(27),
         ),
         child: Row(
@@ -129,7 +129,7 @@ class CartScreen extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 30),
+      separatorBuilder: (_, _) => const SizedBox(height: 30),
       itemBuilder: (context, index) {
         final item = items[index];
         return Row(
@@ -179,7 +179,7 @@ class CartScreen extends StatelessWidget {
               padding: const EdgeInsets.only(top: 40),
               child: Icon(
                 Icons.delete_outline_rounded,
-                color: Colors.black.withOpacity(0.7),
+                color: Colors.black.withValues(alpha: 0.7),
                 size: 24,
               ),
             ),

@@ -154,22 +154,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               _emailController.text.trim(),
                               _passwordController.text.trim(),
                             );
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Account Created! Please Login.',
-                                  ),
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Account Created! Please Login.',
                                 ),
-                              );
-                              Navigator.pop(context); // Go back to login
-                            }
+                              ),
+                            );
+                            Navigator.pop(context); // Go back to login
                           } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Sign Up Failed: $e')),
-                              );
-                            }
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Sign Up Failed: $e')),
+                            );
                           }
                         }
                       },

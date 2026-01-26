@@ -14,7 +14,7 @@ class ProductCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
-        side: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
+        side: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5),
       ),
       color: Colors.white,
       child: Column(

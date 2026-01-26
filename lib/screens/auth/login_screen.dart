@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 100,
                       width: 100,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryMaroon.withOpacity(0.1),
+                        color: AppColors.primaryMaroon.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -158,20 +158,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               _emailController.text.trim(),
                               _passwordController.text.trim(),
                             );
-                            if (mounted) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const HomeScreen(),
-                                ),
-                              );
-                            }
+                            if (!context.mounted) return;
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomeScreen(),
+                              ),
+                            );
                           } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Login Failed: $e')),
-                              );
-                            }
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Login Failed: $e')),
+                            );
                           }
                         }
                       },

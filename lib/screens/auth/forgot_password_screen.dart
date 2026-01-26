@@ -95,22 +95,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             await AuthService().sendPasswordResetEmail(
                               _emailController.text.trim(),
                             );
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Reset link sent to your email',
-                                  ),
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Reset link sent to your email',
                                 ),
-                              );
-                              Navigator.pop(context);
-                            }
+                              ),
+                            );
+                            Navigator.pop(context);
                           } catch (e) {
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Error: $e')),
-                              );
-                            }
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
                           }
                         }
                       },
