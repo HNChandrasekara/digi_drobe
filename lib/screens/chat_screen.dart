@@ -5,10 +5,7 @@ import '../widgets/custom_header.dart';
 class ChatScreen extends StatelessWidget {
   final String channelName;
 
-  const ChatScreen({
-    super.key,
-    required this.channelName,
-  });
+  const ChatScreen({super.key, required this.channelName});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +16,7 @@ class ChatScreen extends StatelessWidget {
           children: [
             const CustomHeader(userName: 'Hirushie'),
             _buildChannelHeader(context),
-            Expanded(
-              child: _buildChatArea(),
-            ),
+            Expanded(child: _buildChatArea()),
             _buildInputBar(),
           ],
         ),
@@ -48,7 +43,11 @@ class ChatScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(Icons.arrow_back_rounded, color: AppColors.primaryMaroon, size: 24),
+              child: const Icon(
+                Icons.arrow_back_rounded,
+                color: AppColors.primaryMaroon,
+                size: 24,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -75,7 +74,10 @@ class ChatScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
-            child: const Text('Follow', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text(
+              'Follow',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -89,11 +91,11 @@ class ChatScreen extends StatelessWidget {
         _buildChatBubble(
           'Daily Outfit Posts',
           'A simple way to approach daily outfit posts:\n\n'
-          '• Keep it consistent: Post around the same time each day so followers know when to expect content.\n'
-          '• Plan outfits ahead: Mix and match basics with statement pieces to create interesting looks.\n'
-          '• Photography matters: Natural light works best; simple backgrounds make your outfit stand out.\n'
-          '• Engage your audience: Share a small tip or story about the outfit in the caption.\n'
-          '• Use hashtags: Hashtags like #OOTD, #StyleInspo, #DailyLook help reach more people.',
+              '• Keep it consistent: Post around the same time each day so followers know when to expect content.\n'
+              '• Plan outfits ahead: Mix and match basics with statement pieces to create interesting looks.\n'
+              '• Photography matters: Natural light works best; simple backgrounds make your outfit stand out.\n'
+              '• Engage your audience: Share a small tip or story about the outfit in the caption.\n'
+              '• Use hashtags: Hashtags like #OOTD, #StyleInspo, #DailyLook help reach more people.',
         ),
         const SizedBox(height: 20),
         _buildChatBubble(
@@ -195,7 +197,11 @@ class ChatScreen extends StatelessWidget {
                   color: AppColors.primaryMaroon,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.arrow_upward_rounded, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.arrow_upward_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ],
           ),

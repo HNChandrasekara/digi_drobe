@@ -21,6 +21,7 @@ class DigiBottomNav extends StatelessWidget {
             color: Colors.black.withValues(alpha: 0.05),
             width: 0.5,
           ),
+          top: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
         ),
       ),
       child: BottomNavigationBar(

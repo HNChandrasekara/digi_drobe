@@ -11,10 +11,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
   runApp(const MyApp());
 }
 
@@ -45,8 +47,16 @@ class MyApp extends StatelessWidget {
           ),
         ),
         textTheme: const TextTheme(
-          displayLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, letterSpacing: -1.0),
-          titleLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, letterSpacing: -0.5),
+          displayLarge: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -1.0,
+          ),
+          titleLarge: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.5,
+          ),
           bodyLarge: TextStyle(color: AppColors.textPrimary),
           bodyMedium: TextStyle(color: AppColors.textSecondary),
         ),
@@ -75,7 +85,9 @@ class MyApp extends StatelessWidget {
             }
             return const HomeScreen();
           }
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         },
       ),
     );

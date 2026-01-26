@@ -13,17 +13,15 @@ class CalendarScreen extends StatelessWidget {
         child: Column(
           children: [
             const CustomHeader(userName: 'Hirushie'),
-            
+
             // Weather Forecast Section
             _buildWeatherForecast(),
-            
+
             const SizedBox(height: 20),
-            
+
             // Outfit Grid
-            Expanded(
-              child: _buildOutfitGrid(),
-            ),
-            
+            Expanded(child: _buildOutfitGrid()),
+
             // Footer Action
             _buildFooterAction(),
           ],
@@ -65,9 +63,21 @@ class CalendarScreen extends StatelessWidget {
               children: [
                 _buildWeatherIcon(Icons.wb_sunny_rounded, Colors.orange, null),
                 _buildWeatherIcon(null, null, '25° C'),
-                _buildWeatherIcon(Icons.wb_cloudy_rounded, Colors.grey[700]!, null),
-                _buildWeatherIcon(Icons.ac_unit_rounded, Colors.blue[300]!, null),
-                _buildWeatherIcon(Icons.ac_unit_rounded, Colors.blue[300]!, null),
+                _buildWeatherIcon(
+                  Icons.wb_cloudy_rounded,
+                  Colors.grey[700]!,
+                  null,
+                ),
+                _buildWeatherIcon(
+                  Icons.ac_unit_rounded,
+                  Colors.blue[300]!,
+                  null,
+                ),
+                _buildWeatherIcon(
+                  Icons.ac_unit_rounded,
+                  Colors.blue[300]!,
+                  null,
+                ),
                 _buildWeatherIcon(null, null, '-2° C'),
               ],
             ),
@@ -102,7 +112,12 @@ class CalendarScreen extends StatelessWidget {
 
   Widget _buildOutfitGrid() {
     final days = [
-      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400'},
+      {
+        'date': 'Today-Friday, Dec 24',
+        'type': 'Formal',
+        'img':
+            'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400',
+      },
       {'date': 'Saturday-Dec 25', 'type': '', 'img': null},
       {'date': 'Sunday-Dec 26', 'type': '', 'img': null},
       {'date': 'Monday-Dec 27', 'type': '', 'img': null},
@@ -121,7 +136,11 @@ class CalendarScreen extends StatelessWidget {
       itemCount: days.length,
       itemBuilder: (context, index) {
         final day = days[index];
-        return _buildDayCard(day['date'] as String, day['img'] as String?, day['type'] as String);
+        return _buildDayCard(
+          day['date'] as String,
+          day['img'] as String?,
+          day['type'] as String,
+        );
       },
     );
   }
@@ -174,7 +193,11 @@ class CalendarScreen extends StatelessWidget {
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.calendar_today_rounded, size: 14, color: AppColors.systemGray),
+                          child: const Icon(
+                            Icons.calendar_today_rounded,
+                            size: 14,
+                            color: AppColors.systemGray,
+                          ),
                         ),
                       ),
                     ],
@@ -190,10 +213,7 @@ class CalendarScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               "Today's look-$type",
-              style: const TextStyle(
-                fontSize: 10,
-                color: AppColors.systemGray,
-              ),
+              style: const TextStyle(fontSize: 10, color: AppColors.systemGray),
             ),
           ],
         ],
@@ -218,7 +238,11 @@ class CalendarScreen extends StatelessWidget {
           const SizedBox(width: 20),
           Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary, size: 28),
+            child: const Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.textPrimary,
+              size: 28,
+            ),
           ),
         ],
       ),

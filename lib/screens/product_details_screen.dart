@@ -33,10 +33,7 @@ class ProductDetailsScreen extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-              ),
+              background: Image.network(imageUrl, fit: BoxFit.cover),
             ),
           ),
           SliverToBoxAdapter(
@@ -55,10 +52,11 @@ class ProductDetailsScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title,
-                          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                            fontSize: 28,
-                            color: AppColors.textPrimary,
-                          ),
+                          style: Theme.of(context).textTheme.displayLarge
+                              ?.copyWith(
+                                fontSize: 28,
+                                color: AppColors.textPrimary,
+                              ),
                         ),
                       ),
                       const Text(
@@ -95,9 +93,9 @@ class ProductDetailsScreen extends StatelessWidget {
                     height: 56,
                     child: ElevatedButton(
                       onPressed: () {
-                         ScaffoldMessenger.of(context).showSnackBar(
-                           const SnackBar(content: Text('Added to Cart')),
-                         );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Added to Cart')),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryMaroon,
@@ -109,7 +107,10 @@ class ProductDetailsScreen extends StatelessWidget {
                       ),
                       child: const Text(
                         'Add to Cart',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

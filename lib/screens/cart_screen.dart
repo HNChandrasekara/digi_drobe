@@ -16,9 +16,7 @@ class CartScreen extends StatelessWidget {
             const SizedBox(height: 20),
             _buildWishlistToggle(),
             const SizedBox(height: 30),
-            Expanded(
-              child: _buildItemList(),
-            ),
+            Expanded(child: _buildItemList()),
             _buildCheckoutFooter(context),
           ],
         ),
@@ -34,17 +32,26 @@ class CartScreen extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColors.textPrimary,
+            ),
           ),
           Row(
             children: [
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.shopping_cart_outlined, color: AppColors.textPrimary),
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: AppColors.textPrimary,
+                ),
               ),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.menu_rounded, color: AppColors.textPrimary),
+                icon: const Icon(
+                  Icons.menu_rounded,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
@@ -134,7 +141,7 @@ class CartScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
-                  image: item['isAsset'] == true 
+                  image: item['isAsset'] == true
                       ? AssetImage(item['url']! as String) as ImageProvider
                       : NetworkImage(item['url']! as String),
                   fit: BoxFit.cover,
@@ -235,8 +242,8 @@ class CartScreen extends StatelessWidget {
             height: 48,
             child: ElevatedButton(
               onPressed: () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const PaymentsScreen())
+                context,
+                MaterialPageRoute(builder: (context) => const PaymentsScreen()),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8B1D1D),

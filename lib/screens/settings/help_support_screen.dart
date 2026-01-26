@@ -34,7 +34,10 @@ class HelpSupportScreen extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1A1A3A)),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1A1A3A),
+            ),
           ),
           const Expanded(
             child: Text(
@@ -78,6 +81,11 @@ class HelpSupportScreen extends StatelessWidget {
               ),
             ),
             Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withValues(alpha: 0.3), size: 16),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.black.withOpacity(0.3),
+              size: 16,
+            ),
           ],
         ),
       ),
@@ -92,7 +100,10 @@ class HelpSupportScreen extends StatelessWidget {
           children: [
             const Icon(Icons.email_outlined, size: 18, color: Colors.black87),
             const SizedBox(width: 8),
-            const Text('support@digidrobe.com', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            const Text(
+              'support@digidrobe.com',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
           ],
         ),
         const SizedBox(height: 16),

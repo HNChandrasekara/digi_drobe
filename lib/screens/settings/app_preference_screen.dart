@@ -15,9 +15,15 @@ class AppPreferenceScreen extends StatelessWidget {
             const SizedBox(height: 40),
             _buildPreferenceItem(Icons.brush_outlined, 'Theme & Appearance'),
             const SizedBox(height: 16),
-            _buildPreferenceItem(Icons.notifications_none_rounded, 'Sound & Notifications'),
+            _buildPreferenceItem(
+              Icons.notifications_none_rounded,
+              'Sound & Notifications',
+            ),
             const SizedBox(height: 16),
-            _buildPreferenceItem(Icons.translate_rounded, 'Language & Accessibility'),
+            _buildPreferenceItem(
+              Icons.translate_rounded,
+              'Language & Accessibility',
+            ),
           ],
         ),
       ),
@@ -31,7 +37,10 @@ class AppPreferenceScreen extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1A1A3A)),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1A1A3A),
+            ),
           ),
           const Expanded(
             child: Text(
@@ -75,6 +84,11 @@ class AppPreferenceScreen extends StatelessWidget {
               ),
             ),
             Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withValues(alpha: 0.3), size: 16),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.black.withOpacity(0.3),
+              size: 16,
+            ),
           ],
         ),
       ),

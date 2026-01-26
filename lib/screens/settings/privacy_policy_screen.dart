@@ -28,15 +28,15 @@ class PrivacyPolicyScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                     _buildContentText(
-                      'Your privacy is important to us. At AquaGuard, we are committed to protecting your personal information and providing a safe, enjoyable quiz experience. This Privacy Policy explains what information we collect, how we use it, and the choices you have regarding your data. We may collect personal information such as your name, email, and avatar if you create an account. Additionally, we gather gameplay data including your scores, achievements, progress, and quiz history. We also collect device and usage information such as your device type, operating system, app usage patterns, and crash reports. Optional data, such as location, is collected only if you enable location-based features within the app.'
+                      'Your privacy is important to us. At AquaGuard, we are committed to protecting your personal information and providing a safe, enjoyable quiz experience. This Privacy Policy explains what information we collect, how we use it, and the choices you have regarding your data. We may collect personal information such as your name, email, and avatar if you create an account. Additionally, we gather gameplay data including your scores, achievements, progress, and quiz history. We also collect device and usage information such as your device type, operating system, app usage patterns, and crash reports. Optional data, such as location, is collected only if you enable location-based features within the app.',
                     ),
                     const SizedBox(height: 20),
                     _buildContentText(
-                      'The information we collect is used to personalize your quiz experience, track your progress and achievements, send notifications or reminders if you opt-in, and improve the app by fixing bugs and analyzing usage trends.'
+                      'The information we collect is used to personalize your quiz experience, track your progress and achievements, send notifications or reminders if you opt-in, and improve the app by fixing bugs and analyzing usage trends.',
                     ),
                     const SizedBox(height: 20),
                     _buildContentText(
-                      'We do not sell your personal information. However, we may share limited data with trusted third-party service providers who help with cloud storage or analytics. Social features, such as sharing scores or achievements, are used only if you choose to participate.'
+                      'We do not sell your personal information. However, we may share limited data with trusted third-party service providers who help with cloud storage or analytics. Social features, such as sharing scores or achievements, are used only if you choose to participate.',
                     ),
                   ],
                 ),
@@ -55,7 +55,10 @@ class PrivacyPolicyScreen extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1A1A3A)),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1A1A3A),
+            ),
           ),
           const Expanded(
             child: Text(

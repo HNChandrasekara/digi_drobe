@@ -30,9 +30,15 @@ class LogoutScreen extends StatelessWidget {
                   Navigator.pop(context);
                 }),
                 const SizedBox(width: 20),
-                _buildButton('Cancel', Colors.white, const Color(0xFF8B1D1D), () {
-                  Navigator.pop(context);
-                }, hasBorder: true),
+                _buildButton(
+                  'Cancel',
+                  Colors.white,
+                  const Color(0xFF8B1D1D),
+                  () {
+                    Navigator.pop(context);
+                  },
+                  hasBorder: true,
+                ),
               ],
             ),
             const Spacer(flex: 3),
@@ -49,7 +55,10 @@ class LogoutScreen extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1A1A3A)),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1A1A3A),
+            ),
           ),
           const Expanded(
             child: Text(
@@ -68,7 +77,13 @@ class LogoutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(String text, Color bgColor, Color textColor, VoidCallback onPressed, {bool hasBorder = false}) {
+  Widget _buildButton(
+    String text,
+    Color bgColor,
+    Color textColor,
+    VoidCallback onPressed, {
+    bool hasBorder = false,
+  }) {
     return SizedBox(
       width: 100,
       height: 48,
@@ -83,10 +98,7 @@ class LogoutScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
