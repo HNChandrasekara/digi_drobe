@@ -15,10 +15,10 @@ class DigiBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.appleWhite.withOpacity(0.8),
+        color: AppColors.appleWhite.withValues(alpha: 0.8),
         border: Border(
           top: BorderSide(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             width: 0.5,
           ),
         ),

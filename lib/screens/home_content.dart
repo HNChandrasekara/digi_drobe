@@ -4,7 +4,6 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
-import 'product_details_screen.dart';
 import 'chat_screen.dart';
 
 class HomeContent extends StatefulWidget {
@@ -204,7 +203,7 @@ class _HomeContentState extends State<HomeContent> {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primaryMaroon.withOpacity(0.3),
+                color: AppColors.primaryMaroon.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),

@@ -61,11 +61,11 @@ class HelpSupportScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withOpacity(0.1)),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.1)),
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.black.withOpacity(0.6), size: 22),
+            Icon(icon, color: Colors.black.withValues(alpha: 0.6), size: 22),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
@@ -77,7 +77,7 @@ class HelpSupportScreen extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withOpacity(0.3), size: 16),
+            Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withValues(alpha: 0.3), size: 16),
           ],
         ),
       ),
@@ -113,6 +113,6 @@ class HelpSupportScreen extends StatelessWidget {
   }
 
   Widget _buildSocialIcon(IconData icon) {
-    return Icon(icon, size: 20, color: Colors.black.withOpacity(0.7));
+    return Icon(icon, size: 20, color: Colors.black.withValues(alpha: 0.7));
   }
 }

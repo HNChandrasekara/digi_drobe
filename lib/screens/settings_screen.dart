@@ -55,7 +55,7 @@ class SettingsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF8B1D1D).withOpacity(0.3),
+              color: const Color(0xFF8B1D1D).withValues(alpha: 0.3),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -129,7 +129,7 @@ class SettingsScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+            border: Border.all(color: Colors.black.withValues(alpha: 0.1), width: 1),
           ),
           child: _buildItemRow(icon, title),
         ),
@@ -146,7 +146,7 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                Icon(icon, color: Colors.black.withOpacity(0.6), size: 22),
+                Icon(icon, color: Colors.black.withValues(alpha: 0.6), size: 22),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
@@ -158,7 +158,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withOpacity(0.3), size: 16),
+                Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withValues(alpha: 0.3), size: 16),
               ],
             ),
           ),
@@ -167,7 +167,7 @@ class SettingsScreen extends StatelessWidget {
               height: 1,
               indent: 56,
               endIndent: 20,
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
             ),
         ],
       ),
@@ -181,7 +181,7 @@ class SettingsScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.1), width: 1),
         ),
         child: Column(
           children: [

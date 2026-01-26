@@ -107,7 +107,7 @@ class CommunityScreen extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -133,7 +133,7 @@ class CommunityScreen extends StatelessWidget {
         child: Container(
           height: 80,
           decoration: BoxDecoration(
-            color: const Color(0xFFD9D9D9).withOpacity(0.5), // Matches the gray in screenshot
+            color: const Color(0xFFD9D9D9).withValues(alpha: 0.5), // Matches the gray in screenshot
             borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(
