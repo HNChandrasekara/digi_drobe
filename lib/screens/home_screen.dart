@@ -33,10 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: pages),
       bottomNavigationBar: DigiBottomNav(
         currentIndex: _selectedIndex,
         onTap: _onTabChange,

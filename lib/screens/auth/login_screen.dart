@@ -65,9 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to continue',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
                   // Email Field
@@ -77,7 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -90,7 +92,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -116,7 +121,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -124,9 +132,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                         Navigator.push(
+                        Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordScreen(),
+                          ),
                         );
                       },
                       child: const Text(
@@ -149,9 +159,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               _passwordController.text.trim(),
                             );
                             if (mounted) {
-                               Navigator.pushReplacement(
+                              Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                                MaterialPageRoute(
+                                  builder: (context) => const HomeScreen(),
+                                ),
                               );
                             }
                           } catch (e) {
@@ -173,7 +185,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: const Text(
                         'Login',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -190,7 +205,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpScreen(),
+                            ),
                           );
                         },
                         child: const Text(

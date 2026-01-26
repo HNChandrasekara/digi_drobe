@@ -44,7 +44,10 @@ class _HomeContentState extends State<HomeContent> {
     }
     setState(() {
       _filteredItems = _allItems
-          .where((item) => item['title']!.toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (item) =>
+                item['title']!.toLowerCase().contains(query.toLowerCase()),
+          )
           .toList();
     });
   }
@@ -56,7 +59,7 @@ class _HomeContentState extends State<HomeContent> {
         children: [
           const CustomHeader(userName: 'Hirushie'),
           DigiSearchBar(onChanged: _filterSearchResults),
-          
+
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
@@ -93,7 +96,9 @@ class _HomeContentState extends State<HomeContent> {
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: _showFeed ? _buildProductFeed() : _buildFeatureNavigation(),
+              child: _showFeed
+                  ? _buildProductFeed()
+                  : _buildFeatureNavigation(),
             ),
           ),
         ],
@@ -151,9 +156,11 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Try on clothes digitally',
           icon: Icons.accessibility_new_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Virtual Fitting Room coming soon!')),
-             );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Virtual Fitting Room coming soon!'),
+              ),
+            );
           },
         ),
         FeatureCard(
@@ -161,9 +168,9 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Buy and sell pre-loved items',
           icon: Icons.store_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Thrift Store coming soon!')),
-             );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Thrift Store coming soon!')),
+            );
           },
         ),
         FeatureCard(
@@ -171,9 +178,9 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'What we aim to achieve',
           icon: Icons.flag_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Goals feature coming soon!')),
-             );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Goals feature coming soon!')),
+            );
           },
         ),
         _buildStylemateCard(),
@@ -189,7 +196,8 @@ class _HomeContentState extends State<HomeContent> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ChatScreen(channelName: 'StyleMate AI'),
+              builder: (context) =>
+                  const ChatScreen(channelName: 'StyleMate AI'),
             ),
           );
         },
@@ -221,7 +229,11 @@ class _HomeContentState extends State<HomeContent> {
                     color: Colors.white24,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
+                  child: const Icon(
+                    Icons.psychology_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 const Expanded(
@@ -249,7 +261,11 @@ class _HomeContentState extends State<HomeContent> {
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ],
             ),
           ),

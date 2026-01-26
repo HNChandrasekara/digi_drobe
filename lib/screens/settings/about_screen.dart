@@ -19,13 +19,21 @@ class AboutScreen extends StatelessWidget {
                   const Text(
                     'Welcome to AquaGuard, the fun and interactive quiz app that makes learning exciting! Our mission is to challenge your mind, spark curiosity, and reward knowledge across a variety of categories.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.6),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      height: 1.6,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   const Text(
                     'We aim to provide a safe, user-friendly experience where players can compete, track progress, and enjoy new quizzes and features based on user feedback. Thank you for choosing AquaGuard - let\'s make learning an adventure!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.6),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black87,
+                      height: 1.6,
+                    ),
                   ),
                 ],
               ),
@@ -46,7 +54,10 @@ class AboutScreen extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1A1A3A)),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1A1A3A),
+            ),
           ),
           const Expanded(
             child: Text(
@@ -73,7 +84,10 @@ class AboutScreen extends StatelessWidget {
           children: [
             const Icon(Icons.email_outlined, size: 18, color: Colors.black87),
             const SizedBox(width: 8),
-            const Text('support@digidrobe.com', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            const Text(
+              'support@digidrobe.com',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
           ],
         ),
         const SizedBox(height: 16),

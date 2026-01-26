@@ -12,11 +12,16 @@ class DigiSearchBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: SearchBar(
         onChanged: onChanged,
-        leading: const Icon(Icons.search_rounded, color: AppColors.primaryMaroon),
+        leading: const Icon(
+          Icons.search_rounded,
+          color: AppColors.primaryMaroon,
+        ),
         hintText: 'Search',
         elevation: const WidgetStatePropertyAll(0),
         backgroundColor: const WidgetStatePropertyAll(Colors.white),
-        padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 16)),
+        padding: const WidgetStatePropertyAll(
+          EdgeInsets.symmetric(horizontal: 16),
+        ),
         shape: WidgetStatePropertyAll(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         ),

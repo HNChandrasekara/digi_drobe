@@ -54,18 +54,18 @@ class FeatureCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
                       ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 2),
                         Text(
                           subtitle!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: AppColors.textSecondary),
                         ),
                       ],
                     ],

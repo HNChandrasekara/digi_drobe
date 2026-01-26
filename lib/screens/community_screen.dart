@@ -18,9 +18,9 @@ class CommunityScreen extends StatelessWidget {
             children: [
               const CustomHeader(userName: 'Hirushie'),
               const DigiSearchBar(),
-              
+
               const SizedBox(height: 20),
-              
+
               // Stories Section
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -69,7 +69,7 @@ class CommunityScreen extends StatelessWidget {
               ),
               _buildChannelItem(context),
               _buildChannelItem(context),
-              
+
               const SizedBox(height: 30),
             ],
           ),
@@ -124,16 +124,22 @@ class CommunityScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: GestureDetector(
-        onTap: isNavigable 
+        onTap: isNavigable
             ? () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ChatScreen(channelName: 'Daily Outfit Inspirations (OOTD)'))
-              ) 
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatScreen(
+                    channelName: 'Daily Outfit Inspirations (OOTD)',
+                  ),
+                ),
+              )
             : null,
         child: Container(
           height: 80,
           decoration: BoxDecoration(
-            color: const Color(0xFFD9D9D9).withOpacity(0.5), // Matches the gray in screenshot
+            color: const Color(
+              0xFFD9D9D9,
+            ).withOpacity(0.5), // Matches the gray in screenshot
             borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(

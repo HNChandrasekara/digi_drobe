@@ -49,9 +49,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Enter your email to receive a reset link',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
                   // Email Field
@@ -61,7 +61,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -74,7 +76,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -87,12 +92,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           try {
-                            await AuthService().sendPasswordResetEmail(_emailController.text.trim());
+                            await AuthService().sendPasswordResetEmail(
+                              _emailController.text.trim(),
+                            );
                             if (mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(
-                                 const SnackBar(content: Text('Reset link sent to your email')),
-                               );
-                               Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Reset link sent to your email',
+                                  ),
+                                ),
+                              );
+                              Navigator.pop(context);
                             }
                           } catch (e) {
                             if (mounted) {
@@ -113,7 +124,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       child: const Text(
                         'Send Reset Link',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

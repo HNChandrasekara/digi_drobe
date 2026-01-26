@@ -5,11 +5,7 @@ class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String title;
 
-  const ProductCard({
-    super.key,
-    required this.imageUrl,
-    required this.title,
-  });
+  const ProductCard({super.key, required this.imageUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +14,7 @@ class ProductCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
-        side: BorderSide(
-          color: Colors.black.withOpacity(0.05),
-          width: 0.5,
-        ),
+        side: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
       ),
       color: Colors.white,
       child: Column(
@@ -30,9 +23,7 @@ class ProductCard extends StatelessWidget {
           Expanded(
             child: Container(
               width: double.infinity,
-              decoration: const BoxDecoration(
-                color: AppColors.systemGray6,
-              ),
+              decoration: const BoxDecoration(color: AppColors.systemGray6),
               child: const Center(
                 child: Icon(
                   Icons.image_not_supported_outlined,
