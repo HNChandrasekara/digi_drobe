@@ -20,7 +20,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.4' # Matches pubspec.yaml environment sdk: ^3.10.4
+          flutter-version: '3.38.6' # Matches local environment and satisfies Dart SDK ^3.10.4
           channel: 'stable'
 
       - name: Install dependencies
