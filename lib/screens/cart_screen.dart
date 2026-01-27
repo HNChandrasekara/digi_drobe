@@ -67,7 +67,7 @@ class CartScreen extends StatelessWidget {
         height: 54,
         padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: const Color(0xFF8B1D1D).withOpacity(0.9),
+          color: const Color(0xFF8B1D1D).withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(27),
         ),
         child: Row(
@@ -177,11 +177,7 @@ class CartScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 40),
-              child: Icon(
-                Icons.delete_outline_rounded,
-                color: Colors.black.withOpacity(0.7),
-                size: 24,
-              ),
+              child: Icon(Icons.delete_outline_rounded, color: Colors.black.withValues(alpha: 0.7), size: 24),
             ),
           ],
         );

@@ -96,10 +96,10 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -170,14 +170,10 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF8B1D1D).withOpacity(0.05)
-              : Colors.white,
+          color: isSelected ? const Color(0xFF8B1D1D).withValues(alpha: 0.05) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF8B1D1D)
-                : Colors.black.withOpacity(0.05),
+            color: isSelected ? const Color(0xFF8B1D1D) : Colors.black.withValues(alpha: 0.05),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -185,9 +181,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? const Color(0xFF8B1D1D)
-                  : Colors.black.withOpacity(0.6),
+              color: isSelected ? const Color(0xFF8B1D1D) : Colors.black.withValues(alpha: 0.6),
               size: 24,
             ),
             const SizedBox(width: 16),
@@ -221,7 +215,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(
-          top: BorderSide(color: Colors.black.withOpacity(0.05), width: 1),
+          top: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 1),
         ),
       ),
       child: SizedBox(
