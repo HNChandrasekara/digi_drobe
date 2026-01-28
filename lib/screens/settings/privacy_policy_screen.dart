@@ -22,7 +22,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                       'Last updated: 2023/06/12',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.black.withValues(alpha: 0.5),
+                        color: Colors.black.withOpacity(0.5),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -82,7 +82,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
       text,
       style: TextStyle(
         fontSize: 14,
-        color: Colors.black.withValues(alpha: 0.7),
+        color: Colors.black.withOpacity(0.7),
         height: 1.6,
         fontWeight: FontWeight.w400,
       ),

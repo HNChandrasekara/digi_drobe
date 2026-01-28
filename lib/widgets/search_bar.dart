@@ -26,7 +26,7 @@ class DigiSearchBar extends StatelessWidget {
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         ),
         side: WidgetStatePropertyAll(
-          BorderSide(color: Colors.black.withValues(alpha: 0.05)),
+          BorderSide(color: Colors.black.withOpacity(0.05)),
         ),
       ),
     );

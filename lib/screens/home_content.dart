@@ -211,7 +211,7 @@ class _HomeContentState extends State<HomeContent> {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primaryMaroon.withValues(alpha: 0.3),
+                color: AppColors.primaryMaroon.withOpacity(0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),

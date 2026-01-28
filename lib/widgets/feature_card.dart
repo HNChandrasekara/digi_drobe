@@ -24,7 +24,7 @@ class FeatureCard extends StatelessWidget {
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.black.withValues(alpha: 0.05), width: 0.5),
+          side: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -37,7 +37,7 @@ class FeatureCard extends StatelessWidget {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryMaroon.withValues(alpha: 0.08),
+                    color: AppColors.primaryMaroon.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -73,7 +73,7 @@ class FeatureCard extends StatelessWidget {
                 ),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: AppColors.systemGray2.withValues(alpha: 0.5),
+                  color: AppColors.systemGray2.withOpacity(0.5),
                   size: 16,
                 ),
               ],

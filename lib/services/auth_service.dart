@@ -1,7 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  static bool _initialized = false;
+  static void markInitialized() => _initialized = true;
+
+  FirebaseAuth get _auth {
+    if (!_initialized) {
+      throw Exception('Firebase not initialized');
+    }
+    return FirebaseAuth.instance;
+  }
 
   // Sign Up
   Future<UserCredential?> signUpWithEmailPassword(
