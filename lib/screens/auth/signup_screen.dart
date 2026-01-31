@@ -157,9 +157,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text(
-                                  'Account Created! Please Login.',
-                                ),
+                                content: Text('Account Created! Please Login.'),
                               ),
                             );
                             Navigator.pop(context); // Go back to login
