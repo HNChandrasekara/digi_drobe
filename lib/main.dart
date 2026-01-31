@@ -9,7 +9,7 @@ import 'utils/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   bool firebaseInitialized = false;
   try {
     debugPrint('Firebase: Initializing...');
@@ -27,7 +27,7 @@ void main() async {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  
+
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
     debugPrint('Caught Flutter error: ${details.exception}');
@@ -64,23 +64,23 @@ class MyApp extends StatelessWidget {
           ),
         );
       },
-      home: !firebaseInitialized 
-        ? const HomeScreen() // Development fallback
-        : StreamBuilder<User?>(
-        stream: AuthService().authStateChanges,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            User? user = snapshot.data;
-            if (user == null) {
-              return const LoginScreen();
-            }
-            return const HomeScreen();
-          }
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        },
-      ),
+      home: !firebaseInitialized
+          ? const HomeScreen() // Development fallback
+          : StreamBuilder<User?>(
+              stream: AuthService().authStateChanges,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  User? user = snapshot.data;
+                  if (user == null) {
+                    return const LoginScreen();
+                  }
+                  return const HomeScreen();
+                }
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              },
+            ),
     );
   }
 }

@@ -5,6 +5,7 @@ import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
 import 'chat_screen.dart';
+import 'style_bot_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -195,8 +196,7 @@ class _HomeContentState extends State<HomeContent> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  const ChatScreen(channelName: 'StyleMate AI'),
+              builder: (context) => const StyleBotScreen(),
             ),
           );
         },
