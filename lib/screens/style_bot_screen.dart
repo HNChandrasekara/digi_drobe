@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../services/gemini_service.dart';
 
 class StyleBotScreen extends StatefulWidget {
   const StyleBotScreen({super.key});
@@ -12,6 +13,8 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
   bool _isChatActive = false;
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
+  final GeminiService _geminiService = GeminiService();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -19,29 +22,31 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
-    if (_messageController.text.trim().isEmpty) return;
+  Future<void> _sendMessage() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
 
     setState(() {
       _isChatActive = true;
       _messages.add({
         'isUser': true,
-        'message': _messageController.text,
+        'message': text,
       });
-      // Simulate bot response
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) {
-          setState(() {
-            _messages.add({
-              'isUser': false,
-              'message':
-                  'For next week\'s college outfits, you can go for a mix of comfort and style. On Monday, try an oversized cream sweater with straight-leg jeans and white sneakers for a cozy start. Tuesday can be a casual chic look with a black ribbed top, wide-leg pants, and a small crossbody bag. Mid-week on Wednesday, a white tee with a denim jacket and a mini or midi skirt gives a cute, fresh vibe. On Thursday, switch to a relaxed streetwear style with an oversized graphic tee, cargo pants, and sneakers. For Friday, keep it smart casual with a light button-down tucked into mom jeans paired with loafers. These outfits stay comfortable for everyday campus life.',
-            });
-          });
-        }
-      });
-      _messageController.clear();
+      _isLoading = true;
     });
+    _messageController.clear();
+
+    final response = await _geminiService.sendMessage(text);
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _messages.add({
+          'isUser': false,
+          'message': response,
+        });
+      });
+    }
   }
 
   @override
@@ -74,30 +79,43 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
           const Spacer(flex: 2),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            height: 200, // Fixed height for the card look
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
               color: const Color(0xFFEBEBEB).withOpacity(0.8), // Light grey/beige
               borderRadius: BorderRadius.circular(24),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+            child: Stack(
               children: [
-                 Text(
-                  'Ask Stylebot',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black.withOpacity(0.7),
-                    fontWeight: FontWeight.w500,
+                TextField(
+                  controller: _messageController,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Ask Stylebot',
+                    hintStyle: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black.withOpacity(0.7),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    border: InputBorder.none,
                   ),
                 ),
-                const SizedBox(height: 80), // Space for typing area feel
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: Icon(
-                    Icons.mic_none_rounded,
-                    color: Colors.grey[600],
-                    size: 24,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.mic_none_rounded,
+                      color: Colors.grey[600],
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      // Placeholder for voice input
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Voice input not implemented yet')),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -107,15 +125,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
            // Assuming bottom nav is handled by HomeScreen, so we don't duplicate it here.
            // However, to make this functional, tapping the container should switch state or focus input.
            // For this demo, let's make it interactive.
-           TextField(
-             controller: _messageController,
-             onSubmitted: (_) => _sendMessage(),
-             decoration: const InputDecoration(
-               hintText: 'Type your request...',
-               border: InputBorder.none,
-               contentPadding: EdgeInsets.symmetric(horizontal: 24),
-             ),
-           ),
+           // Removed redundant bottom TextField
         ],
       ),
     );
@@ -128,8 +138,11 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.all(20),
-            itemCount: _messages.length,
+            itemCount: _messages.length + (_isLoading ? 1 : 0),
             itemBuilder: (context, index) {
+              if (index == _messages.length && _isLoading) {
+                 return const Center(child: CircularProgressIndicator());
+              }
               final msg = _messages[index];
               return _buildMessageBubble(msg['message'], msg['isUser']);
             },
