@@ -7,6 +7,11 @@ class AuthService {
 
   FirebaseAuth get _auth {
     if (!_isFirebaseInitialized) {
+  static bool _initialized = false;
+  static void markInitialized() => _initialized = true;
+
+  FirebaseAuth get _auth {
+    if (!_initialized) {
       throw Exception('Firebase not initialized');
     }
     return FirebaseAuth.instance;
@@ -18,11 +23,13 @@ class AuthService {
       debugPrint('Mock Sign Up: $email');
       return null; // Return null or mock data in mock mode
     }
+  Future<UserCredential?> signUpWithEmailPassword(
+    String email,
+    String password,
+  ) async {
     try {
-      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential userCredential = await _auth
+          .createUserWithEmailAndPassword(email: email, password: password);
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw e.message ?? 'An unknown error occurred';
@@ -35,11 +42,13 @@ class AuthService {
       debugPrint('Mock Sign In: $email');
       return null;
     }
+  Future<UserCredential?> signInWithEmailPassword(
+    String email,
+    String password,
+  ) async {
     try {
-      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email: email, password: password);
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw e.message ?? 'An unknown error occurred';

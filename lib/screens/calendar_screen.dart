@@ -40,17 +40,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
         child: Column(
           children: [
             const CustomHeader(userName: 'Hirushie'),
-            
+
             // Weather Forecast Section
             _buildWeatherForecast(),
-            
+
             const SizedBox(height: 20),
-            
+
             // Outfit Grid
-            Expanded(
-              child: _buildOutfitGrid(),
-            ),
-            
+            Expanded(child: _buildOutfitGrid()),
+
             // Footer Action
             _buildFooterAction(),
           ],
@@ -104,6 +102,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       return _buildWeatherIcon(icon, color, day['temp']);
                     }).toList(),
                   ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildWeatherIcon(Icons.wb_sunny_rounded, Colors.orange, null),
+                _buildWeatherIcon(null, null, '25° C'),
+                _buildWeatherIcon(
+                  Icons.wb_cloudy_rounded,
+                  Colors.grey[700]!,
+                  null,
+                ),
+                _buildWeatherIcon(
+                  Icons.ac_unit_rounded,
+                  Colors.blue[300]!,
+                  null,
+                ),
+                _buildWeatherIcon(
+                  Icons.ac_unit_rounded,
+                  Colors.blue[300]!,
+                  null,
+                ),
+                _buildWeatherIcon(null, null, '-2° C'),
+              ],
+            ),
           ),
         ],
       ),
@@ -131,6 +152,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _buildOutfitGrid() {
     final days = [
       {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': null},
+      {
+        'date': 'Today-Friday, Dec 24',
+        'type': 'Formal',
+        'img':
+            'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400',
+      },
       {'date': 'Saturday-Dec 25', 'type': '', 'img': null},
       {'date': 'Sunday-Dec 26', 'type': '', 'img': null},
       {'date': 'Monday-Dec 27', 'type': '', 'img': null},
@@ -150,6 +177,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
       itemBuilder: (context, index) {
         final day = days[index];
         return _buildDayCard(day['date'] as String, day['type'] as String);
+        return _buildDayCard(
+          day['date'] as String,
+          day['img'],
+          day['type'] as String,
+        );
       },
     );
   }
@@ -194,15 +226,48 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               ),
             ),
+            child: imgUrl != null
+                ? Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: NetworkImage(imgUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.calendar_today_rounded,
+                            size: 14,
+                            color: AppColors.systemGray,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.systemGray6.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
           ),
           if (type.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               "Today's look-$type",
-              style: const TextStyle(
-                fontSize: 10,
-                color: AppColors.systemGray,
-              ),
+              style: const TextStyle(fontSize: 10, color: AppColors.systemGray),
             ),
           ],
         ],
@@ -227,7 +292,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           const SizedBox(width: 20),
           Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary, size: 28),
+            child: const Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.textPrimary,
+              size: 28,
+            ),
           ),
         ],
       ),

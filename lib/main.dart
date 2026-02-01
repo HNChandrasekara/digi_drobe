@@ -26,15 +26,35 @@ void main() async {
     debugPrint('Firebase initialization failed: $e');
   }
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-  ));
-  runApp(const MyApp());
+  bool firebaseInitialized = false;
+  try {
+    debugPrint('Firebase: Initializing...');
+    await Firebase.initializeApp().timeout(const Duration(seconds: 3));
+    AuthService.markInitialized();
+    firebaseInitialized = true;
+    debugPrint('Firebase: Success');
+  } catch (e) {
+    debugPrint('Firebase: Failed/Timeout (using fallback): $e');
+  }
+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ),
+  );
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('Caught Flutter error: ${details.exception}');
+  };
+
+  runApp(MyApp(firebaseInitialized: firebaseInitialized));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool firebaseInitialized;
+  const MyApp({super.key, required this.firebaseInitialized});
 
   @override
   Widget build(BuildContext context) {
@@ -45,33 +65,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
           seedColor: AppColors.primaryMaroon,
-          background: AppColors.backgroundLight,
           surface: AppColors.surfaceLight,
         ),
         scaffoldBackgroundColor: AppColors.backgroundLight,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-          titleTextStyle: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.5,
-          ),
-        ),
-        textTheme: const TextTheme(
-          displayLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, letterSpacing: -1.0),
-          titleLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, letterSpacing: -0.5),
-          bodyLarge: TextStyle(color: AppColors.textPrimary),
-          bodyMedium: TextStyle(color: AppColors.textSecondary),
-        ),
-        pageTransitionsTheme: const PageTransitionsTheme(
-          builders: {
-            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          },
-        ),
       ),
       builder: (context, child) {
         return Stack(
@@ -115,6 +111,33 @@ class MyApp extends StatelessWidget {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         },
       ),
+        return Material(
+          color: AppColors.backgroundLight,
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
+      },
+      home: !firebaseInitialized
+          ? const HomeScreen() // Development fallback
+          : StreamBuilder<User?>(
+              stream: AuthService().authStateChanges,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.active) {
+                  User? user = snapshot.data;
+                  if (user == null) {
+                    return const LoginScreen();
+                  }
+                  return const HomeScreen();
+                }
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              },
+            ),
     );
   }
 }

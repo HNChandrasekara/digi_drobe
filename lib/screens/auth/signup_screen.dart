@@ -53,9 +53,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Sign up to get started',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
                   // Name Field
@@ -75,7 +75,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -87,7 +90,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -100,7 +105,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -126,7 +134,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -143,18 +154,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               _emailController.text.trim(),
                               _passwordController.text.trim(),
                             );
-                            if (mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Account Created! Please Login.')),
-                              );
-                              Navigator.pop(context); // Go back to login
-                            }
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Account Created! Please Login.'),
+                              ),
+                            );
+                            Navigator.pop(context); // Go back to login
                           } catch (e) {
-                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Sign Up Failed: $e')),
-                              );
-                            }
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Sign Up Failed: $e')),
+                            );
                           }
                         }
                       },
@@ -168,7 +179,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       child: const Text(
                         'Sign Up',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

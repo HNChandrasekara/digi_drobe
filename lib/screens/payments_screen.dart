@@ -40,11 +40,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                     const SizedBox(height: 20),
                     _buildPaymentMethod('Apple Pay', Icons.apple_rounded),
                     const SizedBox(height: 12),
-                    _buildPaymentMethod('Credit Card', Icons.credit_card_rounded),
+                    _buildPaymentMethod(
+                      'Credit Card',
+                      Icons.credit_card_rounded,
+                    ),
                     const SizedBox(height: 12),
                     _buildPaymentMethod('PayPal', Icons.account_balance_wallet_outlined),
                     const SizedBox(height: 12),
                     _buildPaymentMethod('PayHere', Icons.payments_rounded),
+                    _buildPaymentMethod(
+                      'PayPal',
+                      Icons.account_balance_wallet_outlined,
+                    ),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -64,7 +71,10 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textPrimary),
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: AppColors.textPrimary,
+            ),
           ),
           const Expanded(
             child: Text(
@@ -103,16 +113,31 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
-              Text('Items (2)', style: TextStyle(color: AppColors.textSecondary)),
-              Text('Rs.40,000.00', style: TextStyle(fontWeight: FontWeight.w600)),
+              Text(
+                'Items (2)',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+              Text(
+                'Rs.40,000.00',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
-              Text('Delivery', style: TextStyle(color: AppColors.textSecondary)),
-              Text('Free', style: TextStyle(fontWeight: FontWeight.w600, color: Colors.green)),
+              Text(
+                'Delivery',
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
+              Text(
+                'Free',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.green,
+                ),
+              ),
             ],
           ),
           const Padding(
@@ -122,8 +147,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
-              Text('Total', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-              Text('Rs.40,000.00', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF8B1D1D))),
+              Text(
+                'Total',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+              ),
+              Text(
+                'Rs.40,000.00',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF8B1D1D),
+                ),
+              ),
             ],
           ),
         ],
@@ -138,16 +173,26 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF8B1D1D).withOpacity(0.05) : Colors.white,
+          color: isSelected
+              ? const Color(0xFF8B1D1D).withOpacity(0.05)
+              : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFF8B1D1D) : Colors.black.withOpacity(0.05),
+            color: isSelected
+                ? const Color(0xFF8B1D1D)
+                : Colors.black.withOpacity(0.05),
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Row(
           children: [
-            Icon(icon, color: isSelected ? const Color(0xFF8B1D1D) : Colors.black.withOpacity(0.6), size: 24),
+            Icon(
+              icon,
+              color: isSelected
+                  ? const Color(0xFF8B1D1D)
+                  : Colors.black.withOpacity(0.6),
+              size: 24,
+            ),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
@@ -155,12 +200,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? const Color(0xFF8B1D1D) : AppColors.textPrimary,
+                  color: isSelected
+                      ? const Color(0xFF8B1D1D)
+                      : AppColors.textPrimary,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: Color(0xFF8B1D1D), size: 20),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFF8B1D1D),
+                size: 20,
+              ),
           ],
         ),
       ),
@@ -172,7 +223,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.black.withOpacity(0.05), width: 1)),
+        border: Border(
+          top: BorderSide(color: Colors.black.withOpacity(0.05), width: 1),
+        ),
       ),
       child: SizedBox(
         width: double.infinity,

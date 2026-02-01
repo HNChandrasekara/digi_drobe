@@ -4,8 +4,8 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
-import 'product_details_screen.dart';
 import 'chat_screen.dart';
+import 'style_bot_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -49,7 +49,10 @@ class _HomeContentState extends State<HomeContent> {
     }
     setState(() {
       _filteredItems = _allItems
-          .where((item) => item['title']!.toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (item) =>
+                item['title']!.toLowerCase().contains(query.toLowerCase()),
+          )
           .toList();
     });
   }
@@ -64,18 +67,19 @@ class _HomeContentState extends State<HomeContent> {
             onProfileTap: widget.onProfileTap,
           ),
           DigiSearchBar(onChanged: _filterSearchResults),
-          
+
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Your Favourite Virtual Wardrobe',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                Expanded(
+                  child: Text(
+                    'Your Favourite Virtual Wardrobe',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 GestureDetector(
@@ -100,7 +104,9 @@ class _HomeContentState extends State<HomeContent> {
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: _showFeed ? _buildProductFeed() : _buildFeatureNavigation(),
+              child: _showFeed
+                  ? _buildProductFeed()
+                  : _buildFeatureNavigation(),
             ),
           ),
         ],
@@ -128,7 +134,7 @@ class _HomeContentState extends State<HomeContent> {
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  Navigator.push(
+https://github.com/HNChandrasekara/digi_drobe/pull/6/conflict?name=lib%252Fscreens%252Fhome_content.dart&ancestor_oid=842887f826c40c01c9cb0e8c10e42c10395c0bd9&base_oid=d7d233975cdbd52e76e8b529ad66b96007c47429&head_oid=a3c107c827ed711fb7257b7dff13cc14c8ad18f6                  Navigator.push(
                     context,
                     MaterialPageRoute(
                   builder: (context) => ProductDetailsScreen(
@@ -138,6 +144,7 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   );
                 },
+                onTap: () => widget.onTabChange(3),
                 child: ProductCard(
                   title: _filteredItems[index]['title']!,
                   imageUrl: '',
@@ -168,9 +175,11 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Try on clothes digitally',
           icon: Icons.accessibility_new_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Virtual Fitting Room coming soon!')),
-             );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Virtual Fitting Room coming soon!'),
+              ),
+            );
           },
         ),
         FeatureCard(
@@ -178,9 +187,9 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Buy and sell pre-loved items',
           icon: Icons.store_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Thrift Store coming soon!')),
-             );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Thrift Store coming soon!')),
+            );
           },
         ),
         FeatureCard(
@@ -188,9 +197,9 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'What we aim to achieve',
           icon: Icons.flag_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Goals feature coming soon!')),
-             );
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Goals feature coming soon!')),
+            );
           },
         ),
         _buildStylemateCard(),
@@ -205,9 +214,7 @@ class _HomeContentState extends State<HomeContent> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const ChatScreen(channelName: 'StyleMate AI'),
-            ),
+            MaterialPageRoute(builder: (context) => const StyleBotScreen()),
           );
         },
         child: Container(
@@ -238,7 +245,11 @@ class _HomeContentState extends State<HomeContent> {
                     color: Colors.white24,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
+                  child: const Icon(
+                    Icons.psychology_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 const Expanded(
@@ -266,7 +277,11 @@ class _HomeContentState extends State<HomeContent> {
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ],
             ),
           ),
