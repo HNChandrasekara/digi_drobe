@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../services/weather_service.dart';
 
 class StyleBotScreen extends StatefulWidget {
   const StyleBotScreen({super.key});
@@ -12,6 +13,8 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
   bool _isChatActive = false;
   final TextEditingController _messageController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [];
+  final WeatherService _weatherService = WeatherService();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -19,6 +22,60 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
     super.dispose();
   }
 
+  Future<void> _sendMessage() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() {
+      _isChatActive = true;
+      _messages.add({
+        'isUser': true,
+        'message': text,
+      });
+      _isLoading = true;
+    });
+    _messageController.clear();
+
+    String response;
+    final lowerText = text.toLowerCase();
+
+    // Simple intent detection
+    if (lowerText.contains('weather')) {
+      // Extract city logic (naive)
+      String city = 'London'; // Default
+      if (lowerText.contains('in ')) {
+        city = text.substring(lowerText.indexOf('in ') + 3).trim();
+        // Remove punctuation
+        city = city.replaceAll(RegExp(r'[^\w\s]'), '');
+      } else {
+        // If just "weather", ask for city or default? 
+        // Let's try to assume the user might type just a city name if we asked, 
+        // but for now, let's just use the mock default or error.
+        response = "Please specify a city, e.g., 'Weather in Paris'.";
+        _addBotResponse(response);
+        return;
+      }
+      
+      response = await _weatherService.getWeatherString(city);
+    } else {
+      // Fallback for non-weather queries (Mock Style Bot)
+      await Future.delayed(const Duration(milliseconds: 500));
+      response = "I am focusing on Weather updates right now! Ask me 'Weather in [City]' to get outfit advice based on the forecast.";
+    }
+
+    _addBotResponse(response);
+  }
+
+  void _addBotResponse(String response) {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _messages.add({
+          'isUser': false,
+          'message': response,
+        });
+      });
+    }
   void _sendMessage() {
     if (_messageController.text.trim().isEmpty) return;
 
@@ -62,6 +119,9 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
           const Text(
             'Hello Hirushie,',
             style: TextStyle(
+              fontSize: 28, 
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Serif', 
               fontSize: 28, // Large serif font
               fontWeight: FontWeight.bold,
               fontFamily: 'Serif', // Using default serif for now
@@ -71,6 +131,48 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
           const Spacer(flex: 2),
           Container(
             width: double.infinity,
+            height: 200,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFEBEBEB).withOpacity(0.8),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Stack(
+              children: [
+                TextField(
+                  controller: _messageController,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => _sendMessage(),
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Ask about Weather...',
+                    hintStyle: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black.withOpacity(0.7),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.mic_none_rounded,
+                      color: Colors.grey[600],
+                      size: 24,
+                    ),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Voice input not implemented yet')),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+           const Spacer(flex: 3),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             decoration: BoxDecoration(
               color: const Color(
@@ -127,6 +229,11 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.all(20),
+            itemCount: _messages.length + (_isLoading ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == _messages.length && _isLoading) {
+                 return const Center(child: CircularProgressIndicator());
+              }
             itemCount: _messages.length,
             itemBuilder: (context, index) {
               final msg = _messages[index];
@@ -134,6 +241,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             },
           ),
         ),
+         _buildInputBar(),
         _buildInputBar(),
       ],
     );
@@ -145,6 +253,10 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
       child: Row(
         children: [
           const Text(
+            'Style & Weather',
+            style: TextStyle(
+              fontSize: 24,
+              color: Color(0xFF4A4A4A),
             'Stylebot',
             style: TextStyle(
               fontSize: 24,
@@ -153,6 +265,8 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             ),
           ),
           const Spacer(),
+          if (Navigator.canPop(context))
+             IconButton(
           // Add close button or back if needed, but image doesn't show one clearly
           // (assuming it's a tab or top level).
           // If pushed, we need a back button.
@@ -170,6 +284,8 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
+        crossAxisAlignment:
+            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         crossAxisAlignment: isUser
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
@@ -179,6 +295,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             decoration: BoxDecoration(
               color: isUser
                   ? AppColors.primaryMaroon
+                  : const Color(0xFFE0E0E0),
                   : const Color(0xFFE0E0E0), // Grey for bot
               borderRadius: isUser
                   ? const BorderRadius.only(
@@ -286,6 +403,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
                 controller: _messageController,
                 onSubmitted: (_) => _sendMessage(),
                 decoration: const InputDecoration(
+                  hintText: 'Check weather...',
                   hintText: 'Reply...',
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.only(bottom: 8),
@@ -300,6 +418,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
               color: AppColors.primaryMaroon,
               shape: BoxShape.circle,
             ),
+            child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
             child: const Icon(
               Icons.send_rounded,
               color: Colors.white,

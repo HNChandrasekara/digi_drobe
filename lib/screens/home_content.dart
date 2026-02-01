@@ -9,8 +9,13 @@ import 'style_bot_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
+  final VoidCallback? onProfileTap;
 
-  const HomeContent({super.key, required this.onTabChange});
+  const HomeContent({
+    super.key, 
+    required this.onTabChange,
+    this.onProfileTap,
+  });
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -57,7 +62,10 @@ class _HomeContentState extends State<HomeContent> {
     return SafeArea(
       child: Column(
         children: [
-          const CustomHeader(userName: 'Hirushie'),
+          CustomHeader(
+            userName: 'Hirushie',
+            onProfileTap: widget.onProfileTap,
+          ),
           DigiSearchBar(onChanged: _filterSearchResults),
 
           Padding(
@@ -125,6 +133,17 @@ class _HomeContentState extends State<HomeContent> {
             itemCount: _filteredItems.length,
             itemBuilder: (context, index) {
               return GestureDetector(
+                onTap: () {
+https://github.com/HNChandrasekara/digi_drobe/pull/6/conflict?name=lib%252Fscreens%252Fhome_content.dart&ancestor_oid=842887f826c40c01c9cb0e8c10e42c10395c0bd9&base_oid=d7d233975cdbd52e76e8b529ad66b96007c47429&head_oid=a3c107c827ed711fb7257b7dff13cc14c8ad18f6                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                  builder: (context) => ProductDetailsScreen(
+                        title: _filteredItems[index]['title']!,
+                        imageUrl: '',
+                      ),
+                    ),
+                  );
+                },
                 onTap: () => widget.onTabChange(3),
                 child: ProductCard(
                   title: _filteredItems[index]['title']!,

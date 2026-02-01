@@ -139,7 +139,14 @@ class CartScreen extends StatelessWidget {
               width: 140,
               height: 140,
               decoration: BoxDecoration(
+                color: AppColors.systemGray6.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.shopping_bag_outlined,
+                  color: AppColors.systemGray,
+                  size: 40,
                 image: DecorationImage(
                   image: item['isAsset'] == true
                       ? AssetImage(item['url']! as String) as ImageProvider
