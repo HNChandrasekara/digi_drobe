@@ -30,13 +30,28 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: 30),
               _buildProfileCard(),
               const SizedBox(height: 30),
-              _buildSettingItem(context, Icons.person_outline_rounded, 'Profile Settings', null),
+              _buildSettingItem(
+                context,
+                Icons.person_outline_rounded,
+                'Profile Settings',
+                null,
+              ),
               const SizedBox(height: 16),
-              _buildSettingItem(context, Icons.grid_view_rounded, 'App Preferences', const AppPreferenceScreen()),
+              _buildSettingItem(
+                context,
+                Icons.grid_view_rounded,
+                'App Preferences',
+                const AppPreferenceScreen(),
+              ),
               const SizedBox(height: 16),
               _buildGroupedSettings(context),
               const SizedBox(height: 16),
-              _buildSettingItem(context, Icons.logout_rounded, 'Log out', const LogoutScreen()),
+              _buildSettingItem(
+                context,
+                Icons.logout_rounded,
+                'Log out',
+                const LogoutScreen(),
+              ),
               const SizedBox(height: 40),
             ],
           ),
@@ -72,7 +87,11 @@ class SettingsScreen extends StatelessWidget {
                     color: Colors.white24,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.person_rounded, color: Colors.white, size: 40),
+                  child: const Icon(
+                    Icons.person_rounded,
+                    color: Colors.white,
+                    size: 40,
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
@@ -83,7 +102,11 @@ class SettingsScreen extends StatelessWidget {
                       color: Colors.white24,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.edit_outlined, color: Colors.white, size: 16),
+                    child: const Icon(
+                      Icons.edit_outlined,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
               ],
@@ -104,10 +127,7 @@ class SettingsScreen extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(
                     'hirushie9@gmail.com',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
@@ -118,13 +138,21 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(BuildContext context, IconData icon, String title, Widget? destination) {
+  Widget _buildSettingItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    Widget? destination,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
-        onTap: destination != null 
-          ? () => Navigator.push(context, MaterialPageRoute(builder: (context) => destination))
-          : null,
+        onTap: destination != null
+            ? () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => destination),
+              )
+            : null,
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -137,7 +165,12 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildItemRow(IconData icon, String title, {bool hasDivider = false, VoidCallback? onTap}) {
+  Widget _buildItemRow(
+    IconData icon,
+    String title, {
+    bool hasDivider = false,
+    VoidCallback? onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -158,7 +191,11 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withOpacity(0.3), size: 16),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.black.withOpacity(0.3),
+                  size: 16,
+                ),
               ],
             ),
           ),
@@ -186,21 +223,34 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildItemRow(
-              Icons.security_rounded, 
-              'Privacy Policy', 
+              Icons.security_rounded,
+              'Privacy Policy',
               hasDivider: true,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen())),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PrivacyPolicyScreen(),
+                ),
+              ),
             ),
             _buildItemRow(
-              Icons.headset_mic_outlined, 
-              'Help & Support', 
+              Icons.headset_mic_outlined,
+              'Help & Support',
               hasDivider: true,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HelpSupportScreen())),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpSupportScreen(),
+                ),
+              ),
             ),
             _buildItemRow(
-              Icons.info_outline_rounded, 
+              Icons.info_outline_rounded,
               'About',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen())),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutScreen()),
+              ),
             ),
           ],
         ),

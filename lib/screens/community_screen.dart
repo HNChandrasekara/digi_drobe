@@ -18,9 +18,9 @@ class CommunityScreen extends StatelessWidget {
             children: [
               const CustomHeader(userName: 'Hirushie'),
               const DigiSearchBar(),
-              
+
               const SizedBox(height: 20),
-              
+
               // Stories Section
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -69,7 +69,7 @@ class CommunityScreen extends StatelessWidget {
               ),
               _buildChannelItem(context),
               _buildChannelItem(context),
-              
+
               const SizedBox(height: 30),
             ],
           ),
@@ -80,11 +80,7 @@ class CommunityScreen extends StatelessWidget {
 
   Widget _buildStoriesList() {
     final stories = [
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&q=80&w=200',
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=200',
-      'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=200',
-      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=200',
-      'https://images.unsplash.com/photo-1516575334481-f85287c2c82d?auto=format&fit=crop&q=80&w=200',
+      '', '', '', '', ''
     ];
 
     return SizedBox(
@@ -101,10 +97,7 @@ class CommunityScreen extends StatelessWidget {
               height: 75,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: NetworkImage(stories[index]),
-                  fit: BoxFit.cover,
-                ),
+                color: AppColors.systemGray6,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -112,6 +105,11 @@ class CommunityScreen extends StatelessWidget {
                     offset: const Offset(0, 4),
                   ),
                 ],
+              ),
+              child: const Icon(
+                Icons.person_outline_rounded,
+                color: AppColors.primaryMaroon,
+                size: 35,
               ),
             ),
           );
@@ -124,16 +122,22 @@ class CommunityScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: GestureDetector(
-        onTap: isNavigable 
+        onTap: isNavigable
             ? () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => const ChatScreen(channelName: 'Daily Outfit Inspirations (OOTD)'))
-              ) 
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ChatScreen(
+                    channelName: 'Daily Outfit Inspirations (OOTD)',
+                  ),
+                ),
+              )
             : null,
         child: Container(
           height: 80,
           decoration: BoxDecoration(
-            color: const Color(0xFFD9D9D9).withOpacity(0.5), // Matches the gray in screenshot
+            color: const Color(
+              0xFFD9D9D9,
+            ).withOpacity(0.5), // Matches the gray in screenshot
             borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(

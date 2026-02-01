@@ -5,37 +5,34 @@ class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String title;
 
-  const ProductCard({
-    super.key,
-    required this.imageUrl,
-    required this.title,
-  });
+  const ProductCard({super.key, required this.imageUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    return Card(
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
       ),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
+              decoration: const BoxDecoration(
+                color: AppColors.systemGray6,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              decoration: const BoxDecoration(color: AppColors.systemGray6),
+              child: const Center(
+                child: Icon(
+                  Icons.image_not_supported_outlined,
+                  color: AppColors.systemGray,
+                  size: 40,
                 ),
               ),
             ),
@@ -47,20 +44,17 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
                     color: AppColors.textPrimary,
-                    letterSpacing: -0.3,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                const Text(
+                Text(
                   'Explore more',
-                  style: TextStyle(
-                    fontSize: 11,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),

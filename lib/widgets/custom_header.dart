@@ -3,8 +3,13 @@ import '../utils/colors.dart';
 
 class CustomHeader extends StatelessWidget {
   final String userName;
+  final VoidCallback? onProfileTap;
 
-  const CustomHeader({super.key, required this.userName});
+  const CustomHeader({
+    super.key, 
+    required this.userName,
+    this.onProfileTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,29 +21,29 @@ class CustomHeader extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'DigiDrobe',
-                style: TextStyle(
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: AppColors.primaryMaroon,
-                  fontSize: 28,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -1.0,
                 ),
               ),
               Text(
                 'Welcome, $userName!',
-                style: const TextStyle(
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: AppColors.textSecondary,
-                  fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  letterSpacing: -0.2,
                 ),
               ),
             ],
           ),
           Row(
             children: [
-              _buildIconButton(Icons.person_rounded),
+              GestureDetector(
+                onTap: onProfileTap,
+                child: _buildIconButton(Icons.settings_rounded),
+              ),
               const SizedBox(width: 12),
               _buildIconButton(Icons.tune_rounded),
             ],

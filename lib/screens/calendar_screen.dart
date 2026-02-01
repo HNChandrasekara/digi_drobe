@@ -3,6 +3,7 @@ import 'package:googleapis/calendar/v3.dart' as calendar;
 import '../utils/colors.dart';
 import '../widgets/custom_header.dart';
 import '../services/calendar_service.dart';
+import '../services/weather_service.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -16,6 +17,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<calendar.Event> _events = [];
   bool _isSignedIn = false;
   bool _isLoading = false;
+  final WeatherService _weatherService = WeatherService();
+  List<Map<String, dynamic>> _forecast = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -48,6 +52,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (mounted) {
       setState(() {
         _events = events;
+    _loadWeather();
+  }
+
+  Future<void> _loadWeather() async {
+    // Default city for calendar view, or could be user preference
+    final data = await _weatherService.getForecast('London');
+    if (mounted) {
+      setState(() {
+        _forecast = data;
+        _isLoading = false;
       });
     }
   }
@@ -71,6 +85,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
               child: _buildMainContent(),
             ),
             
+
+            // Weather Forecast Section
+            _buildWeatherForecast(),
+
+            const SizedBox(height: 20),
+
+            // Outfit Grid
+            Expanded(child: _buildOutfitGrid()),
+
             // Footer Action
             _buildFooterAction(),
           ],
@@ -202,6 +225,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(16),
+          Container(
+            height: 80, // Fixed height for row
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
@@ -213,6 +239,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               ],
             ),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: _forecast.map((day) {
+                      final isSunny = day['isSunny'] == true || day['condition'].toString().toLowerCase().contains('sun');
+                      IconData icon = isSunny ? Icons.wb_sunny_rounded : Icons.wb_cloudy_rounded;
+                      if (day['condition'].toString().toLowerCase().contains('rain')) icon = Icons.umbrella_rounded;
+                      if (day['condition'].toString().toLowerCase().contains('snow')) icon = Icons.ac_unit_rounded;
+                      
+                      Color color = isSunny ? Colors.orange : (Colors.blue[300] ?? Colors.blue);
+                      if (day['condition'].toString().toLowerCase().contains('cloud')) color = Colors.grey;
+
+                      return _buildWeatherIcon(icon, color, day['temp']);
+                    }).toList(),
+                  ),
             child: Row(
               children: [
                 Container(
@@ -253,6 +295,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ),
                 const Icon(Icons.chevron_right, color: AppColors.systemGray),
+                _buildWeatherIcon(Icons.wb_sunny_rounded, Colors.orange, null),
+                _buildWeatherIcon(null, null, '25° C'),
+                _buildWeatherIcon(
+                  Icons.wb_cloudy_rounded,
+                  Colors.grey[700]!,
+                  null,
+                ),
+                _buildWeatherIcon(
+                  Icons.ac_unit_rounded,
+                  Colors.blue[300]!,
+                  null,
+                ),
+                _buildWeatherIcon(
+                  Icons.ac_unit_rounded,
+                  Colors.blue[300]!,
+                  null,
+                ),
+                _buildWeatherIcon(null, null, '-2° C'),
               ],
             ),
           );
@@ -267,6 +327,33 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _buildOutfitGrid() {
      final days = [
       {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400'},
+  Widget _buildWeatherIcon(IconData icon, Color color, String temp) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 4),
+        Text(
+          temp,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOutfitGrid() {
+    final days = [
+      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': null},
+      {
+        'date': 'Today-Friday, Dec 24',
+        'type': 'Formal',
+        'img':
+            'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400',
+      },
       {'date': 'Saturday-Dec 25', 'type': '', 'img': null},
       {'date': 'Sunday-Dec 26', 'type': '', 'img': null},
       {'date': 'Monday-Dec 27', 'type': '', 'img': null},
@@ -285,12 +372,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
       itemCount: days.length,
       itemBuilder: (context, index) {
         final day = days[index];
-        return _buildDayCard(day['date'] as String, day['img'] as String?, day['type'] as String);
+        return _buildDayCard(day['date'] as String, day['type'] as String);
+        return _buildDayCard(
+          day['date'] as String,
+          day['img'],
+          day['type'] as String,
+        );
       },
     );
   }
 
-  Widget _buildDayCard(String date, String? imgUrl, String type) {
+  Widget _buildDayCard(String date, String type) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -317,6 +409,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
           const SizedBox(height: 8),
           Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.systemGray6.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.checkroom_rounded,
+                  color: AppColors.systemGray,
+                  size: 30,
+                ),
+              ),
+            ),
             child: imgUrl != null
                 ? Container(
                     decoration: BoxDecoration(
@@ -324,6 +429,32 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       image: DecorationImage(
                         image: NetworkImage(imgUrl),
                         fit: BoxFit.cover,
+                ? Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: NetworkImage(imgUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 4,
+                        right: 4,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.calendar_today_rounded,
+                            size: 14,
+                            color: AppColors.systemGray,
+                          ),
+                        ),
                       ),
                     ),
                   )
@@ -345,10 +476,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
             const SizedBox(height: 8),
             Text(
               "Today's look-$type",
-              style: const TextStyle(
-                fontSize: 10,
-                color: AppColors.systemGray,
-              ),
+              style: const TextStyle(fontSize: 10, color: AppColors.systemGray),
             ),
           ],
         ],
@@ -373,7 +501,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           const SizedBox(width: 20),
           Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(Icons.notifications_none_rounded, color: AppColors.textPrimary, size: 28),
+            child: const Icon(
+              Icons.notifications_none_rounded,
+              color: AppColors.textPrimary,
+              size: 28,
+            ),
           ),
         ],
       ),
