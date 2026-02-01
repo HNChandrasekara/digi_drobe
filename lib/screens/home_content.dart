@@ -195,9 +195,7 @@ class _HomeContentState extends State<HomeContent> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const StyleBotScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const StyleBotScreen()),
           );
         },
         child: Container(
