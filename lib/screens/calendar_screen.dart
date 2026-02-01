@@ -1,9 +1,36 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../widgets/custom_header.dart';
+import '../services/weather_service.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
+
+  @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  final WeatherService _weatherService = WeatherService();
+  List<Map<String, dynamic>> _forecast = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadWeather();
+  }
+
+  Future<void> _loadWeather() async {
+    // Default city for calendar view, or could be user preference
+    final data = await _weatherService.getForecast('London');
+    if (mounted) {
+      setState(() {
+        _forecast = data;
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +75,7 @@ class CalendarScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Container(
+            height: 80, // Fixed height for row
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -60,49 +88,49 @@ class CalendarScreen extends StatelessWidget {
                 ),
               ],
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildWeatherIcon(Icons.wb_sunny_rounded, Colors.orange, null),
-                _buildWeatherIcon(null, null, '25° C'),
-                _buildWeatherIcon(Icons.wb_cloudy_rounded, Colors.grey[700]!, null),
-                _buildWeatherIcon(Icons.ac_unit_rounded, Colors.blue[300]!, null),
-                _buildWeatherIcon(Icons.ac_unit_rounded, Colors.blue[300]!, null),
-                _buildWeatherIcon(null, null, '-2° C'),
-              ],
-            ),
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: _forecast.map((day) {
+                      final isSunny = day['isSunny'] == true || day['condition'].toString().toLowerCase().contains('sun');
+                      IconData icon = isSunny ? Icons.wb_sunny_rounded : Icons.wb_cloudy_rounded;
+                      if (day['condition'].toString().toLowerCase().contains('rain')) icon = Icons.umbrella_rounded;
+                      if (day['condition'].toString().toLowerCase().contains('snow')) icon = Icons.ac_unit_rounded;
+                      
+                      Color color = isSunny ? Colors.orange : (Colors.blue[300] ?? Colors.blue);
+                      if (day['condition'].toString().toLowerCase().contains('cloud')) color = Colors.grey;
+
+                      return _buildWeatherIcon(icon, color, day['temp']);
+                    }).toList(),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildWeatherIcon(IconData? icon, Color? color, String? temp) {
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        color: AppColors.systemGray6,
-        shape: BoxShape.circle,
-      ),
-      child: Center(
-        child: icon != null
-            ? Icon(icon, color: color, size: 20)
-            : Text(
-                temp!,
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-      ),
+  Widget _buildWeatherIcon(IconData icon, Color color, String temp) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 4),
+        Text(
+          temp,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildOutfitGrid() {
     final days = [
-      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400'},
+      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': null},
       {'date': 'Saturday-Dec 25', 'type': '', 'img': null},
       {'date': 'Sunday-Dec 26', 'type': '', 'img': null},
       {'date': 'Monday-Dec 27', 'type': '', 'img': null},
@@ -121,12 +149,12 @@ class CalendarScreen extends StatelessWidget {
       itemCount: days.length,
       itemBuilder: (context, index) {
         final day = days[index];
-        return _buildDayCard(day['date'] as String, day['img'] as String?, day['type'] as String);
+        return _buildDayCard(day['date'] as String, day['type'] as String);
       },
     );
   }
 
-  Widget _buildDayCard(String date, String? imgUrl, String type) {
+  Widget _buildDayCard(String date, String type) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -153,19 +181,19 @@ class CalendarScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Expanded(
-                  : Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.systemGray6.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.checkroom_rounded,
-                        color: AppColors.systemGray,
-                        size: 30,
-                      ),
-                    ),
-                  ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.systemGray6.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.checkroom_rounded,
+                  color: AppColors.systemGray,
+                  size: 30,
+                ),
+              ),
+            ),
           ),
           if (type.isNotEmpty) ...[
             const SizedBox(height: 8),
