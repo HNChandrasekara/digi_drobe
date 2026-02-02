@@ -19,7 +19,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   bool _isLoading = false;
   final WeatherService _weatherService = WeatherService();
   List<Map<String, dynamic>> _forecast = [];
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -28,11 +27,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Future<void> _checkSignInStatus() async {
-    // In a real app, you might persist auth state or silently sign in
-    // For now, we start as not signed in
     setState(() {
       _isSignedIn = _calendarService.isSignedIn;
     });
+    if (_isSignedIn) {
+      await _fetchEvents();
+      await _loadWeather();
+    }
   }
 
   Future<void> _handleSignIn() async {
@@ -40,6 +41,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final account = await _calendarService.signIn();
     if (account != null) {
       await _fetchEvents();
+      await _loadWeather();
       setState(() {
         _isSignedIn = true;
       });
@@ -52,16 +54,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (mounted) {
       setState(() {
         _events = events;
-    _loadWeather();
+      });
+    }
   }
 
   Future<void> _loadWeather() async {
-    // Default city for calendar view, or could be user preference
     final data = await _weatherService.getForecast('London');
     if (mounted) {
       setState(() {
         _forecast = data;
-        _isLoading = false;
       });
     }
   }
@@ -74,27 +75,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
         child: Column(
           children: [
             const CustomHeader(userName: 'Hirushie'),
-            
-            // Calendar Integration Section
             _buildCalendarSection(),
-            
             const SizedBox(height: 20),
-            
-            // Outfit Grid (or Event Grid)
-            Expanded(
-              child: _buildMainContent(),
-            ),
-            
-
-            // Weather Forecast Section
-            _buildWeatherForecast(),
-
-            const SizedBox(height: 20),
-
-            // Outfit Grid
-            Expanded(child: _buildOutfitGrid()),
-
-            // Footer Action
+            Expanded(child: _buildMainContent()),
             _buildFooterAction(),
           ],
         ),
@@ -153,10 +136,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: const Icon(Icons.calendar_today, color: Colors.blue),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Connect Google Calendar',
                           style: TextStyle(
@@ -175,7 +158,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     ),
                   ),
                   _isLoading
-                      ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : ElevatedButton(
                           onPressed: _handleSignIn,
                           style: ElevatedButton.styleFrom(
@@ -191,21 +178,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
             )
           else
-             Container(
+            Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.green.withOpacity(0.3)),
               ),
-              child: Row(
-                children: const [
+              child: const Row(
+                children: [
                   Icon(Icons.check_circle, color: Colors.green),
                   SizedBox(width: 12),
-                  Text("Calendar Connected", style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(
+                    "Calendar Connected",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
                 ],
               ),
-             ),
+            ),
         ],
       ),
     );
@@ -220,14 +210,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
           final event = _events[index];
           final title = event.summary ?? 'No Title';
           final start = event.start?.dateTime ?? event.start?.date;
-          final time = start != null ? "${start.hour}:${start.minute.toString().padLeft(2, '0')}" : 'All Day';
-          
+          final time = start != null
+              ? "${start.hour}:${start.minute.toString().padLeft(2, '0')}"
+              : 'All Day';
+
           return Container(
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(16),
-          Container(
-            height: 80, // Fixed height for row
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
@@ -239,26 +228,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               ],
             ),
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: _forecast.map((day) {
-                      final isSunny = day['isSunny'] == true || day['condition'].toString().toLowerCase().contains('sun');
-                      IconData icon = isSunny ? Icons.wb_sunny_rounded : Icons.wb_cloudy_rounded;
-                      if (day['condition'].toString().toLowerCase().contains('rain')) icon = Icons.umbrella_rounded;
-                      if (day['condition'].toString().toLowerCase().contains('snow')) icon = Icons.ac_unit_rounded;
-                      
-                      Color color = isSunny ? Colors.orange : (Colors.blue[300] ?? Colors.blue);
-                      if (day['condition'].toString().toLowerCase().contains('cloud')) color = Colors.grey;
-
-                      return _buildWeatherIcon(icon, color, day['temp']);
-                    }).toList(),
-                  ),
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primaryMaroon.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -285,7 +261,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Suggested: ${index % 2 == 0 ? "Formal Suit" : "Casual Chic"}', 
+                        'Suggested: ${index % 2 == 0 ? "Formal Suit" : "Casual Chic"}',
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -295,24 +271,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ),
                 const Icon(Icons.chevron_right, color: AppColors.systemGray),
-                _buildWeatherIcon(Icons.wb_sunny_rounded, Colors.orange, null),
-                _buildWeatherIcon(null, null, '25° C'),
-                _buildWeatherIcon(
-                  Icons.wb_cloudy_rounded,
-                  Colors.grey[700]!,
-                  null,
-                ),
-                _buildWeatherIcon(
-                  Icons.ac_unit_rounded,
-                  Colors.blue[300]!,
-                  null,
-                ),
-                _buildWeatherIcon(
-                  Icons.ac_unit_rounded,
-                  Colors.blue[300]!,
-                  null,
-                ),
-                _buildWeatherIcon(null, null, '-2° C'),
               ],
             ),
           );
@@ -320,7 +278,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
     }
 
-    // Default Grid if no events or not signed in
     return _buildOutfitGrid();
   }
 

@@ -27,7 +27,6 @@ class ProductCard extends StatelessWidget {
                 color: AppColors.systemGray6,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              decoration: const BoxDecoration(color: AppColors.systemGray6),
               child: const Center(
                 child: Icon(
                   Icons.image_not_supported_outlined,

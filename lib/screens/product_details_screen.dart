@@ -33,17 +33,20 @@ class ProductDetailsScreen extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                color: AppColors.systemGray6,
-                child: const Center(
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    color: AppColors.systemGray,
-                    size: 80,
+              background: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  color: AppColors.systemGray6,
+                  child: const Center(
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: AppColors.systemGray,
+                      size: 80,
+                    ),
                   ),
                 ),
               ),
-              background: Image.network(imageUrl, fit: BoxFit.cover),
             ),
           ),
           SliverToBoxAdapter(

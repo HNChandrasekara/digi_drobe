@@ -4,8 +4,8 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
-import 'chat_screen.dart';
 import 'style_bot_screen.dart';
+import 'product_details_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -26,12 +26,36 @@ class _HomeContentState extends State<HomeContent> {
   void initState() {
     super.initState();
     _allItems = [
-      {'title': 'White Top'},
-      {'title': 'Maroon Heels'},
-      {'title': 'Designer Bag'},
-      {'title': 'Aesthetic Jeans'},
-      {'title': 'Summer Dress'},
-      {'title': 'Casual Sneakers'},
+      {
+        'title': 'White Top',
+        'url':
+            'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=80&w=400',
+      },
+      {
+        'title': 'Maroon Heels',
+        'url':
+            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=400',
+      },
+      {
+        'title': 'Designer Bag',
+        'url':
+            'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=400',
+      },
+      {
+        'title': 'Aesthetic Jeans',
+        'url':
+            'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=400',
+      },
+      {
+        'title': 'Summer Dress',
+        'url':
+            'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=400',
+      },
+      {
+        'title': 'Casual Sneakers',
+        'url':
+            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=400',
+      },
     ];
     _filteredItems = _allItems;
   }
@@ -60,7 +84,6 @@ class _HomeContentState extends State<HomeContent> {
         children: [
           CustomHeader(userName: 'Hirushie', onProfileTap: widget.onProfileTap),
           DigiSearchBar(onChanged: _filterSearchResults),
-
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
@@ -93,7 +116,6 @@ class _HomeContentState extends State<HomeContent> {
               ],
             ),
           ),
-
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
