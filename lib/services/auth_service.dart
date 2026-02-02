@@ -3,12 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthService {
-  bool get _isFirebaseInitialized => Firebase.apps.isNotEmpty;
-
-  FirebaseAuth get _auth {
-    if (!_isFirebaseInitialized) {
   static bool _initialized = false;
   static void markInitialized() => _initialized = true;
+
+  bool get _isFirebaseInitialized => Firebase.apps.isNotEmpty;
 
   FirebaseAuth get _auth {
     if (!_initialized) {
@@ -18,15 +16,14 @@ class AuthService {
   }
 
   // Sign Up
-  Future<UserCredential?> signUpWithEmailPassword(String email, String password) async {
-    if (!_isFirebaseInitialized) {
-      debugPrint('Mock Sign Up: $email');
-      return null; // Return null or mock data in mock mode
-    }
   Future<UserCredential?> signUpWithEmailPassword(
     String email,
     String password,
   ) async {
+    if (!_isFirebaseInitialized) {
+      debugPrint('Mock Sign Up: $email');
+      return null; // Return null or mock data in mock mode
+    }
     try {
       final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
@@ -37,15 +34,14 @@ class AuthService {
   }
 
   // Sign In
-  Future<UserCredential?> signInWithEmailPassword(String email, String password) async {
-    if (!_isFirebaseInitialized) {
-      debugPrint('Mock Sign In: $email');
-      return null;
-    }
   Future<UserCredential?> signInWithEmailPassword(
     String email,
     String password,
   ) async {
+    if (!_isFirebaseInitialized) {
+      debugPrint('Mock Sign In: $email');
+      return null;
+    }
     try {
       final UserCredential userCredential = await _auth
           .signInWithEmailAndPassword(email: email, password: password);

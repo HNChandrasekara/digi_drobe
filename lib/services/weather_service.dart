@@ -18,13 +18,17 @@ class WeatherService {
   Future<List<Map<String, dynamic>>> getForecast(String city) async {
     // Mock Mode fallback
     if (_apiKey.contains('YOUR_') || _apiKey.isEmpty) {
-      await Future.delayed(const Duration(milliseconds: 800)); // Simulate network
+      await Future.delayed(
+        const Duration(milliseconds: 800),
+      ); // Simulate network
       return _getMockForecast(city);
     }
 
     try {
       // 1. Search for City Key
-      final searchUrl = Uri.parse('$_baseUrl/locations/v1/cities/search?apikey=$_apiKey&q=$city');
+      final searchUrl = Uri.parse(
+        '$_baseUrl/locations/v1/cities/search?apikey=$_apiKey&q=$city',
+      );
       final searchResponse = await http.get(searchUrl);
 
       if (searchResponse.statusCode == 200) {
@@ -35,7 +39,9 @@ class WeatherService {
           // 2. Get Current Conditions (Real API limit usually prevents 5-day forecast on free tier easily without separate call)
           // For now, we will fetch current and mock the rest if needed, or just return 1 item.
           // Let's try to fetch current conditions.
-          final weatherUrl = Uri.parse('$_baseUrl/currentconditions/v1/$cityKey?apikey=$_apiKey');
+          final weatherUrl = Uri.parse(
+            '$_baseUrl/currentconditions/v1/$cityKey?apikey=$_apiKey',
+          );
           final weatherResponse = await http.get(weatherUrl);
 
           if (weatherResponse.statusCode == 200) {
@@ -44,14 +50,14 @@ class WeatherService {
               final temp = weatherData[0]['Temperature']['Metric']['Value'];
               final unit = weatherData[0]['Temperature']['Metric']['Unit'];
               final text = weatherData[0]['WeatherText'];
-              
+
               // Return real current weather as first item
               return [
                 {
                   'temp': '$temp° $unit',
                   'condition': text,
                   'isSunny': text.toString().toLowerCase().contains('sun'),
-                }
+                },
               ];
             }
           }

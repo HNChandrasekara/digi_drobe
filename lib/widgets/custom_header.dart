@@ -5,11 +5,7 @@ class CustomHeader extends StatelessWidget {
   final String userName;
   final VoidCallback? onProfileTap;
 
-  const CustomHeader({
-    super.key, 
-    required this.userName,
-    this.onProfileTap,
-  });
+  const CustomHeader({super.key, required this.userName, this.onProfileTap});
 
   @override
   Widget build(BuildContext context) {

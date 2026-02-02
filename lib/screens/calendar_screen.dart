@@ -325,29 +325,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   Widget _buildOutfitGrid() {
-     final days = [
-      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&q=80&w=400'},
-  Widget _buildWeatherIcon(IconData icon, Color color, String temp) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(height: 4),
-        Text(
-          temp,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOutfitGrid() {
     final days = [
-      {'date': 'Today-Friday, Dec 24', 'type': 'Formal', 'img': null},
       {
         'date': 'Today-Friday, Dec 24',
         'type': 'Formal',
@@ -372,17 +350,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
       itemCount: days.length,
       itemBuilder: (context, index) {
         final day = days[index];
-        return _buildDayCard(day['date'] as String, day['type'] as String);
         return _buildDayCard(
           day['date'] as String,
-          day['img'],
+          day['img'] as String?,
           day['type'] as String,
         );
       },
     );
   }
 
-  Widget _buildDayCard(String date, String type) {
+  Widget _buildDayCard(String date, String? imgUrl, String type) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -409,26 +386,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
           const SizedBox(height: 8),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.systemGray6.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.checkroom_rounded,
-                  color: AppColors.systemGray,
-                  size: 30,
-                ),
-              ),
-            ),
             child: imgUrl != null
-                ? Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: DecorationImage(
-                        image: NetworkImage(imgUrl),
-                        fit: BoxFit.cover,
                 ? Stack(
                     children: [
                       Container(
@@ -456,7 +414,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   )
                 : Container(
                     decoration: BoxDecoration(

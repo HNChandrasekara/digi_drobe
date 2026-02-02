@@ -10,13 +10,15 @@ import 'utils/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     // On web, Firebase.initializeApp() requires options if they aren't in index.html.
     // If we're on web and firebase_options.dart is missing, we skip to avoid assertion errors.
     if (kIsWeb) {
-      debugPrint('Web platform detected. Skipping Firebase initialization if unconfigured.');
-      // Attempting to catch the specific assertion error is hard for bootstrap, 
+      debugPrint(
+        'Web platform detected. Skipping Firebase initialization if unconfigured.',
+      );
+      // Attempting to catch the specific assertion error is hard for bootstrap,
       // so we rely on the try-catch and developer discretion.
       await Firebase.initializeApp();
     } else {
@@ -101,43 +103,19 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder<User?>(
         stream: AuthService().authStateChanges,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active || snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.done) {
             User? user = snapshot.data;
             if (user == null) {
               return const LoginScreen();
             }
             return const HomeScreen();
           }
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         },
       ),
-        return Material(
-          color: AppColors.backgroundLight,
-          child: Center(
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 500),
-              child: child ?? const SizedBox.shrink(),
-            ),
-          ),
-        );
-      },
-      home: !firebaseInitialized
-          ? const HomeScreen() // Development fallback
-          : StreamBuilder<User?>(
-              stream: AuthService().authStateChanges,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.active) {
-                  User? user = snapshot.data;
-                  if (user == null) {
-                    return const LoginScreen();
-                  }
-                  return const HomeScreen();
-                }
-                return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
-                );
-              },
-            ),
     );
   }
 }

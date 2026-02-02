@@ -79,9 +79,7 @@ class CommunityScreen extends StatelessWidget {
   }
 
   Widget _buildStoriesList() {
-    final stories = [
-      '', '', '', '', ''
-    ];
+    final stories = ['', '', '', '', ''];
 
     return SizedBox(
       height: 90,
