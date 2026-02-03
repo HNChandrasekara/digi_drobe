@@ -4,6 +4,8 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
+import '../services/product_data_service.dart';
+import '../models/product.dart';
 import 'style_bot_screen.dart';
 import 'product_details_screen.dart';
 
@@ -19,44 +21,13 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   bool _showFeed = true;
-  List<Map<String, String>> _allItems = [];
-  List<Map<String, String>> _filteredItems = [];
+  late List<Product> _allItems;
+  late List<Product> _filteredItems;
 
   @override
   void initState() {
     super.initState();
-    _allItems = [
-      {
-        'title': 'White Top',
-        'url':
-            'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=80&w=400',
-      },
-      {
-        'title': 'Maroon Heels',
-        'url':
-            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=400',
-      },
-      {
-        'title': 'Designer Bag',
-        'url':
-            'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=400',
-      },
-      {
-        'title': 'Aesthetic Jeans',
-        'url':
-            'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=400',
-      },
-      {
-        'title': 'Summer Dress',
-        'url':
-            'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=400',
-      },
-      {
-        'title': 'Casual Sneakers',
-        'url':
-            'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=400',
-      },
-    ];
+    _allItems = ProductDataService.getAllProducts();
     _filteredItems = _allItems;
   }
 
@@ -68,12 +39,7 @@ class _HomeContentState extends State<HomeContent> {
       return;
     }
     setState(() {
-      _filteredItems = _allItems
-          .where(
-            (item) =>
-                item['title']!.toLowerCase().contains(query.toLowerCase()),
-          )
-          .toList();
+      _filteredItems = ProductDataService.searchProducts(query);
     });
   }
 
@@ -147,22 +113,18 @@ class _HomeContentState extends State<HomeContent> {
             ),
             itemCount: _filteredItems.length,
             itemBuilder: (context, index) {
+              final product = _filteredItems[index];
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProductDetailsScreen(
-                        title: _filteredItems[index]['title']!,
-                        imageUrl: _filteredItems[index]['url']!,
-                      ),
+                      builder: (context) =>
+                          ProductDetailsScreen(product: product),
                     ),
                   );
                 },
-                child: ProductCard(
-                  title: _filteredItems[index]['title']!,
-                  imageUrl: _filteredItems[index]['url']!,
-                ),
+                child: ProductCard(title: product.title, imageUrl: ''),
               );
             },
           );

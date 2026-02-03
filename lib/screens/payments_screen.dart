@@ -9,7 +9,7 @@ class PaymentsScreen extends StatefulWidget {
 }
 
 class _PaymentsScreenState extends State<PaymentsScreen> {
-  String selectedMethod = 'Apple Pay';
+  String selectedMethod = 'PayHere';
 
   @override
   Widget build(BuildContext context) {
@@ -38,19 +38,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildPaymentMethod('Apple Pay', Icons.apple_rounded),
-                    const SizedBox(height: 12),
-                    _buildPaymentMethod(
-                      'Credit Card',
-                      Icons.credit_card_rounded,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildPaymentMethod(
-                      'PayPal',
-                      Icons.account_balance_wallet_outlined,
-                    ),
-                    const SizedBox(height: 12),
                     _buildPaymentMethod('PayHere', Icons.payments_rounded),
+                    const SizedBox(height: 12),
                     _buildPaymentMethod(
                       'PayPal',
                       Icons.account_balance_wallet_outlined,

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class WeatherService {
-  // TODO: Replace with your actual AccuWeather API Key
+  // TODO: Replace with your actual AccuWeather API Key from https://developer.accuweather.com
   static const String _apiKey = 'YOUR_ACCUWEATHER_API_KEY';
   static const String _baseUrl = 'http://dataservice.accuweather.com';
 
@@ -14,7 +14,7 @@ class WeatherService {
     return "Current weather in $city: ${current['condition']}, ${current['temp']}.";
   }
 
-  /// Returns a list of weather data points (Mocked 5-day forecast or single current real data)
+  /// Returns a 5-day forecast list from AccuWeather API or mocked data
   Future<List<Map<String, dynamic>>> getForecast(String city) async {
     // Mock Mode fallback
     if (_apiKey.contains('YOUR_') || _apiKey.isEmpty) {
@@ -27,7 +27,7 @@ class WeatherService {
     try {
       // 1. Search for City Key
       final searchUrl = Uri.parse(
-        '$_baseUrl/locations/v1/cities/search?apikey=$_apiKey&q=$city',
+        '$_baseUrl/locations/v1/cities/search?apikey=$_apiKey&q=$city&language=en',
       );
       final searchResponse = await http.get(searchUrl);
 
@@ -36,35 +36,33 @@ class WeatherService {
         if (searchData is List && searchData.isNotEmpty) {
           final cityKey = searchData[0]['Key'];
 
-          // 2. Get Current Conditions (Real API limit usually prevents 5-day forecast on free tier easily without separate call)
-          // For now, we will fetch current and mock the rest if needed, or just return 1 item.
-          // Let's try to fetch current conditions.
-          final weatherUrl = Uri.parse(
-            '$_baseUrl/currentconditions/v1/$cityKey?apikey=$_apiKey',
+          // 2. Get 5-Day Forecast
+          // Details: true returns full forecast data
+          final forecastUrl = Uri.parse(
+            '$_baseUrl/forecasts/v1/daily/5day/$cityKey?apikey=$_apiKey&details=true&metric=true',
           );
-          final weatherResponse = await http.get(weatherUrl);
+          final forecastResponse = await http.get(forecastUrl);
 
-          if (weatherResponse.statusCode == 200) {
-            final weatherData = json.decode(weatherResponse.body);
-            if (weatherData is List && weatherData.isNotEmpty) {
-              final temp = weatherData[0]['Temperature']['Metric']['Value'];
-              final unit = weatherData[0]['Temperature']['Metric']['Unit'];
-              final text = weatherData[0]['WeatherText'];
-
-              // Return real current weather as first item
-              return [
-                {
-                  'temp': '$temp° $unit',
+          if (forecastResponse.statusCode == 200) {
+            final forecastData = json.decode(forecastResponse.body);
+            if (forecastData is Map && forecastData['DailyForecasts'] != null) {
+              final dailyForecasts = forecastData['DailyForecasts'] as List;
+              return dailyForecasts.map((day) {
+                final temp = day['Temperature']['Maximum']['Value'];
+                final text = day['Day']['IconPhrase'];
+                return {
+                  'temp': '${temp.toStringAsFixed(0)}° C',
                   'condition': text,
                   'isSunny': text.toString().toLowerCase().contains('sun'),
-                },
-              ];
+                };
+              }).toList();
             }
           }
         }
       }
       return [];
     } catch (e) {
+      print('[WeatherService] Error fetching forecast: $e');
       // On error, return mock
       return _getMockForecast(city);
     }
@@ -74,8 +72,8 @@ class WeatherService {
     // Mock 5 items for the UI strip
     return [
       {'temp': '25° C', 'condition': 'Sunny', 'isSunny': true},
-      {'temp': '24° C', 'condition': 'Cloudy', 'isSunny': false},
-      {'temp': '22° C', 'condition': 'Rain', 'isSunny': false},
+      {'temp': '24° C', 'condition': 'Mostly Cloudy', 'isSunny': false},
+      {'temp': '22° C', 'condition': 'Rainy', 'isSunny': false},
       {'temp': '20° C', 'condition': 'Sunny', 'isSunny': true},
       {'temp': '21° C', 'condition': 'Cloudy', 'isSunny': false},
     ];

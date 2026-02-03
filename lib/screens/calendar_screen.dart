@@ -13,40 +13,105 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  final CalendarService _calendarService = CalendarService();
+  late CalendarService _calendarService;
+  final WeatherService _weatherService = WeatherService();
   List<calendar.Event> _events = [];
+  List<Map<String, dynamic>> _weatherForecast = [];
   bool _isSignedIn = false;
   bool _isLoading = false;
-  final WeatherService _weatherService = WeatherService();
-  List<Map<String, dynamic>> _forecast = [];
+  bool _weatherLoading = true;
 
   @override
   void initState() {
     super.initState();
+    // Initialize with demo mode enabled for development
+    // Set to false once you have Google OAuth credentials configured
+    _calendarService = CalendarService(demoMode: true);
     _checkSignInStatus();
+    _loadWeather();
+  }
+
+  Future<void> _loadWeather() async {
+    try {
+      final forecast = await _weatherService.getForecast('London');
+      if (mounted) {
+        setState(() {
+          _weatherForecast = forecast;
+          _weatherLoading = false;
+        });
+      }
+    } catch (error) {
+      print('[Weather] Error loading weather: $error');
+      if (mounted) {
+        setState(() {
+          _weatherLoading = false;
+        });
+      }
+    }
   }
 
   Future<void> _checkSignInStatus() async {
-    setState(() {
-      _isSignedIn = _calendarService.isSignedIn;
-    });
-    if (_isSignedIn) {
-      await _fetchEvents();
-      await _loadWeather();
+    final user = await _calendarService.checkSignInStatus();
+    if (mounted) {
+      setState(() {
+        _isSignedIn = user != null;
+      });
+      if (_isSignedIn) {
+        await _fetchEvents();
+      }
     }
   }
 
   Future<void> _handleSignIn() async {
     setState(() => _isLoading = true);
-    final account = await _calendarService.signIn();
-    if (account != null) {
-      await _fetchEvents();
-      await _loadWeather();
-      setState(() {
-        _isSignedIn = true;
-      });
+    try {
+      print('[Calendar] Starting sign-in...');
+      final account = await _calendarService.signIn();
+      print('[Calendar] Sign-in returned account: $account');
+      print('[Calendar] isSignedIn after auth: ${_calendarService.isSignedIn}');
+
+      if (_calendarService.isSignedIn) {
+        print('[Calendar] User is signed in, fetching events...');
+        await _fetchEvents();
+        if (mounted) {
+          setState(() {
+            _isSignedIn = true;
+          });
+          final demoText = _calendarService.isDemoMode ? ' (Demo Mode)' : '';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('✓ Calendar connected successfully!$demoText'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        print('[Calendar] User is not signed in');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to connect. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (error) {
+      print('[Calendar] Sign-in error: $error');
+      print('[Calendar] Error type: ${error.runtimeType}');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${error.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
-    setState(() => _isLoading = false);
   }
 
   Future<void> _fetchEvents() async {
@@ -54,15 +119,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
     if (mounted) {
       setState(() {
         _events = events;
-      });
-    }
-  }
-
-  Future<void> _loadWeather() async {
-    final data = await _weatherService.getForecast('London');
-    if (mounted) {
-      setState(() {
-        _forecast = data;
       });
     }
   }
@@ -76,7 +132,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
           children: [
             const CustomHeader(userName: 'Hirushie'),
             _buildCalendarSection(),
-            const SizedBox(height: 20),
+            _buildWeatherBar(),
+            const SizedBox(height: 12),
             Expanded(child: _buildMainContent()),
             _buildFooterAction(),
           ],
@@ -185,18 +242,204 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(color: Colors.green.withOpacity(0.3)),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.check_circle, color: Colors.green),
-                  SizedBox(width: 12),
-                  Text(
-                    "Calendar Connected",
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                  const Icon(Icons.check_circle, color: Colors.green),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "Calendar Connected",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            if (_calendarService.isDemoMode) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text(
+                                  'DEMO',
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        Text(
+                          _calendarService.isDemoMode
+                              ? 'Using demo data (configure Google OAuth to use real calendar)'
+                              : "Connected as: ",
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.logout, size: 20),
+                    onPressed: () async {
+                      await _calendarService.signOut();
+                      if (mounted) {
+                        setState(() {
+                          _isSignedIn = false;
+                          _events = [];
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Google Calendar disconnected'),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWeatherBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: _weatherLoading
+            ? const SizedBox(
+                height: 50,
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+              )
+            : _weatherForecast.isEmpty
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.cloud_off, color: AppColors.systemGray),
+                    SizedBox(width: 8),
+                    Text(
+                      'Weather data unavailable',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _weatherForecast[0]['isSunny'] == true
+                              ? Icons.wb_sunny
+                              : Icons.wb_cloudy,
+                          color: _weatherForecast[0]['isSunny'] == true
+                              ? Colors.amber
+                              : AppColors.systemGray,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _weatherForecast[0]['condition'] ?? 'N/A',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          _weatherForecast[0]['temp'] ?? '--',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_weatherForecast.length > 1)
+                    SizedBox(
+                      height: 35,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _weatherForecast.length - 1,
+                        itemBuilder: (context, index) {
+                          final forecast = _weatherForecast[index + 1];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.systemGray6.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    forecast['isSunny'] == true
+                                        ? Icons.wb_sunny
+                                        : Icons.wb_cloudy,
+                                    color: forecast['isSunny'] == true
+                                        ? Colors.amber
+                                        : AppColors.systemGray,
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    forecast['temp'] ?? '--',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
       ),
     );
   }
@@ -309,7 +552,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         final day = days[index];
         return _buildDayCard(
           day['date'] as String,
-          day['img'] as String?,
+          day['img'],
           day['type'] as String,
         );
       },
@@ -349,9 +592,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          image: DecorationImage(
-                            image: NetworkImage(imgUrl),
-                            fit: BoxFit.cover,
+                          color: AppColors.systemGray6,
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.photo,
+                            color: AppColors.systemGray,
+                            size: 40,
                           ),
                         ),
                       ),

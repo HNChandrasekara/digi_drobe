@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../models/product.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  final String title;
-  final String imageUrl;
+  final Product product;
 
-  const ProductDetailsScreen({
-    super.key,
-    required this.title,
-    required this.imageUrl,
-  });
+  const ProductDetailsScreen({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +29,13 @@ class ProductDetailsScreen extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
-              background: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  color: AppColors.systemGray6,
-                  child: const Center(
-                    child: Icon(
-                      Icons.image_not_supported_outlined,
-                      color: AppColors.systemGray,
-                      size: 80,
-                    ),
+              background: Container(
+                decoration: BoxDecoration(color: AppColors.systemGray6),
+                child: const Center(
+                  child: Icon(
+                    Icons.image_not_supported_outlined,
+                    color: AppColors.systemGray,
+                    size: 80,
                   ),
                 ),
               ),
@@ -64,7 +56,7 @@ class ProductDetailsScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          title,
+                          product.title,
                           style: Theme.of(context).textTheme.displayLarge
                               ?.copyWith(
                                 fontSize: 28,
@@ -72,9 +64,9 @@ class ProductDetailsScreen extends StatelessWidget {
                               ),
                         ),
                       ),
-                      const Text(
-                        '\$45.00', // Placeholder price
-                        style: TextStyle(
+                      Text(
+                        '\$${product.price.toStringAsFixed(2)}',
+                        style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryMaroon,
@@ -83,6 +75,45 @@ class ProductDetailsScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryMaroon.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      product.category,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryMaroon,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Text(
+                        'Brand: ',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        product.brand,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
                   const Text(
                     'Description',
                     style: TextStyle(
@@ -92,9 +123,9 @@ class ProductDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'This is a placeholder description for the item. It includes details about the material, fit, and style recommendations. Perfect for any occasion!',
-                    style: TextStyle(
+                  Text(
+                    product.description,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
                       height: 1.5,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../widgets/custom_header.dart';
+import '../services/product_data_service.dart';
+import 'payments_screen.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -10,32 +12,31 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
+  late List<Map<String, dynamic>> _cartItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeCart();
+  }
+
+  void _initializeCart() {
+    final allProducts = ProductDataService.getAllProducts();
+    _cartItems = allProducts
+        .take(3)
+        .map(
+          (product) => {
+            'title': product.title,
+            'price': '\$${product.price.toStringAsFixed(2)}',
+            'productId': product.id,
+          },
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Mock cart items
-    final items = [
-      {
-        'title': 'White Polo Shirt',
-        'price': '\$45.00',
-        'url':
-            'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=80&w=400',
-        'isAsset': false,
-      },
-      {
-        'title': 'Maroon Heels',
-        'price': '\$89.00',
-        'url':
-            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&q=80&w=400',
-        'isAsset': false,
-      },
-      {
-        'title': 'Designer Bag',
-        'price': '\$120.00',
-        'url':
-            'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=400',
-        'isAsset': false,
-      },
-    ];
+    final items = _cartItems;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -85,12 +86,10 @@ class _CartScreenState extends State<CartScreen> {
               height: 140,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                image: DecorationImage(
-                  image: item['isAsset'] == true
-                      ? AssetImage(item['url']! as String) as ImageProvider
-                      : NetworkImage(item['url']! as String),
-                  fit: BoxFit.cover,
-                ),
+                color: AppColors.systemGray6,
+              ),
+              child: const Center(
+                child: Icon(Icons.photo, color: AppColors.systemGray, size: 40),
               ),
             ),
             const SizedBox(width: 20),
@@ -135,6 +134,12 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Widget _buildCheckoutFooter(BuildContext context) {
+    final allProducts = ProductDataService.getAllProducts();
+    final cartProducts = allProducts
+        .where((p) => _cartItems.any((item) => item['productId'] == p.id))
+        .toList();
+    final total = ProductDataService.calculateCartTotal(cartProducts);
+
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -151,16 +156,16 @@ class _CartScreenState extends State<CartScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Total',
                 style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
               ),
               Text(
-                '\$254.00',
-                style: TextStyle(
+                '\$${total.toStringAsFixed(2)}',
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
@@ -173,7 +178,14 @@ class _CartScreenState extends State<CartScreen> {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PaymentsScreen(),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryMaroon,
                 foregroundColor: Colors.white,

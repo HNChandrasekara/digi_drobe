@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import 'email_service.dart';
 
 class AuthService {
   static bool _initialized = false;
@@ -63,14 +64,41 @@ class AuthService {
   // Password Reset
   Future<void> sendPasswordResetEmail(String email) async {
     if (!_isFirebaseInitialized) {
-      debugPrint('Mock Password Reset: $email');
+      // Use custom email service for web/non-Firebase environments
+      debugPrint('Using Email Service for password reset: $email');
+
+      // Generate a reset token (in production, generate and store securely)
+      final resetToken = _generateResetToken();
+      final resetLink =
+          'https://digi-drobe.com/reset-password?token=$resetToken&email=$email';
+
+      final success = await EmailService.sendPasswordResetEmail(
+        recipientEmail: email,
+        resetLink: resetLink,
+      );
+
+      if (!success) {
+        throw 'Failed to send password reset email. Please try again.';
+      }
       return;
     }
+
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw e.message ?? 'An unknown error occurred';
     }
+  }
+
+  // Generate a simple reset token (in production, use secure token generation)
+  static String _generateResetToken() {
+    const chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789';
+    String token = '';
+    for (int i = 0; i < 32; i++) {
+      token += chars[(DateTime.now().millisecond + i) % chars.length];
+    }
+    return token;
   }
 
   // User Stream
