@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
+import '../../services/auth_service.dart';
 
 class LogoutScreen extends StatelessWidget {
-  const LogoutScreen({super.key});
+  final AuthService authService;
+  final VoidCallback onLogout;
+
+  const LogoutScreen({
+    super.key,
+    required this.authService,
+    required this.onLogout,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +33,23 @@ class LogoutScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildButton('Yes', const Color(0xFF8B1D1D), Colors.white, () {
-                  // Handle logout
-                  Navigator.pop(context);
-                }),
+                _buildButton(
+                  'Yes',
+                  const Color(0xFF8B1D1D),
+                  Colors.white,
+                  () async {
+                    // Sign out via Firebase
+                    await authService.signOut();
+                    onLogout();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Logged out successfully'),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 const SizedBox(width: 20),
                 _buildButton(
                   'Cancel',

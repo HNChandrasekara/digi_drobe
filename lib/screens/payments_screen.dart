@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../services/payment_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../services/product_data_service.dart';
+import '../services/auth_service.dart';
 
 class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});
@@ -10,6 +14,14 @@ class PaymentsScreen extends StatefulWidget {
 
 class _PaymentsScreenState extends State<PaymentsScreen> {
   String selectedMethod = 'PayHere';
+  bool _payHereSandbox = true;
+  bool _payPalSandbox = true;
+
+  double get _cartTotal {
+    final allProducts = ProductDataService.getAllProducts();
+    final cartProducts = allProducts.take(3).toList();
+    return ProductDataService.calculateCartTotal(cartProducts);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +39,22 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                   children: [
                     const SizedBox(height: 20),
                     _buildOrderSummary(),
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
+                    // Email/phone inputs removed per request. We will use the account email when available.
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text('Amount', style: TextStyle(fontSize: 16)),
+                        Text(
+                          '\$${_cartTotal.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     const Text(
                       'Payment Method',
                       style: TextStyle(
@@ -102,6 +129,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
       ),
       child: Column(
         children: [
+          const SizedBox(height: 0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
@@ -223,11 +251,78 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         width: double.infinity,
         height: 54,
         child: ElevatedButton(
-          onPressed: () {
-            // Processing payment
+          onPressed: () async {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Processing Payment...')),
             );
+
+            bool success = false;
+            // Prefer signed-in user's email if available; otherwise leave empty.
+            final email = AuthService().currentUser?.email ?? '';
+            final phone = '';
+
+            final orderId = 'ORDER-${DateTime.now().millisecondsSinceEpoch}';
+            final amountStr = _cartTotal.toStringAsFixed(2);
+
+            if (selectedMethod == 'PayHere') {
+              final redirectUrl = await PaymentService.processPayHerePayment(
+                amount: amountStr,
+                orderId: orderId,
+                customerEmail: email,
+                customerPhone: phone,
+              );
+
+              if (redirectUrl != null) {
+                // Open the PayHere checkout in a new tab/window
+                final uri = Uri.parse(redirectUrl);
+                try {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  return;
+                } catch (e) {
+                  // fallback: show success message and log URL
+                  print('[PaymentsScreen] Failed to launch URL: $e');
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Open this URL to complete payment: $redirectUrl',
+                      ),
+                    ),
+                  );
+                  return;
+                }
+              } else {
+                success = false;
+              }
+            } else if (selectedMethod == 'PayPal') {
+              success = await PaymentService.processPayPalPayment(
+                amount: amountStr,
+                orderId: orderId,
+                customerEmail: email,
+              );
+            }
+
+            if (!mounted) return;
+
+            if (success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '$selectedMethod payment initiated successfully!',
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '$selectedMethod payment failed. Please try again.',
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF8B1D1D),
@@ -244,5 +339,10 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
