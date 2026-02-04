@@ -4,8 +4,20 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import 'chat_screen.dart';
 
-class CommunityScreen extends StatelessWidget {
+class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
+
+  @override
+  State<CommunityScreen> createState() => _CommunityScreenState();
+}
+
+class _CommunityScreenState extends State<CommunityScreen> {
+  String _searchQuery = '';
+
+  bool _matchesSearch(String text) {
+    if (_searchQuery.isEmpty) return true;
+    return text.toLowerCase().contains(_searchQuery);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,58 +29,71 @@ class CommunityScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const CustomHeader(userName: 'Hirushie'),
-              const DigiSearchBar(),
+              DigiSearchBar(
+                onChanged: (query) {
+                  setState(() => _searchQuery = query.toLowerCase());
+                },
+              ),
 
               const SizedBox(height: 20),
 
               // Stories Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Text(
-                  'Stories',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              if (_matchesSearch('stories'))
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Text(
+                    'Stories',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              _buildStoriesList(),
+              if (_matchesSearch('stories')) _buildStoriesList(),
 
               const SizedBox(height: 20),
 
               // Channels Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Text(
-                  'Channels',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              if (_matchesSearch('channels'))
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Text(
+                    'Channels',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              _buildChannelItem(context, isNavigable: true),
-              _buildChannelItem(context),
-              _buildChannelItem(context),
+              if (_matchesSearch('channels'))
+                _buildChannelItem(context, isNavigable: true),
+              if (_matchesSearch('channels')) _buildChannelItem(context),
+              if (_matchesSearch('channels')) _buildChannelItem(context),
 
               const SizedBox(height: 20),
 
               // Recommended Communities Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Text(
-                  'Recommended Communities',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              if (_matchesSearch('recommended') ||
+                  _matchesSearch('communities'))
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Text(
+                    'Recommended Communities',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              _buildChannelItem(context),
-              _buildChannelItem(context),
+              if (_matchesSearch('recommended') ||
+                  _matchesSearch('communities'))
+                _buildChannelItem(context),
+              if (_matchesSearch('recommended') ||
+                  _matchesSearch('communities'))
+                _buildChannelItem(context),
 
               const SizedBox(height: 30),
             ],

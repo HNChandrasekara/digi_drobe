@@ -120,11 +120,18 @@ class _CartScreenState extends State<CartScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Icon(
-                Icons.delete_outline_rounded,
-                color: Colors.black.withOpacity(0.7),
-                size: 24,
+              padding: const EdgeInsets.only(top: 28),
+              child: IconButton(
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: Colors.black.withOpacity(0.7),
+                  size: 24,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _cartItems.removeAt(index);
+                  });
+                },
               ),
             ),
           ],
