@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'email_service.dart';
-import 'avatar_service.dart';
+// import 'avatar_service.dart';
 
 class AuthService {
   static bool _initialized = false;
@@ -63,7 +63,7 @@ class AuthService {
       }
       
       // Clear local user data
-      await AvatarService.clearAvatar();
+      // await AvatarService.clearAvatar();
       
       debugPrint('Logout: All user data cleared successfully.');
     } catch (e) {
