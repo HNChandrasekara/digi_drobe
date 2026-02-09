@@ -4,71 +4,98 @@ import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import 'chat_screen.dart';
 
-class CommunityScreen extends StatelessWidget {
+class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
 
   @override
+  State<CommunityScreen> createState() => _CommunityScreenState();
+}
+
+class _CommunityScreenState extends State<CommunityScreen> {
+  String _searchQuery = '';
+
+  bool _matchesSearch(String text) {
+    if (_searchQuery.isEmpty) return true;
+    return text.toLowerCase().contains(_searchQuery);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomHeader(userName: 'Hirushie'),
-              const DigiSearchBar(),
+              CustomHeader(userName: 'Hirushie'),
+              DigiSearchBar(
+                onChanged: (query) {
+                  setState(() => _searchQuery = query.toLowerCase());
+                },
+              ),
 
               const SizedBox(height: 20),
 
               // Stories Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Text(
-                  'Stories',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              if (_matchesSearch('stories'))
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Text(
+                    'Stories',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              _buildStoriesList(),
+              if (_matchesSearch('stories')) _buildStoriesList(isDark),
 
               const SizedBox(height: 20),
 
               // Channels Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Text(
-                  'Channels',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              if (_matchesSearch('channels'))
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Text(
+                    'Channels',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              _buildChannelItem(context, isNavigable: true),
-              _buildChannelItem(context),
-              _buildChannelItem(context),
+              if (_matchesSearch('channels'))
+                _buildChannelItem(context, isDark: isDark, isNavigable: true),
+              if (_matchesSearch('channels')) _buildChannelItem(context, isDark: isDark),
+              if (_matchesSearch('channels')) _buildChannelItem(context, isDark: isDark),
 
               const SizedBox(height: 20),
 
               // Recommended Communities Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Text(
-                  'Recommended Communities',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              if (_matchesSearch('recommended') ||
+                  _matchesSearch('communities'))
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: Text(
+                    'Recommended Communities',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              _buildChannelItem(context),
-              _buildChannelItem(context),
+              if (_matchesSearch('recommended') ||
+                  _matchesSearch('communities'))
+                _buildChannelItem(context, isDark: isDark),
+              if (_matchesSearch('recommended') ||
+                  _matchesSearch('communities'))
+                _buildChannelItem(context, isDark: isDark),
 
               const SizedBox(height: 30),
             ],
@@ -78,7 +105,7 @@ class CommunityScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStoriesList() {
+  Widget _buildStoriesList(bool isDark) {
     final stories = ['', '', '', '', ''];
 
     return SizedBox(
@@ -95,10 +122,10 @@ class CommunityScreen extends StatelessWidget {
               height: 75,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.systemGray6,
+                color: isDark ? AppColors.cardDark : AppColors.systemGray6,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -116,7 +143,8 @@ class CommunityScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChannelItem(BuildContext context, {bool isNavigable = false}) {
+  Widget _buildChannelItem(BuildContext context,
+      {required bool isDark, bool isNavigable = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: GestureDetector(
@@ -133,22 +161,25 @@ class CommunityScreen extends StatelessWidget {
         child: Container(
           height: 80,
           decoration: BoxDecoration(
-            color: const Color(
-              0xFFD9D9D9,
-            ).withOpacity(0.5), // Matches the gray in screenshot
+            color: isDark
+                ? AppColors.cardDark
+                : const Color(0xFFD9D9D9).withOpacity(0.5),
             borderRadius: BorderRadius.circular(15),
+            border: isDark
+                ? Border.all(color: AppColors.dividerDark, width: 0.5)
+                : null,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Daily Outfit Inspirations (OOTD)',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                     ),
                   ),
                 ),
@@ -158,7 +189,7 @@ class CommunityScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF8B1D1D),
+                      backgroundColor: AppColors.primaryMaroon,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(

@@ -45,6 +45,8 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return SafeArea(
       child: Column(
         children: [
@@ -59,7 +61,7 @@ class _HomeContentState extends State<HomeContent> {
                   child: Text(
                     'Your Favourite Virtual Wardrobe',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.textPrimary,
+                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -69,7 +71,7 @@ class _HomeContentState extends State<HomeContent> {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: AppColors.systemGray6,
+                      color: isDark ? AppColors.cardDark : AppColors.systemGray6,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -86,7 +88,7 @@ class _HomeContentState extends State<HomeContent> {
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _showFeed
-                  ? _buildProductFeed()
+                  ? _buildProductFeed(isDark)
                   : _buildFeatureNavigation(),
             ),
           ),
@@ -95,12 +97,14 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  Widget _buildProductFeed() {
+  Widget _buildProductFeed(bool isDark) {
     return _filteredItems.isEmpty
         ? Center(
             child: Text(
               'No items found',
-              style: TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(
+                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              ),
             ),
           )
         : GridView.builder(

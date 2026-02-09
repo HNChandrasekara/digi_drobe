@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'email_service.dart';
+import 'avatar_service.dart';
 
 class AuthService {
   static bool _initialized = false;
@@ -54,11 +55,21 @@ class AuthService {
 
   // Sign Out
   Future<void> signOut() async {
-    if (!_isFirebaseInitialized) {
-      debugPrint('Mock Sign Out');
-      return;
+    try {
+      if (!_isFirebaseInitialized) {
+        debugPrint('Mock Sign Out');
+      } else {
+        await _auth.signOut();
+      }
+      
+      // Clear local user data
+      await AvatarService.clearAvatar();
+      
+      debugPrint('Logout: All user data cleared successfully.');
+    } catch (e) {
+      debugPrint('Logout Error: $e');
+      rethrow;
     }
-    await _auth.signOut();
   }
 
   // Password Reset

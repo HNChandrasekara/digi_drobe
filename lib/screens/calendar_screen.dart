@@ -125,24 +125,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            const CustomHeader(userName: 'Hirushie'),
-            _buildCalendarSection(),
-            _buildWeatherBar(),
+            CustomHeader(userName: 'Hirushie'),
+            _buildCalendarSection(isDark),
+            _buildWeatherBar(isDark),
             const SizedBox(height: 12),
-            Expanded(child: _buildMainContent()),
-            _buildFooterAction(),
+            Expanded(child: _buildMainContent(isDark)),
+            _buildFooterAction(isDark),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCalendarSection() {
+  Widget _buildCalendarSection(bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Column(
@@ -151,17 +153,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'My Schedule',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                 ),
               ),
               if (_isSignedIn)
                 IconButton(
-                  icon: const Icon(Icons.refresh, size: 20),
+                  icon: Icon(
+                    Icons.refresh,
+                    size: 20,
+                    color: isDark ? AppColors.textSecondaryDark : Colors.black87,
+                  ),
                   onPressed: _fetchEvents,
                 ),
             ],
@@ -171,15 +177,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.cardDark : Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
                 ],
+                border: isDark
+                    ? Border.all(color: AppColors.dividerDark, width: 0.5)
+                    : null,
               ),
               child: Row(
                 children: [
@@ -187,13 +196,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.blue.withOpacity(isDark ? 0.2 : 0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.calendar_today, color: Colors.blue),
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: isDark ? Colors.blue[300] : Colors.blue,
+                    ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -201,14 +213,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           'Connect Google Calendar',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
+                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                           ),
                         ),
                         Text(
                           'Sync your events for outfit advice',
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -238,9 +250,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.cardDark : Colors.white,
                 borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.green.withOpacity(0.3)),
+                border: Border.all(
+                  color: Colors.green.withOpacity(isDark ? 0.5 : 0.3),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -252,9 +273,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       children: [
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               "Calendar Connected",
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                              ),
                             ),
                             if (_calendarService.isDemoMode) ...[
                               const SizedBox(width: 8),
@@ -283,16 +307,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           _calendarService.isDemoMode
                               ? 'Using demo data (configure Google OAuth to use real calendar)'
                               : "Connected as: ",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.textSecondary,
+                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                           ),
                         ),
                       ],
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.logout, size: 20),
+                    icon: Icon(
+                      Icons.logout,
+                      size: 20,
+                      color: isDark ? AppColors.textSecondaryDark : Colors.black54,
+                    ),
                     onPressed: () async {
                       await _calendarService.signOut();
                       if (mounted) {
@@ -316,21 +344,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildWeatherBar() {
+  Widget _buildWeatherBar(bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.cardDark : Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],
+          border: isDark
+              ? Border.all(color: AppColors.dividerDark, width: 0.5)
+              : null,
         ),
         child: _weatherLoading
             ? const SizedBox(
@@ -338,113 +369,118 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               )
             : _weatherForecast.isEmpty
-            ? Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.cloud_off, color: AppColors.systemGray),
-                    SizedBox(width: 8),
-                    Text(
-                      'Weather data unavailable',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4, bottom: 8),
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          _weatherForecast[0]['isSunny'] == true
-                              ? Icons.wb_sunny
-                              : Icons.wb_cloudy,
-                          color: _weatherForecast[0]['isSunny'] == true
-                              ? Colors.amber
-                              : AppColors.systemGray,
-                          size: 18,
+                          Icons.cloud_off,
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          _weatherForecast[0]['condition'] ?? 'N/A',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          _weatherForecast[0]['temp'] ?? '--',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
+                          'Weather data unavailable',
+                          style: TextStyle(
+                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                            fontSize: 12,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  if (_weatherForecast.length > 1)
-                    SizedBox(
-                      height: 35,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _weatherForecast.length - 1,
-                        itemBuilder: (context, index) {
-                          final forecast = _weatherForecast[index + 1];
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.systemGray6.withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    forecast['isSunny'] == true
-                                        ? Icons.wb_sunny
-                                        : Icons.wb_cloudy,
-                                    color: forecast['isSunny'] == true
-                                        ? Colors.amber
-                                        : AppColors.systemGray,
-                                    size: 14,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    forecast['temp'] ?? '--',
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4, bottom: 8),
+                        child: Row(
+                          children: [
+                            Icon(
+                              _weatherForecast[0]['isSunny'] == true
+                                  ? Icons.wb_sunny
+                                  : Icons.wb_cloudy,
+                              color: _weatherForecast[0]['isSunny'] == true
+                                  ? Colors.amber
+                                  : (isDark ? AppColors.textSecondaryDark : AppColors.systemGray),
+                              size: 18,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _weatherForecast[0]['condition'] ?? 'N/A',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                               ),
                             ),
-                          );
-                        },
+                            const SizedBox(width: 12),
+                            Text(
+                              _weatherForecast[0]['temp'] ?? '--',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
-              ),
+                      if (_weatherForecast.length > 1)
+                        SizedBox(
+                          height: 35,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _weatherForecast.length - 1,
+                            itemBuilder: (context, index) {
+                              final forecast = _weatherForecast[index + 1];
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? AppColors.surfaceDark
+                                        : AppColors.systemGray6.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        forecast['isSunny'] == true
+                                            ? Icons.wb_sunny
+                                            : Icons.wb_cloudy,
+                                        color: forecast['isSunny'] == true
+                                            ? Colors.amber
+                                            : (isDark ? AppColors.textSecondaryDark : AppColors.systemGray),
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        forecast['temp'] ?? '--',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
       ),
     );
   }
 
-  Widget _buildMainContent() {
+  Widget _buildMainContent(bool isDark) {
     if (_isSignedIn && _events.isNotEmpty) {
       return ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -461,15 +497,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? AppColors.cardDark : Colors.white,
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
+              border: isDark
+                  ? Border.all(color: AppColors.dividerDark, width: 0.5)
+                  : null,
             ),
             child: Row(
               children: [
@@ -497,23 +536,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
+                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Suggested: ${index % 2 == 0 ? "Formal Suit" : "Casual Chic"}',
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
+                        style: TextStyle(
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: AppColors.systemGray),
+                Icon(
+                  Icons.chevron_right,
+                  color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                ),
               ],
             ),
           );
@@ -521,10 +564,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       );
     }
 
-    return _buildOutfitGrid();
+    return _buildOutfitGrid(isDark);
   }
 
-  Widget _buildOutfitGrid() {
+  Widget _buildOutfitGrid(bool isDark) {
     final days = [
       {
         'date': 'Today-Friday, Dec 24',
@@ -554,23 +597,27 @@ class _CalendarScreenState extends State<CalendarScreen> {
           day['date'] as String,
           day['img'],
           day['type'] as String,
+          isDark,
         );
       },
     );
   }
 
-  Widget _buildDayCard(String date, String? imgUrl, String type) {
+  Widget _buildDayCard(String date, String? imgUrl, String type, bool isDark) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: isDark
+            ? Border.all(color: AppColors.dividerDark, width: 0.5)
+            : null,
       ),
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -578,10 +625,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
         children: [
           Text(
             date,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -592,12 +639,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: AppColors.systemGray6,
+                          color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Icon(
                             Icons.photo,
-                            color: AppColors.systemGray,
+                            color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
                             size: 40,
                           ),
                         ),
@@ -607,14 +654,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         right: 4,
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.cardDark : Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.calendar_today_rounded,
                             size: 14,
-                            color: AppColors.systemGray,
+                            color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
                           ),
                         ),
                       ),
@@ -622,13 +669,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   )
                 : Container(
                     decoration: BoxDecoration(
-                      color: AppColors.systemGray6.withOpacity(0.5),
+                      color: isDark ? AppColors.surfaceDark : AppColors.systemGray6.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.checkroom_rounded,
-                        color: AppColors.systemGray,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
                         size: 30,
                       ),
                     ),
@@ -638,7 +685,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
             const SizedBox(height: 8),
             Text(
               "Today's look-$type",
-              style: const TextStyle(fontSize: 10, color: AppColors.systemGray),
+              style: TextStyle(
+                fontSize: 10,
+                color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+              ),
             ),
           ],
         ],
@@ -646,26 +696,26 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  Widget _buildFooterAction() {
+  Widget _buildFooterAction(bool isDark) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Text(
+          Text(
             'Set reminder',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
               fontSize: 14,
             ),
           ),
           const SizedBox(width: 20),
           Container(
             padding: const EdgeInsets.all(8),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_none_rounded,
-              color: AppColors.textPrimary,
+              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
               size: 28,
             ),
           ),

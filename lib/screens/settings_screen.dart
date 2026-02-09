@@ -1,29 +1,45 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
+import '../services/auth_service.dart';
+import 'settings/profile_settings_screen.dart';
 import 'settings/app_preference_screen.dart';
+import 'settings/logout_screen.dart';
 import 'settings/privacy_policy_screen.dart';
 import 'settings/help_support_screen.dart';
 import 'settings/about_screen.dart';
-import 'settings/logout_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  final AuthService _authService = AuthService();
+
+  void _onLogout() {
+    // Navigate to login screen or restart app flow
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
               const SizedBox(height: 40),
-              const Text(
+              Text(
                 'Settings',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1A1A3A),
+                  color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
                   letterSpacing: -0.5,
                 ),
               ),
@@ -34,7 +50,8 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 Icons.person_outline_rounded,
                 'Profile Settings',
-                null,
+                const ProfileSettingsScreen(),
+                isDark,
               ),
               const SizedBox(height: 16),
               _buildSettingItem(
@@ -42,15 +59,17 @@ class SettingsScreen extends StatelessWidget {
                 Icons.grid_view_rounded,
                 'App Preferences',
                 const AppPreferenceScreen(),
+                isDark,
               ),
               const SizedBox(height: 16),
-              _buildGroupedSettings(context),
+              _buildGroupedSettings(context, isDark),
               const SizedBox(height: 16),
               _buildSettingItem(
                 context,
                 Icons.logout_rounded,
                 'Log out',
-                const LogoutScreen(),
+                LogoutScreen(authService: _authService, onLogout: _onLogout),
+                isDark,
               ),
               const SizedBox(height: 40),
             ],
@@ -83,7 +102,7 @@ class SettingsScreen extends StatelessWidget {
                 Container(
                   width: 80,
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white24,
                     shape: BoxShape.circle,
                   ),
@@ -143,6 +162,7 @@ class SettingsScreen extends StatelessWidget {
     IconData icon,
     String title,
     Widget? destination,
+    bool isDark,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -155,11 +175,16 @@ class SettingsScreen extends StatelessWidget {
             : null,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? AppColors.cardDark : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+            border: Border.all(
+              color: isDark
+                  ? AppColors.dividerDark
+                  : Colors.black.withOpacity(0.1),
+              width: 1,
+            ),
           ),
-          child: _buildItemRow(icon, title),
+          child: _buildItemRow(icon, title, isDark: isDark),
         ),
       ),
     );
@@ -170,6 +195,7 @@ class SettingsScreen extends StatelessWidget {
     String title, {
     bool hasDivider = false,
     VoidCallback? onTap,
+    required bool isDark,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -179,21 +205,29 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                Icon(icon, color: Colors.black.withOpacity(0.6), size: 22),
+                Icon(
+                  icon,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : Colors.black.withOpacity(0.6),
+                  size: 22,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black87,
+                      color: isDark ? AppColors.textPrimaryDark : Colors.black87,
                     ),
                   ),
                 ),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: Colors.black.withOpacity(0.3),
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : Colors.black.withOpacity(0.3),
                   size: 16,
                 ),
               ],
@@ -204,27 +238,35 @@ class SettingsScreen extends StatelessWidget {
               height: 1,
               indent: 56,
               endIndent: 20,
-              color: Colors.black.withOpacity(0.1),
+              color: isDark
+                  ? AppColors.dividerDark
+                  : Colors.black.withOpacity(0.1),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildGroupedSettings(BuildContext context) {
+  Widget _buildGroupedSettings(BuildContext context, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.cardDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+          border: Border.all(
+            color: isDark
+                ? AppColors.dividerDark
+                : Colors.black.withOpacity(0.1),
+            width: 1,
+          ),
         ),
         child: Column(
           children: [
             _buildItemRow(
               Icons.security_rounded,
               'Privacy Policy',
+              isDark: isDark,
               hasDivider: true,
               onTap: () => Navigator.push(
                 context,
@@ -236,6 +278,7 @@ class SettingsScreen extends StatelessWidget {
             _buildItemRow(
               Icons.headset_mic_outlined,
               'Help & Support',
+              isDark: isDark,
               hasDivider: true,
               onTap: () => Navigator.push(
                 context,
@@ -247,6 +290,7 @@ class SettingsScreen extends StatelessWidget {
             _buildItemRow(
               Icons.info_outline_rounded,
               'About',
+              isDark: isDark,
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const AboutScreen()),

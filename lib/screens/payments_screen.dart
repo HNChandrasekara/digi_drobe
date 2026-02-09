@@ -13,12 +13,14 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
+            _buildHeader(context, isDark),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -26,56 +28,57 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    _buildOrderSummary(),
-                    const SizedBox(height: 40),
-                    const Text(
+                    _buildOrderSummary(isDark),
+                    const SizedBox(height: 24),
+                    Text(
                       'Payment Method',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildPaymentMethod('PayHere', Icons.payments_rounded),
+                    _buildPaymentMethod('PayHere', Icons.payments_rounded, isDark),
                     const SizedBox(height: 12),
                     _buildPaymentMethod(
                       'PayPal',
                       Icons.account_balance_wallet_outlined,
+                      isDark,
                     ),
                     const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
-            _buildFooter(),
+            _buildFooter(isDark),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: AppColors.textPrimary,
+              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Text(
               'Payments',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
               ),
             ),
           ),
@@ -85,16 +88,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 
-  Widget _buildOrderSummary() {
+  Widget _buildOrderSummary(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(
+          color: isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -104,26 +109,33 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Items (2)',
-                style: TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(
+                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                ),
               ),
               Text(
                 'Rs.40,000.00',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Delivery',
-                style: TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(
+                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                ),
               ),
-              Text(
+              const Text(
                 'Free',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
@@ -132,23 +144,27 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
               ),
             ],
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Divider(),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Divider(color: isDark ? AppColors.dividerDark : null),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Total',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                ),
               ),
-              Text(
+              const Text(
                 'Rs.40,000.00',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF8B1D1D),
+                  color: AppColors.primaryMaroon,
                 ),
               ),
             ],
@@ -158,7 +174,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 
-  Widget _buildPaymentMethod(String title, IconData icon) {
+  Widget _buildPaymentMethod(String title, IconData icon, bool isDark) {
     final bool isSelected = selectedMethod == title;
     return GestureDetector(
       onTap: () => setState(() => selectedMethod = title),
@@ -166,13 +182,13 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF8B1D1D).withOpacity(0.05)
-              : Colors.white,
+              ? AppColors.primaryMaroon.withOpacity(0.05)
+              : (isDark ? AppColors.cardDark : Colors.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFF8B1D1D)
-                : Colors.black.withOpacity(0.05),
+                ? AppColors.primaryMaroon
+                : (isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05)),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -181,8 +197,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
             Icon(
               icon,
               color: isSelected
-                  ? const Color(0xFF8B1D1D)
-                  : Colors.black.withOpacity(0.6),
+                  ? AppColors.primaryMaroon
+                  : (isDark ? AppColors.textSecondaryDark : Colors.black.withOpacity(0.6)),
               size: 24,
             ),
             const SizedBox(width: 16),
@@ -193,15 +209,15 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                   fontSize: 16,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected
-                      ? const Color(0xFF8B1D1D)
-                      : AppColors.textPrimary,
+                      ? AppColors.primaryMaroon
+                      : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimary),
                 ),
               ),
             ),
             if (isSelected)
               const Icon(
                 Icons.check_circle_rounded,
-                color: Color(0xFF8B1D1D),
+                color: AppColors.primaryMaroon,
                 size: 20,
               ),
           ],
@@ -210,13 +226,16 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(bool isDark) {
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.cardDark : Colors.white,
         border: Border(
-          top: BorderSide(color: Colors.black.withOpacity(0.05), width: 1),
+          top: BorderSide(
+            color: isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05),
+            width: 1,
+          ),
         ),
       ),
       child: SizedBox(
@@ -230,7 +249,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF8B1D1D),
+            backgroundColor: AppColors.primaryMaroon,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(27),

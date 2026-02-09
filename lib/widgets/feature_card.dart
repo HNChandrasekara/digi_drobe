@@ -17,14 +17,21 @@ class FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       child: Card(
         elevation: 0,
-        color: Colors.white,
+        color: isDark ? AppColors.cardDark : Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
+          side: BorderSide(
+            color: isDark
+                ? AppColors.dividerDark
+                : Colors.black.withOpacity(0.05),
+            width: 0.5,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -56,7 +63,7 @@ class FeatureCard extends StatelessWidget {
                         title,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
-                              color: AppColors.textPrimary,
+                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -65,7 +72,9 @@ class FeatureCard extends StatelessWidget {
                         Text(
                           subtitle!,
                           style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: AppColors.textSecondary),
+                              ?.copyWith(
+                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                              ),
                         ),
                       ],
                     ],
@@ -73,7 +82,9 @@ class FeatureCard extends StatelessWidget {
                 ),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: AppColors.systemGray2.withOpacity(0.5),
+                  color: isDark
+                      ? AppColors.textSecondaryDark.withOpacity(0.5)
+                      : AppColors.systemGray2.withOpacity(0.5),
                   size: 16,
                 ),
               ],
