@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
-import '../../services/avatar_service.dart';
 import '../../utils/colors.dart';
 import '../../services/auth_service.dart';
 

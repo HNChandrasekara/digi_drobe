@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
+import '../../utils/colors.dart';
 
 class LogoutScreen extends StatelessWidget {
   final AuthService authService;
