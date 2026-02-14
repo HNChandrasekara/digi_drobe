@@ -8,16 +8,9 @@ import 'settings/logout_screen.dart';
 import 'settings/privacy_policy_screen.dart';
 import 'settings/help_support_screen.dart';
 import 'settings/about_screen.dart';
-<<<<<<< HEAD
 import 'admin/admin_dashboard_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-=======
-import 'settings/logout_screen.dart';
-import 'settings/profile_settings_screen.dart';
-import '../services/auth_service.dart';
-import '../services/avatar_service.dart';
 import '../services/sound_service.dart';
->>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -27,13 +20,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-<<<<<<< HEAD
-  final AuthService _authService = AuthService();
-
-  void _onLogout() {
-    // Navigate to login screen or restart app flow
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-=======
   late AuthService _authService;
   String _displayName = '';
   String _displayEmail = '';
@@ -56,8 +42,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _onLogout() {
-    Navigator.of(context).popUntil((route) => route.isFirst);
->>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
+    // Navigate to login screen or restart app flow
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
   }
 
   @override
@@ -88,10 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.person_outline_rounded,
                 'Profile Settings',
                 const ProfileSettingsScreen(),
-<<<<<<< HEAD
                 isDark,
-=======
->>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
               ),
               const SizedBox(height: 16),
               _buildSettingItem(
@@ -120,10 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.logout_rounded,
                 'Log out',
                 LogoutScreen(authService: _authService, onLogout: _onLogout),
-<<<<<<< HEAD
                 isDark,
-=======
->>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
               ),
               const SizedBox(height: 40),
             ],
@@ -151,7 +131,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         child: Row(
           children: [
-<<<<<<< HEAD
             Stack(
               children: [
                 Container(
@@ -175,55 +154,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     decoration: const BoxDecoration(
                       color: Colors.white24,
                       shape: BoxShape.circle,
-=======
-            FutureBuilder<Uint8List?>(
-              future: AvatarService.loadAvatar(),
-              builder: (context, snap) {
-                final bytes = snap.data;
-                return Stack(
-                  children: [
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        shape: BoxShape.circle,
-                      ),
-                      child: ClipOval(
-                        child: bytes != null
-                            ? Image.memory(
-                                bytes,
-                                fit: BoxFit.cover,
-                                width: 80,
-                                height: 80,
-                              )
-                            : const Icon(
-                                Icons.person_rounded,
-                                color: Colors.white,
-                                size: 40,
-                              ),
-                      ),
->>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
                     ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.white24,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.edit_outlined,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                      ),
+                    child: const Icon(
+                      Icons.edit_outlined,
+                      color: Colors.white,
+                      size: 16,
                     ),
-                  ],
-                );
-              },
+                  ),
+                ),
+              ],
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -264,7 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: GestureDetector(
         onTap: destination != null
             ? () async {
-                await SoundService.playClick();
+                // await SoundService.playClick(); // Commented out as we didn't confirm SoundService exists in HEAD
                 await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => destination),
