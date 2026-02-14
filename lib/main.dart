@@ -7,36 +7,41 @@ import 'screens/home_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'services/auth_service.dart';
 import 'utils/colors.dart';
+import 'firebase_options.dart';
+import 'providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  try {
-    // On web, Firebase.initializeApp() requires options if they aren't in index.html.
-    // If we're on web and firebase_options.dart is missing, we skip to avoid assertion errors.
-    if (kIsWeb) {
-      debugPrint(
-        'Web platform detected. Skipping Firebase initialization if unconfigured.',
-      );
-      // Attempting to catch the specific assertion error is hard for bootstrap,
-      // so we rely on the try-catch and developer discretion.
-      await Firebase.initializeApp();
-    } else {
-      await Firebase.initializeApp();
-    }
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
-  }
+  debugPrint('--- APP STARTING (v2 with ThemeProvider) ---');
 
   bool firebaseInitialized = false;
   try {
-    debugPrint('Firebase: Initializing...');
-    await Firebase.initializeApp().timeout(const Duration(seconds: 3));
+    debugPrint('Firebase: Initializing with currentPlatform options...');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    
+    // Connect to emulators if running on localhost (e.g. debug mode)
+    if (kDebugMode) {
+      String host = 'localhost';
+      // Android emulator needs to point to 10.0.2.2 to access the host machine's localhost
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+        host = '10.0.2.2';
+      }
+      try {
+        await FirebaseAuth.instance.useAuthEmulator(host, 9099);
+        debugPrint('Firebase: Connected to Auth Emulator at $host:9099');
+      } catch (e) {
+        debugPrint('Firebase: Auth Emulator connection failed: $e');
+      }
+    }
+
     AuthService.markInitialized();
     firebaseInitialized = true;
     debugPrint('Firebase: Success');
   } catch (e) {
-    debugPrint('Firebase: Failed/Timeout (using fallback): $e');
+    debugPrint('Firebase: Initialization total failure: $e');
   }
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -51,7 +56,14 @@ void main() async {
     debugPrint('Caught Flutter error: ${details.exception}');
   };
 
-  runApp(MyApp(firebaseInitialized: firebaseInitialized));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: MyApp(firebaseInitialized: firebaseInitialized),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

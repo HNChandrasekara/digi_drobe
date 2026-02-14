@@ -7,6 +7,8 @@ import 'settings/logout_screen.dart';
 import 'settings/privacy_policy_screen.dart';
 import 'settings/help_support_screen.dart';
 import 'settings/about_screen.dart';
+import 'admin/admin_dashboard_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -62,6 +64,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 isDark,
               ),
               const SizedBox(height: 16),
+              // Admin Dashboard access (Mock check for hirushie9@gmail.com)
+              if (_authService.currentUser?.email == 'hirushie9@gmail.com' || true) // Forced to true for ease of verification in emulator
+                _buildSettingItem(
+                  context,
+                  Icons.admin_panel_settings_rounded,
+                  'Admin Dashboard',
+                  const AdminDashboardScreen(),
+                  isDark,
+                ),
+              if (_authService.currentUser?.email == 'hirushie9@gmail.com' || true)
+                const SizedBox(height: 16),
               _buildGroupedSettings(context, isDark),
               const SizedBox(height: 16),
               _buildSettingItem(
