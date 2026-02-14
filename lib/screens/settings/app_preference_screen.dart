@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../utils/colors.dart';
 import 'package:provider/provider.dart';
 import '../../providers/theme_provider.dart';
@@ -305,7 +306,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 48), // Spacer for centering
+          const SizedBox(width: 48),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import '../utils/colors.dart';
 import '../services/auth_service.dart';
 import 'settings/profile_settings_screen.dart';
@@ -7,8 +8,16 @@ import 'settings/logout_screen.dart';
 import 'settings/privacy_policy_screen.dart';
 import 'settings/help_support_screen.dart';
 import 'settings/about_screen.dart';
+<<<<<<< HEAD
 import 'admin/admin_dashboard_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+=======
+import 'settings/logout_screen.dart';
+import 'settings/profile_settings_screen.dart';
+import '../services/auth_service.dart';
+import '../services/avatar_service.dart';
+import '../services/sound_service.dart';
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -18,11 +27,37 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+<<<<<<< HEAD
   final AuthService _authService = AuthService();
 
   void _onLogout() {
     // Navigate to login screen or restart app flow
     Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+=======
+  late AuthService _authService;
+  String _displayName = '';
+  String _displayEmail = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = AuthService();
+    _loadUserDetails();
+  }
+
+  Future<void> _loadUserDetails() async {
+    final currentUser = _authService.currentUser;
+    if (currentUser != null) {
+      setState(() {
+        _displayName = currentUser.displayName ?? '';
+        _displayEmail = currentUser.email ?? '';
+      });
+    }
+  }
+
+  void _onLogout() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
   }
 
   @override
@@ -46,14 +81,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              _buildProfileCard(),
+              _buildProfileCard(_displayName, _displayEmail),
               const SizedBox(height: 30),
               _buildSettingItem(
                 context,
                 Icons.person_outline_rounded,
                 'Profile Settings',
                 const ProfileSettingsScreen(),
+<<<<<<< HEAD
                 isDark,
+=======
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
               ),
               const SizedBox(height: 16),
               _buildSettingItem(
@@ -82,7 +120,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Icons.logout_rounded,
                 'Log out',
                 LogoutScreen(authService: _authService, onLogout: _onLogout),
+<<<<<<< HEAD
                 isDark,
+=======
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
               ),
               const SizedBox(height: 40),
             ],
@@ -92,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildProfileCard() {
+  Widget _buildProfileCard(String displayName, String displayEmail) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -110,6 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         child: Row(
           children: [
+<<<<<<< HEAD
             Stack(
               children: [
                 Container(
@@ -133,33 +175,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     decoration: const BoxDecoration(
                       color: Colors.white24,
                       shape: BoxShape.circle,
+=======
+            FutureBuilder<Uint8List?>(
+              future: AvatarService.loadAvatar(),
+              builder: (context, snap) {
+                final bytes = snap.data;
+                return Stack(
+                  children: [
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: bytes != null
+                            ? Image.memory(
+                                bytes,
+                                fit: BoxFit.cover,
+                                width: 80,
+                                height: 80,
+                              )
+                            : const Icon(
+                                Icons.person_rounded,
+                                color: Colors.white,
+                                size: 40,
+                              ),
+                      ),
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
                     ),
-                    child: const Icon(
-                      Icons.edit_outlined,
-                      color: Colors.white,
-                      size: 16,
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.white24,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.edit_outlined,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
             ),
             const SizedBox(width: 20),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'DigiDrobe',
-                    style: TextStyle(
+                    displayName,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'hirushie9@gmail.com',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    displayEmail,
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
@@ -181,10 +263,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
         onTap: destination != null
-            ? () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => destination),
-              )
+            ? () async {
+                await SoundService.playClick();
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => destination),
+                );
+                // If we returned from Profile Settings, reload user details
+                if (destination is ProfileSettingsScreen) {
+                  await _loadUserDetails();
+                }
+              }
             : null,
         child: Container(
           decoration: BoxDecoration(

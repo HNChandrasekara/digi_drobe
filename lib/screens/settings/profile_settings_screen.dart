@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
+<<<<<<< HEAD
+=======
+import '../../services/avatar_service.dart';
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
 import '../../utils/colors.dart';
 import '../../services/auth_service.dart';
 
@@ -81,6 +85,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
@@ -89,6 +94,14 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         child: Column(
           children: [
             _buildHeader(context, isDark),
+=======
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -102,10 +115,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       Center(
                         child: Text(
                           _nameController.text,
+<<<<<<< HEAD
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
                             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+=======
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
                           ),
                         ),
                       ),
@@ -249,26 +269,43 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildHeader(BuildContext context, bool isDark) {
+=======
+  Widget _buildHeader(BuildContext context) {
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Row(
         children: [
           IconButton(
             onPressed: () => Navigator.pop(context),
+<<<<<<< HEAD
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
               color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
             ),
           ),
           Expanded(
+=======
+            icon: const Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF1A1A3A),
+            ),
+          ),
+          const Expanded(
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
             child: Text(
               'Profile Settings',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
+<<<<<<< HEAD
                 color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+=======
+                color: Color(0xFF1A1A3A),
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
               ),
             ),
           ),
@@ -280,6 +317,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   Widget _buildProfileAvatar() {
     return Center(
+<<<<<<< HEAD
       child: Stack(
         children: [
           Container(
@@ -318,22 +356,84 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               ),
             ),
         ],
+=======
+      child: FutureBuilder<Uint8List?>(
+        future: AvatarService.loadAvatar(),
+        builder: (context, snap) {
+          final bytes = snap.data;
+          return Stack(
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryMaroon.withOpacity(0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child: bytes != null
+                      ? Image.memory(
+                          bytes,
+                          fit: BoxFit.cover,
+                          width: 120,
+                          height: 120,
+                        )
+                      : const Icon(
+                          Icons.person_rounded,
+                          size: 60,
+                          color: AppColors.primaryMaroon,
+                        ),
+                ),
+              ),
+              if (_isEditing)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: _pickAndSaveAvatar,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(
+                        color: AppColors.primaryMaroon,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.camera_alt_rounded,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
       ),
     );
   }
 
   Future<void> _pickAndSaveAvatar() async {
+<<<<<<< HEAD
     // Mock pick and save avatar since AvatarService is missing
+=======
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         withData: true,
       );
       if (result == null) return;
+<<<<<<< HEAD
       // In a real app, we would save this to the AvatarService
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Avatar selected (Mock mode)')),
       );
+=======
+      final bytes = result.files.first.bytes;
+      if (bytes == null) return;
+      await AvatarService.saveAvatar(Uint8List.fromList(bytes));
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
       setState(() {});
     } catch (e) {
       ScaffoldMessenger.of(
@@ -349,23 +449,34 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     bool enabled = true,
     String? hint,
   }) {
+<<<<<<< HEAD
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
+=======
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
+<<<<<<< HEAD
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+=======
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
           ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
           enabled: enabled,
+<<<<<<< HEAD
           style: TextStyle(
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
           ),
@@ -401,6 +512,25 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             fillColor: !enabled
                 ? (isDark ? AppColors.surfaceDark : Colors.grey.withOpacity(0.05))
                 : (isDark ? AppColors.cardDark : Colors.white),
+=======
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: Icon(icon, color: AppColors.primaryMaroon),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Colors.grey),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.3)),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+            ),
+            filled: !enabled,
+            fillColor: !enabled ? Colors.grey.withOpacity(0.05) : Colors.white,
+>>>>>>> 09c3eded5701c01428880b6acdeff424d436ba2e
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
