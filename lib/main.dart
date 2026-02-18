@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -32,9 +34,11 @@ void main() async {
       }
       try {
         await FirebaseAuth.instance.useAuthEmulator(host, 9099);
-        debugPrint('Firebase: Connected to Auth Emulator at $host:9099');
+        FirebaseFirestore.instance.useFirestoreEmulator(host, 8081);
+        await FirebaseStorage.instance.useStorageEmulator(host, 9199);
+        debugPrint('Firebase: Connected to Emulators at $host (Auth:9099, Firestore:8081, Storage:9199)');
       } catch (e) {
-        debugPrint('Firebase: Auth Emulator connection failed: $e');
+        debugPrint('Firebase: Emulator connection failed: $e');
       }
     }
 
