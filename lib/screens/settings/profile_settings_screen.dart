@@ -318,12 +318,18 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Future<void> _pickAndSaveAvatar() async {
+    // Mock pick and save avatar since AvatarService is missing
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         withData: true,
       );
       if (result == null) return;
+      // In a real app, we would save this to the AvatarService
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Avatar selected (Mock mode)')),
+      );
+      setState(() {});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Avatar selected (Mock mode only)')),

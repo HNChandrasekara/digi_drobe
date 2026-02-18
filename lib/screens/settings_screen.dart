@@ -203,6 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: GestureDetector(
         onTap: destination != null
             ? () async {
+                // await SoundService.playClick(); // Commented out as we didn't confirm SoundService exists in HEAD
                 // await SoundService.playClick();
                 await Navigator.push(
                   context,

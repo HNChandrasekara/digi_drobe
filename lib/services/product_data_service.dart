@@ -10,6 +10,7 @@ class ProductDataService {
           'High-quality 100% cotton polo shirt in classic white. Perfect for casual and semi-formal occasions. Features a comfortable fit and breathable fabric.',
       category: 'Tops',
       brand: 'ThreadCraft',
+      model3dUrl: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
     ),
     Product(
       id: '2',

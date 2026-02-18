@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import '../models/product.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -31,13 +32,22 @@ class ProductDetailsScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(color: AppColors.systemGray6),
-                child: const Center(
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    color: AppColors.systemGray,
-                    size: 80,
-                  ),
-                ),
+                child: product.model3dUrl != null
+                    ? ModelViewer(
+                        src: product.model3dUrl!,
+                        alt: 'A 3D model of ${product.title}',
+                        ar: true,
+                        autoRotate: true,
+                        cameraControls: true,
+                        backgroundColor: AppColors.systemGray6,
+                      )
+                    : const Center(
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: AppColors.systemGray,
+                          size: 80,
+                        ),
+                      ),
               ),
             ),
           ),
