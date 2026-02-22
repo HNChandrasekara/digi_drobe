@@ -12,7 +12,6 @@ class AppPreferenceScreen extends StatefulWidget {
 }
 
 class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
-  bool _soundEnabled = true;
   bool _notificationsEnabled = true;
   String _selectedLanguage = 'English (US)';
   final List<String> _languages = ['English (US)', 'Sinhala', 'Tamil'];
@@ -123,18 +122,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
         ),
         child: Column(
           children: [
-            _buildToggleItem(
-              icon: Icons.volume_up_outlined,
-              title: 'Sound',
-              value: _soundEnabled,
-              isDark: isDark,
-              onChanged: (value) {
-                setState(() {
-                  _soundEnabled = value;
-                });
-              },
-              hasDivider: true,
-            ),
+
             _buildToggleItem(
               icon: Icons.notifications_none_rounded,
               title: 'Notifications',
