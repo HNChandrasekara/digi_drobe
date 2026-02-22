@@ -38,8 +38,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       setState(() {
         _nameController.text = user.displayName ?? 'User';
         _emailController.text = user.email ?? '';
-        // Phone is not available in Firebase Auth by default
-        _phoneController.text = '';
+        _phoneController.text = ''; // Phone not avail in generic firebase auth user
       });
     }
   }
@@ -49,33 +48,29 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-        // Update display name
         if (_nameController.text.isNotEmpty &&
             _nameController.text != user.displayName) {
           await user.updateDisplayName(_nameController.text);
         }
-
-        // Refresh user data
         await user.reload();
-
         setState(() {
           _isEditing = false;
           _successMessage = 'Profile updated successfully!';
         });
-
-        // Clear message after 2 seconds
         await Future.delayed(const Duration(seconds: 2));
-        setState(() => _successMessage = '');
+        if (mounted) setState(() => _successMessage = '');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update profile: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update profile: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -335,10 +330,17 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         const SnackBar(content: Text('Avatar selected (Mock mode)')),
       );
       setState(() {});
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Avatar selected (Mock mode only)')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to pick image: $e')),
+        );
+      }
     }
   }
 
