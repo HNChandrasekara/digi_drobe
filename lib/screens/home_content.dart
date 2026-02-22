@@ -8,6 +8,7 @@ import '../services/product_data_service.dart';
 import '../models/product.dart';
 import 'style_bot_screen.dart';
 import 'product_details_screen.dart';
+import 'virtual_fitting_room_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -155,10 +156,9 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Try on clothes digitally',
           icon: Icons.accessibility_new_rounded,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Virtual Fitting Room coming soon!'),
-              ),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
             );
           },
         ),

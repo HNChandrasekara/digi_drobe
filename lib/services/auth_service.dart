@@ -5,13 +5,14 @@ import 'email_service.dart';
 // import 'avatar_service.dart';
 
 class AuthService {
-  static bool _initialized = false;
-  static void markInitialized() => _initialized = true;
-
   bool get _isFirebaseInitialized => Firebase.apps.isNotEmpty;
 
+  static void markInitialized() {
+    // Left empty for backwards compatibility. Remove if not used elsewhere.
+  }
+
   FirebaseAuth get _auth {
-    if (!_initialized) {
+    if (!_isFirebaseInitialized) {
       throw Exception('Firebase not initialized');
     }
     return FirebaseAuth.instance;
