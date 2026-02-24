@@ -11,7 +11,7 @@ class AuthService {
   bool get _isFirebaseInitialized => Firebase.apps.isNotEmpty;
 
   FirebaseAuth get _auth {
-    if (!_initialized) {
+    if (!_isFirebaseInitialized) {
       throw Exception('Firebase not initialized');
     }
     return FirebaseAuth.instance;
