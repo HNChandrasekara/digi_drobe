@@ -12,25 +12,26 @@ import 'services/auth_service.dart';
 import 'utils/colors.dart';
 import 'firebase_options.dart';
 import 'providers/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'providers/product_provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  debugPrint('--- APP STARTING (v2 with ThemeProvider) ---');
+  debugPrint('--- APP STARTING ---');
 
   bool firebaseInitialized = false;
   try {
-    debugPrint('Firebase: Initializing with currentPlatform options...');
+    debugPrint('Firebase: Initializing...');
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
     }
-    
-    // Connect to emulators if running on localhost (e.g. debug mode)
+
+    // Connect to emulators if running in debug mode (local development)
     if (kDebugMode) {
       String host = 'localhost';
-      // Android emulator needs to point to 10.0.2.2 to access the host machine's localhost
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         host = '10.0.2.2';
       }
@@ -38,17 +39,17 @@ void main() async {
         await FirebaseAuth.instance.useAuthEmulator(host, 9099);
         FirebaseFirestore.instance.useFirestoreEmulator(host, 8081);
         await FirebaseStorage.instance.useStorageEmulator(host, 9199);
-        debugPrint('Firebase: Connected to Emulators at $host (Auth:9099, Firestore:8081, Storage:9199)');
+        debugPrint('Firebase: Connected to Emulators at $host');
       } catch (e) {
-        debugPrint('Firebase: Emulator connection failed: $e');
+        debugPrint('Firebase: Emulator connection failed (already connected?): $e');
       }
     }
 
     AuthService.markInitialized();
     firebaseInitialized = true;
-    debugPrint('Firebase: Success');
+    debugPrint('Firebase: Initialized successfully');
   } catch (e) {
-    debugPrint('Firebase: Initialization total failure: $e');
+    debugPrint('Firebase: Initialization failure: $e');
   }
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -67,6 +68,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: MyApp(firebaseInitialized: firebaseInitialized),
     ),
@@ -86,9 +90,7 @@ class MyApp extends StatelessWidget {
           title: 'Digi Drobe',
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
-          themeMode: themeProvider.isDarkMode
-              ? ThemeMode.dark
-              : ThemeMode.light,
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           builder: (context, child) {
             return Stack(
               children: [
@@ -98,7 +100,7 @@ class MyApp extends StatelessWidget {
                     child: child,
                   ),
                 ),
-                if (Firebase.apps.isEmpty)
+                if (!firebaseInitialized)
                   Positioned(
                     bottom: 0,
                     left: 0,

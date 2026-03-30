@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+import '../models/user_profile.dart';
+import 'user_profile_service.dart';
+import 'community_service.dart';
 import 'email_service.dart';
-// import 'avatar_service.dart';
 
 class AuthService {
   static bool _initialized = false;
@@ -17,19 +19,46 @@ class AuthService {
     return FirebaseAuth.instance;
   }
 
-  // Sign Up
+  // Sign Up — also creates a Firestore UserProfile
   Future<UserCredential?> signUpWithEmailPassword(
     String email,
-    String password,
-  ) async {
+    String password, {
+    String displayName = '',
+  }) async {
     if (!_isFirebaseInitialized) {
       debugPrint('Mock Sign Up: $email');
-      return null; // Return null or mock data in mock mode
+      return null;
     }
     try {
-      final UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-      return userCredential;
+      final UserCredential cred = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // Set display name on FirebaseAuth user
+      if (displayName.isNotEmpty) {
+        await cred.user?.updateDisplayName(displayName);
+        await cred.user?.reload();
+      }
+      // Create Firestore profile
+      if (cred.user != null) {
+        final profile = UserProfile(
+          uid: cred.user!.uid,
+          displayName: displayName.isNotEmpty ? displayName : email.split('@').first,
+          email: email,
+          role: 'user',
+          createdAt: DateTime.now(),
+        );
+        // Make hirushie9@gmail.com admin
+        if (email.toLowerCase() == 'hirushie9@gmail.com') {
+          profile.role = 'admin';
+        }
+        await UserProfileService().createProfile(profile);
+      }
+      // Seed community channels if first run
+      try {
+        await CommunityService().seedChannelsIfEmpty();
+      } catch (_) {}
+      return cred;
     } on FirebaseAuthException catch (e) {
       throw e.message ?? 'An unknown error occurred';
     }
@@ -47,6 +76,25 @@ class AuthService {
     try {
       final UserCredential userCredential = await _auth
           .signInWithEmailAndPassword(email: email, password: password);
+      // Ensure Firestore profile exists (for users created before this update)
+      if (userCredential.user != null) {
+        final uid = userCredential.user!.uid;
+        final existing = await UserProfileService().getProfile(uid);
+        if (existing == null) {
+          final profile = UserProfile(
+            uid: uid,
+            displayName: userCredential.user!.displayName ?? email.split('@').first,
+            email: email,
+            role: email.toLowerCase() == 'hirushie9@gmail.com' ? 'admin' : 'user',
+            createdAt: DateTime.now(),
+          );
+          await UserProfileService().createProfile(profile);
+        }
+        // Seed community channels if needed on sign-in
+        try {
+          await CommunityService().seedChannelsIfEmpty();
+        } catch (_) {}
+      }
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw e.message ?? 'An unknown error occurred';
@@ -61,10 +109,6 @@ class AuthService {
       } else {
         await _auth.signOut();
       }
-      
-      // Clear local user data
-      // await AvatarService.clearAvatar();
-      
       debugPrint('Logout: All user data cleared successfully.');
     } catch (e) {
       debugPrint('Logout Error: $e');
@@ -75,25 +119,19 @@ class AuthService {
   // Password Reset
   Future<void> sendPasswordResetEmail(String email) async {
     if (!_isFirebaseInitialized) {
-      // Use custom email service for web/non-Firebase environments
       debugPrint('Using Email Service for password reset: $email');
-
-      // Generate a reset token (in production, generate and store securely)
       final resetToken = _generateResetToken();
       final resetLink =
           'https://digi-drobe.com/reset-password?token=$resetToken&email=$email';
-
       final success = await EmailService.sendPasswordResetEmail(
         recipientEmail: email,
         resetLink: resetLink,
       );
-
       if (!success) {
         throw 'Failed to send password reset email. Please try again.';
       }
       return;
     }
-
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
@@ -101,7 +139,6 @@ class AuthService {
     }
   }
 
-  // Generate a simple reset token (in production, use secure token generation)
   static String _generateResetToken() {
     const chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz0123456789';
@@ -115,7 +152,7 @@ class AuthService {
   // User Stream
   Stream<User?> get authStateChanges {
     if (!_isFirebaseInitialized) {
-      return Stream.value(null); // Fallback stream for mock mode
+      return Stream.value(null);
     }
     return _auth.authStateChanges();
   }

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/colors.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
-import '../services/product_data_service.dart';
 import '../models/product.dart';
+import '../providers/product_provider.dart';
+import '../providers/user_provider.dart';
 import 'style_bot_screen.dart';
 import 'product_details_screen.dart';
 
@@ -21,37 +23,20 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   bool _showFeed = true;
-  late List<Product> _allItems;
-  late List<Product> _filteredItems;
-
-  @override
-  void initState() {
-    super.initState();
-    _allItems = ProductDataService.getAllProducts();
-    _filteredItems = _allItems;
-  }
-
-  void _filterSearchResults(String query) {
-    if (query.isEmpty) {
-      setState(() {
-        _filteredItems = _allItems;
-      });
-      return;
-    }
-    setState(() {
-      _filteredItems = ProductDataService.searchProducts(query);
-    });
-  }
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final userName = context.watch<UserProvider>().displayName;
+
     return SafeArea(
       child: Column(
         children: [
-          CustomHeader(userName: 'Hirushie', onProfileTap: widget.onProfileTap),
-          DigiSearchBar(onChanged: _filterSearchResults),
+          CustomHeader(userName: userName, onProfileTap: widget.onProfileTap),
+          DigiSearchBar(
+            onChanged: (q) => setState(() => _searchQuery = q),
+          ),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
@@ -61,9 +46,11 @@ class _HomeContentState extends State<HomeContent> {
                   child: Text(
                     'Your Favourite Virtual Wardrobe',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                    ),
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                 ),
                 GestureDetector(
@@ -71,11 +58,15 @@ class _HomeContentState extends State<HomeContent> {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.cardDark : AppColors.systemGray6,
+                      color: isDark
+                          ? AppColors.cardDark
+                          : AppColors.systemGray6,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      _showFeed ? Icons.grid_view_rounded : Icons.list_rounded,
+                      _showFeed
+                          ? Icons.grid_view_rounded
+                          : Icons.list_rounded,
                       size: 20,
                       color: AppColors.primaryMaroon,
                     ),
@@ -98,40 +89,66 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildProductFeed(bool isDark) {
-    return _filteredItems.isEmpty
-        ? Center(
+    return Consumer<ProductProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (provider.error != null) {
+          return Center(
+            child: Text(
+              'Error loading products: ${provider.error}',
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
+            ),
+          );
+        }
+        final items = provider.search(_searchQuery);
+        if (items.isEmpty) {
+          return Center(
             child: Text(
               'No items found',
               style: TextStyle(
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
               ),
             ),
-          )
-        : GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: _filteredItems.length,
-            itemBuilder: (context, index) {
-              final product = _filteredItems[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ProductDetailsScreen(product: product),
-                    ),
-                  );
-                },
-                child: ProductCard(title: product.title, imageUrl: ''),
-              );
-            },
           );
+        }
+        return GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final product = items[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProductDetailsScreen(product: product),
+                  ),
+                );
+              },
+              child: ProductCard(
+                title: product.title,
+                imageUrl: product.imageUrl ?? '',
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildFeatureNavigation() {
