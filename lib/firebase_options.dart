@@ -50,11 +50,11 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDummyKey-ForLocalhost',
-    appId: '1:1234567890:android:abcdef123456',
-    messagingSenderId: '1234567890',
-    projectId: 'digi-drobe-local',
-    storageBucket: 'digi-drobe-local.appspot.com',
+    apiKey: 'AIzaSyAEa-SRpI4BqCVfQyfsYKFR4yicKwADCIk',
+    appId: '1:430204452665:android:b11405fd1da992549272e8',
+    messagingSenderId: '430204452665',
+    projectId: 'digidrobe-f0de3',
+    storageBucket: 'digidrobe-f0de3.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

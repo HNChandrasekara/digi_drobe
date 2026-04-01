@@ -11,6 +11,7 @@ import 'settings/about_screen.dart';
 import 'admin/admin_dashboard_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/sound_service.dart';
+import 'auth/login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -42,8 +43,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _onLogout() {
-    // Navigate to login screen or restart app flow
-    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+    // Navigate back to the login screen and clear the navigation stack.
+    // This works correctly for both the Mock Mode flow and real Firebase.
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
+    );
   }
 
   @override

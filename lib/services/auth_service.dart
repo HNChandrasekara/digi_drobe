@@ -5,6 +5,7 @@ import '../models/user_profile.dart';
 import 'user_profile_service.dart';
 import 'community_service.dart';
 import 'email_service.dart';
+import '../firebase_options.dart';
 
 class AuthService {
   static bool _initialized = false;
@@ -19,14 +20,34 @@ class AuthService {
     return FirebaseAuth.instance;
   }
 
+  // Detect if we're using dummy configuration (Mock Mode)
+  bool get isMockMode => _isMockMode;
+
+  bool get _isMockMode {
+    debugPrint('AuthService: Checking mock mode... Initialized: ${_isFirebaseInitialized}');
+    if (!_isFirebaseInitialized) return true;
+    try {
+      final options = DefaultFirebaseOptions.currentPlatform;
+      final apiKey = options.apiKey;
+      final projectId = options.projectId;
+      final isDummy = apiKey.contains('Dummy') || projectId.contains('-local');
+      debugPrint('AuthService: Config Check -> dummy=$isDummy, project=$projectId');
+      return isDummy;
+    } catch (e) {
+      debugPrint('AuthService: Config access failed, defaulting to mock mode. Error: $e');
+      return true; // Default to mock if configuration access fails on Web
+    }
+  }
+
   // Sign Up — also creates a Firestore UserProfile
   Future<UserCredential?> signUpWithEmailPassword(
     String email,
     String password, {
     String displayName = '',
   }) async {
-    if (!_isFirebaseInitialized) {
-      debugPrint('Mock Sign Up: $email');
+    if (_isMockMode) {
+      debugPrint('Mock Sign Up (Enabled): $email');
+      // Create a mock credential for the flow
       return null;
     }
     try {
@@ -60,7 +81,9 @@ class AuthService {
       } catch (_) {}
       return cred;
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? 'An unknown error occurred';
+      throw e.message ?? 'Auth Error: ${e.code}';
+    } catch (e) {
+      throw 'Sign Up failed: [${e.runtimeType}] $e';
     }
   }
 
@@ -69,8 +92,13 @@ class AuthService {
     String email,
     String password,
   ) async {
-    if (!_isFirebaseInitialized) {
-      debugPrint('Mock Sign In: $email');
+    // Explicit bypass for requested development account OR general Mock Mode detection
+    final isMock = _isMockMode;
+    final isSpecificUser = email.toLowerCase() == 'digidrobe88@gmail.com';
+    debugPrint('AuthService: Sign In attempt -> email=$email, mock=$isMock, bypass=$isSpecificUser');
+    
+    if (isMock || isSpecificUser) {
+      debugPrint('AuthService: Entering Mock Mode for $email');
       return null;
     }
     try {
@@ -97,7 +125,10 @@ class AuthService {
       }
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      throw e.message ?? 'An unknown error occurred';
+      throw e.message ?? 'Auth Error: ${e.code}';
+    } catch (e) {
+      // Catch any other runtime error and report the type
+      throw 'Sign In failed: [${e.runtimeType}] $e';
     }
   }
 

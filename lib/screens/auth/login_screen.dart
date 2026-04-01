@@ -168,9 +168,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                   );
                                 } catch (e) {
                                   if (!context.mounted) return;
+                                  debugPrint('Login Error details: $e');
+                                  String errorMsg = e.toString();
+                                  if (errorMsg.startsWith('Exception: ')) {
+                                    errorMsg = errorMsg.replaceFirst('Exception: ', '');
+                                  }
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content: Text('Login Failed: $e')),
+                                        content: Text('Login Failed: [${e.runtimeType}] $errorMsg')),
                                   );
                                 } finally {
                                   if (mounted) {

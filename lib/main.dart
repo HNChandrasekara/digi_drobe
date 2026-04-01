@@ -21,6 +21,7 @@ void main() async {
   debugPrint('--- APP STARTING ---');
 
   bool firebaseInitialized = false;
+  String? firebaseInitError;
   try {
     debugPrint('Firebase: Initializing...');
     if (Firebase.apps.isEmpty) {
@@ -29,8 +30,9 @@ void main() async {
       );
     }
 
-    // Connect to emulators if running in debug mode (local development)
-    if (kDebugMode) {
+    // Connect to emulators if enabled (local development)
+    const bool useEmulators = false;
+    if (kDebugMode && useEmulators) {
       String host = 'localhost';
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         host = '10.0.2.2';
@@ -47,8 +49,9 @@ void main() async {
 
     AuthService.markInitialized();
     firebaseInitialized = true;
-    debugPrint('Firebase: Initialized successfully');
+    debugPrint('Firebase: Initialized successfully with project: ${DefaultFirebaseOptions.currentPlatform.projectId}');
   } catch (e) {
+    firebaseInitError = e.toString();
     debugPrint('Firebase: Initialization failure: $e');
   }
 
@@ -72,14 +75,18 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: MyApp(firebaseInitialized: firebaseInitialized),
+      child: MyApp(
+        firebaseInitialized: firebaseInitialized,
+        firebaseInitError: firebaseInitError,
+      ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
   final bool firebaseInitialized;
-  const MyApp({super.key, required this.firebaseInitialized});
+  final String? firebaseInitError;
+  const MyApp({super.key, required this.firebaseInitialized, this.firebaseInitError});
 
   @override
   Widget build(BuildContext context) {
@@ -100,19 +107,19 @@ class MyApp extends StatelessWidget {
                     child: child,
                   ),
                 ),
-                if (!firebaseInitialized)
+                if (AuthService().isMockMode)
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
                     child: Material(
                       color: Colors.orange.withOpacity(0.8),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          'Preview Mode: Firebase Not Configured',
+                          'Mock Mode: Firebase Not Configured (Using Dummy Keys)',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: const TextStyle(color: Colors.white, fontSize: 10),
                         ),
                       ),
                     ),
