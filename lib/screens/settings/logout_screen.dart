@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
 import '../../utils/colors.dart';
+import '../auth/login_screen.dart';
 
 class LogoutScreen extends StatelessWidget {
   final AuthService authService;
@@ -43,14 +44,13 @@ class LogoutScreen extends StatelessWidget {
                     try {
                       // Sign out via AuthService (handles Firebase and local cleanup)
                       await authService.signOut();
-                      onLogout();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Logged out successfully'),
-                          ),
-                        );
-                      }
+                      
+                      if (!context.mounted) return;
+                      
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        (route) => false,
+                      );
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
