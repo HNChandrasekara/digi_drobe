@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../utils/colors.dart';
+import '../../services/auth_service.dart';
+import '../auth/login_screen.dart';
 
 class LogoutScreen extends StatelessWidget {
   const LogoutScreen({super.key});
@@ -25,9 +27,15 @@ class LogoutScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildButton('Yes', const Color(0xFF8B1D1D), Colors.white, () {
-                  // Handle logout
-                  Navigator.pop(context);
+                _buildButton('Yes', const Color(0xFF8B1D1D), Colors.white, () async {
+                  await AuthService().signOut();
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
                 }),
                 const SizedBox(width: 20),
                 _buildButton('Cancel', Colors.white, const Color(0xFF8B1D1D), () {
@@ -70,22 +78,25 @@ class LogoutScreen extends StatelessWidget {
 
   Widget _buildButton(String text, Color bgColor, Color textColor, VoidCallback onPressed, {bool hasBorder = false}) {
     return SizedBox(
-      width: 100,
-      height: 48,
+      width: 140,
+      height: 52,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor,
           foregroundColor: textColor,
           elevation: 0,
-          side: hasBorder ? BorderSide(color: textColor, width: 1) : null,
+          side: hasBorder ? BorderSide(color: textColor, width: 1.5) : null,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
         child: Text(
           text,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
       ),
     );
