@@ -10,6 +10,7 @@ import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
 import 'style_bot_screen.dart';
 import 'product_details_screen.dart';
+import 'coming_soon_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -156,9 +157,9 @@ class _HomeContentState extends State<HomeContent> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       children: [
         FeatureCard(
-          title: 'My Cart',
-          subtitle: 'View and checkout your items',
-          icon: Icons.shopping_cart_rounded,
+          title: 'My Wardrobe',
+          subtitle: 'View and organize your clothes',
+          icon: Icons.checkroom_rounded,
           onTap: () => widget.onTabChange(3),
         ),
         FeatureCard(
@@ -172,9 +173,14 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Try on clothes digitally',
           icon: Icons.accessibility_new_rounded,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Virtual Fitting Room coming soon!'),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ComingSoonScreen(
+                  title: 'Virtual Fitting Room',
+                  subtitle: 'This feature will let you virtually try on your clothes to craft the perfect outfit. Stay tuned!',
+                  icon: Icons.accessibility_new_rounded,
+                ),
               ),
             );
           },
@@ -184,8 +190,15 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Buy and sell pre-loved items',
           icon: Icons.store_rounded,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Thrift Store coming soon!')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ComingSoonScreen(
+                  title: 'Thrift Store',
+                  subtitle: 'Get ready to buy and sell pre-loved fashion pieces with other style enthusiasts.',
+                  icon: Icons.store_rounded,
+                ),
+              ),
             );
           },
         ),
@@ -194,8 +207,15 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'What we aim to achieve',
           icon: Icons.flag_rounded,
           onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Goals feature coming soon!')),
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ComingSoonScreen(
+                  title: 'App Goals',
+                  subtitle: 'We are working on bringing sustainable fashion goals tracking here. Check back later!',
+                  icon: Icons.flag_rounded,
+                ),
+              ),
             );
           },
         ),

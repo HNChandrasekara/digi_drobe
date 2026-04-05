@@ -47,9 +47,9 @@ class DigiBottomNav extends StatelessWidget {
             label: 'Calendar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart_rounded),
-            label: 'Cart',
+            icon: Icon(Icons.checkroom_outlined),
+            activeIcon: Icon(Icons.checkroom_rounded),
+            label: 'Wardrobe',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
