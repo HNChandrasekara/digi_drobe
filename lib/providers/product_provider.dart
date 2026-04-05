@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product.dart';
 import '../services/product_service.dart';
 
@@ -23,8 +24,20 @@ class ProductProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      // Seed products if Firestore is empty (first run)
-      await _service.seedProductsIfEmpty();
+      final dummyTitles = [
+        'Premium Cotton Polo Shirt',
+        'Elegant Maroon Heels',
+        'Designer Leather Handbag',
+        'Classic Blue Denim Jeans',
+        'Floral Summer Dress',
+        'White Casual Sneakers'
+      ];
+      final snap = await FirebaseFirestore.instance.collection('products').get();
+      for (var doc in snap.docs) {
+        if (dummyTitles.contains((doc.data())['title'])) {
+          await doc.reference.delete();
+        }
+      }
     } catch (e) {
       debugPrint('ProductProvider: seed error: $e');
     }

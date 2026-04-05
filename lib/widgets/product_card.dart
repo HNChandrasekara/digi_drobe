@@ -32,13 +32,30 @@ class ProductCard extends StatelessWidget {
                 color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              child: Center(
-                child: Icon(
-                  Icons.image_not_supported_outlined,
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
-                  size: 40,
-                ),
-              ),
+              child: imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                          size: 40,
+                        ),
+                      ),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    )
+                  : Center(
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                        size: 40,
+                      ),
+                    ),
             ),
           ),
           Padding(
