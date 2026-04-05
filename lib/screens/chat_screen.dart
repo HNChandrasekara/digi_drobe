@@ -1,30 +1,97 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../utils/colors.dart';
-import '../widgets/custom_header.dart';
+import '../models/chat_message.dart';
+import '../services/community_service.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
+  final String channelId;
   final String channelName;
 
-  const ChatScreen({super.key, required this.channelName});
+  const ChatScreen({
+    super.key,
+    required this.channelId,
+    required this.channelName,
+  });
+
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final CommunityService _communityService = CommunityService();
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  String get _currentUserId =>
+      FirebaseAuth.instance.currentUser?.uid ?? '';
+  String get _currentUserName =>
+      FirebaseAuth.instance.currentUser?.displayName ?? 'User';
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+    _messageController.clear();
+
+    final message = ChatMessage(
+      id: '',
+      senderId: _currentUserId,
+      senderName: _currentUserName,
+      text: text,
+      timestamp: DateTime.now(),
+    );
+
+    try {
+      await _communityService.sendMessage(widget.channelId, message);
+      _scrollToBottom();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send message: $e')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor:
+          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       body: SafeArea(
         child: Column(
           children: [
-            const CustomHeader(userName: 'Hirushie'),
-            _buildChannelHeader(context),
-            Expanded(child: _buildChatArea()),
-            _buildInputBar(),
+            _buildChannelHeader(context, isDark),
+            Expanded(child: _buildChatArea(isDark)),
+            _buildInputBar(isDark),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildChannelHeader(BuildContext context) {
+  Widget _buildChannelHeader(BuildContext context, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Row(
@@ -34,7 +101,7 @@ class ChatScreen extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.cardDark : Colors.white,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -43,7 +110,7 @@ class ChatScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_rounded,
                 color: AppColors.primaryMaroon,
                 size: 24,
@@ -53,11 +120,11 @@ class ChatScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              channelName,
-              style: const TextStyle(
+              widget.channelName,
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
                 letterSpacing: -0.5,
               ),
             ),
@@ -69,7 +136,8 @@ class ChatScreen extends StatelessWidget {
               backgroundColor: AppColors.primaryMaroon,
               foregroundColor: Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -84,88 +152,130 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChatArea() {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        _buildChatBubble(
-          'Daily Outfit Posts',
-          'A simple way to approach daily outfit posts:\n\n'
-              '• Keep it consistent: Post around the same time each day so followers know when to expect content.\n'
-              '• Plan outfits ahead: Mix and match basics with statement pieces to create interesting looks.\n'
-              '• Photography matters: Natural light works best; simple backgrounds make your outfit stand out.\n'
-              '• Engage your audience: Share a small tip or story about the outfit in the caption.\n'
-              '• Use hashtags: Hashtags like #OOTD, #StyleInspo, #DailyLook help reach more people.',
-        ),
-        const SizedBox(height: 20),
-        _buildChatBubble(
-          'Wardrobe Tips',
-          'A good wardrobe starts with basic, well-fitting clothes like t-shirts, pants, and jackets that can be mixed and matched easily. Neutral colors work well, and you can add some color or accessories to make outfits interesting. Shoes and accessories can change a simple look, so choose them carefully. Layering clothes can make your style more fun, and rotating clothes by season keeps them fresh. Taking care of your clothes and experimenting a little with trends helps you look stylish every day.',
-        ),
-      ],
-    );
-  }
-
-  Widget _buildChatBubble(String title, String content) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFFD9D9D9).withOpacity(0.5),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-                bottomRight: Radius.circular(20),
-                bottomLeft: Radius.circular(5),
+  Widget _buildChatArea(bool isDark) {
+    return StreamBuilder<List<ChatMessage>>(
+      stream: _communityService.getMessagesStream(widget.channelId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final messages = snapshot.data ?? [];
+        if (messages.isEmpty) {
+          return Center(
+            child: Text(
+              'No messages yet.\nBe the first to say hello! 👋',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  content,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.5,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+          );
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+        return ListView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(20),
+          itemCount: messages.length,
+          itemBuilder: (context, index) {
+            final msg = messages[index];
+            final isMe = msg.senderId == _currentUserId;
+            return _buildChatBubble(msg, isMe, isDark);
+          },
+        );
+      },
     );
   }
 
-  Widget _buildInputBar() {
+  Widget _buildChatBubble(ChatMessage msg, bool isMe, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          if (!isMe) ...[
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.primaryMaroon.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  msg.senderName.isNotEmpty
+                      ? msg.senderName[0].toUpperCase()
+                      : '?',
+                  style: const TextStyle(
+                    color: AppColors.primaryMaroon,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isMe
+                    ? AppColors.primaryMaroon
+                    : (isDark
+                        ? AppColors.cardDark
+                        : const Color(0xFFD9D9D9).withOpacity(0.5)),
+                borderRadius: BorderRadius.only(
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
+                  bottomLeft: Radius.circular(isMe ? 18 : 4),
+                  bottomRight: Radius.circular(isMe ? 4 : 18),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (!isMe)
+                    Text(
+                      msg.senderName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: AppColors.primaryMaroon,
+                      ),
+                    ),
+                  if (!isMe) const SizedBox(height: 4),
+                  Text(
+                    msg.text,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: isMe
+                          ? Colors.white
+                          : (isDark
+                              ? AppColors.textPrimaryDark
+                              : Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (isMe) const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInputBar(bool isDark) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.cardDark : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
             color: AppColors.primaryMaroon.withOpacity(0.3),
@@ -183,27 +293,37 @@ class ChatScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: TextField(
+                  controller: _messageController,
+                  style: TextStyle(
+                    color: isDark ? AppColors.textPrimaryDark : Colors.black87,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Message',
-                    hintStyle: TextStyle(color: AppColors.systemGray),
+                    hintStyle: TextStyle(
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.systemGray,
+                    ),
                     border: InputBorder.none,
                   ),
+                  onSubmitted: (_) => _sendMessage(),
                 ),
               ),
-              Icon(Icons.mic_none_rounded, color: Colors.grey[600]),
-              const SizedBox(width: 12),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryMaroon,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.arrow_upward_rounded,
-                  color: Colors.white,
-                  size: 20,
+              GestureDetector(
+                onTap: _sendMessage,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryMaroon,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_upward_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ],

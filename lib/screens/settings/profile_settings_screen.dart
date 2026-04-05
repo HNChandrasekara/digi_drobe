@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
@@ -274,6 +275,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Widget _buildProfileAvatar() {
+    final user = FirebaseAuth.instance.currentUser;
+    final photoUrl = user?.photoURL;
+
     return Center(
       child: Stack(
         children: [
@@ -283,14 +287,22 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             decoration: BoxDecoration(
               color: AppColors.primaryMaroon.withOpacity(0.08),
               shape: BoxShape.circle,
+              image: photoUrl != null && photoUrl.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(photoUrl),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
             ),
-            child: const ClipOval(
-              child: Icon(
-                Icons.person_rounded,
-                size: 60,
-                color: AppColors.primaryMaroon,
-              ),
-            ),
+            child: photoUrl == null || photoUrl.isEmpty
+                ? const ClipOval(
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 60,
+                      color: AppColors.primaryMaroon,
+                    ),
+                  )
+                : null,
           ),
           if (_isEditing)
             Positioned(
@@ -318,29 +330,52 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   }
 
   Future<void> _pickAndSaveAvatar() async {
-    // Mock pick and save avatar since AvatarService is missing
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         withData: true,
       );
-      if (result == null) return;
-      // In a real app, we would save this to the AvatarService
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Avatar selected (Mock mode)')),
+      if (result == null || result.files.isEmpty) return;
+      
+      final fileBytes = result.files.first.bytes;
+      if (fileBytes == null) return;
+
+      setState(() => _isLoading = true);
+
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('User not logged in');
+
+      // Upload to Firebase Storage
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users')
+          .child(user.uid)
+          .child('avatar.jpg');
+          
+      await storageRef.putData(
+        fileBytes,
+        SettableMetadata(contentType: 'image/jpeg'),
       );
-      setState(() {});
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Avatar selected (Mock mode only)')),
-        );
-      }
+      
+      final downloadUrl = await storageRef.getDownloadURL();
+      
+      await user.updatePhotoURL(downloadUrl);
+      await user.reload();
+
+      setState(() {
+        _successMessage = 'Profile photo updated successfully!';
+      });
+      
+      await Future.delayed(const Duration(seconds: 2));
+      if (mounted) setState(() => _successMessage = '');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to pick image: $e')),
+          SnackBar(content: Text('Failed to update photo: $e')),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 

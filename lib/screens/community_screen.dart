@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/colors.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
+import '../models/channel.dart';
+import '../providers/user_provider.dart';
+import '../services/community_service.dart';
 import 'chat_screen.dart';
 
 class CommunityScreen extends StatefulWidget {
@@ -13,6 +17,7 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen> {
   String _searchQuery = '';
+  final CommunityService _communityService = CommunityService();
 
   bool _matchesSearch(String text) {
     if (_searchQuery.isEmpty) return true;
@@ -22,98 +27,84 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+    final userName = context.watch<UserProvider>().displayName;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomHeader(userName: 'Hirushie'),
-              DigiSearchBar(
-                onChanged: (query) {
-                  setState(() => _searchQuery = query.toLowerCase());
-                },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomHeader(userName: userName),
+            DigiSearchBar(
+              onChanged: (query) {
+                setState(() => _searchQuery = query.toLowerCase());
+              },
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+
+                    // Stories Section
+                    if (_matchesSearch('stories'))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Text(
+                          'Stories',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    if (_matchesSearch('stories')) _buildStoriesList(isDark),
+
+                    const SizedBox(height: 20),
+
+                    // Channels Section
+                    if (_matchesSearch('channels'))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                        child: Text(
+                          'Channels',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    if (_matchesSearch('channels'))
+                      _buildChannelsList(context, isDark),
+
+                    const SizedBox(height: 30),
+                  ],
+                ),
               ),
-
-              const SizedBox(height: 20),
-
-              // Stories Section
-              if (_matchesSearch('stories'))
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Text(
-                    'Stories',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              if (_matchesSearch('stories')) _buildStoriesList(isDark),
-
-              const SizedBox(height: 20),
-
-              // Channels Section
-              if (_matchesSearch('channels'))
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Text(
-                    'Channels',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              if (_matchesSearch('channels'))
-                _buildChannelItem(context, isDark: isDark, isNavigable: true),
-              if (_matchesSearch('channels')) _buildChannelItem(context, isDark: isDark),
-              if (_matchesSearch('channels')) _buildChannelItem(context, isDark: isDark),
-
-              const SizedBox(height: 20),
-
-              // Recommended Communities Section
-              if (_matchesSearch('recommended') ||
-                  _matchesSearch('communities'))
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Text(
-                    'Recommended Communities',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                    ),
-                  ),
-                ),
-              if (_matchesSearch('recommended') ||
-                  _matchesSearch('communities'))
-                _buildChannelItem(context, isDark: isDark),
-              if (_matchesSearch('recommended') ||
-                  _matchesSearch('communities'))
-                _buildChannelItem(context, isDark: isDark),
-
-              const SizedBox(height: 30),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildStoriesList(bool isDark) {
-    final stories = ['', '', '', '', ''];
-
     return SizedBox(
       height: 90,
       child: ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         scrollDirection: Axis.horizontal,
-        itemCount: stories.length,
+        itemCount: 5,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -143,21 +134,52 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  Widget _buildChannelItem(BuildContext context,
-      {required bool isDark, bool isNavigable = false}) {
+  Widget _buildChannelsList(BuildContext context, bool isDark) {
+    return StreamBuilder<List<Channel>>(
+      stream: _communityService.getChannelsStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'No channels available yet.',
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
+            ),
+          );
+        }
+        return Column(
+          children: snapshot.data!.map((channel) {
+            return _buildChannelItem(context, channel: channel, isDark: isDark);
+          }).toList(),
+        );
+      },
+    );
+  }
+
+  Widget _buildChannelItem(
+    BuildContext context, {
+    required Channel channel,
+    required bool isDark,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: GestureDetector(
-        onTap: isNavigable
-            ? () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ChatScreen(
-                    channelName: 'Daily Outfit Inspirations (OOTD)',
-                  ),
-                ),
-              )
-            : null,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              channelId: channel.id,
+              channelName: channel.name,
+            ),
+          ),
+        ),
         child: Container(
           height: 80,
           decoration: BoxDecoration(
@@ -174,13 +196,30 @@ class _CommunityScreenState extends State<CommunityScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    'Daily Outfit Inspirations (OOTD)',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        channel.name,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        '${channel.memberCount} members',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 15),
@@ -197,7 +236,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Follow',
+                      'Join',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

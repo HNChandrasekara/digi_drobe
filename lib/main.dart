@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -10,15 +12,19 @@ import 'services/auth_service.dart';
 import 'utils/colors.dart';
 import 'firebase_options.dart';
 import 'providers/theme_provider.dart';
-import 'package:provider/provider.dart';
+import 'providers/product_provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/user_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  debugPrint('--- APP STARTING (v2 with ThemeProvider) ---');
+  debugPrint('--- APP STARTING ---');
 
   bool firebaseInitialized = false;
+  String? firebaseInitError;
   try {
     debugPrint('Firebase: Initializing with currentPlatform options...');
+    debugPrint('Firebase: Initializing...');
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -27,24 +33,30 @@ void main() async {
     
     // Connect to emulators if running on localhost (e.g. debug mode)
     if (kDebugMode) {
+
+    // Connect to emulators if enabled (local development)
+    const bool useEmulators = false;
+    if (kDebugMode && useEmulators) {
       String host = 'localhost';
-      // Android emulator needs to point to 10.0.2.2 to access the host machine's localhost
       if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
         host = '10.0.2.2';
       }
       try {
         await FirebaseAuth.instance.useAuthEmulator(host, 9099);
-        debugPrint('Firebase: Connected to Auth Emulator at $host:9099');
+        FirebaseFirestore.instance.useFirestoreEmulator(host, 8081);
+        await FirebaseStorage.instance.useStorageEmulator(host, 9199);
+        debugPrint('Firebase: Connected to Emulators at $host');
       } catch (e) {
-        debugPrint('Firebase: Auth Emulator connection failed: $e');
+        debugPrint('Firebase: Emulator connection failed (already connected?): $e');
       }
     }
 
     AuthService.markInitialized();
     firebaseInitialized = true;
-    debugPrint('Firebase: Success');
+    debugPrint('Firebase: Initialized successfully with project: ${DefaultFirebaseOptions.currentPlatform.projectId}');
   } catch (e) {
-    debugPrint('Firebase: Initialization total failure: $e');
+    firebaseInitError = e.toString();
+    debugPrint('Firebase: Initialization failure: $e');
   }
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -63,15 +75,22 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
-      child: MyApp(firebaseInitialized: firebaseInitialized),
+      child: MyApp(
+        firebaseInitialized: firebaseInitialized,
+        firebaseInitError: firebaseInitError,
+      ),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
   final bool firebaseInitialized;
-  const MyApp({super.key, required this.firebaseInitialized});
+  final String? firebaseInitError;
+  const MyApp({super.key, required this.firebaseInitialized, this.firebaseInitError});
 
   @override
   Widget build(BuildContext context) {
@@ -82,9 +101,7 @@ class MyApp extends StatelessWidget {
           title: 'Digi Drobe',
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
-          themeMode: themeProvider.isDarkMode
-              ? ThemeMode.dark
-              : ThemeMode.light,
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           builder: (context, child) {
             return Stack(
               children: [
@@ -94,19 +111,19 @@ class MyApp extends StatelessWidget {
                     child: child,
                   ),
                 ),
-                if (Firebase.apps.isEmpty)
+                if (AuthService().isMockMode)
                   Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
                     child: Material(
                       color: Colors.orange.withOpacity(0.8),
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 4),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
-                          'Preview Mode: Firebase Not Configured',
+                          'Mock Mode: Firebase Not Configured (Using Dummy Keys)',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: const TextStyle(color: Colors.white, fontSize: 10),
                         ),
                       ),
                     ),

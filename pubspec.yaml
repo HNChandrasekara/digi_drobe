@@ -39,7 +39,7 @@ dependencies:
   firebase_core: ^4.4.0
   firebase_auth: ^6.1.4
   google_sign_in: ^7.2.0
-  googleapis: ^15.0.0
+  googleapis: ^16.0.0
   extension_google_sign_in_as_googleapis_auth: ^3.0.0
   http: ^1.6.0
   url_launcher: ^6.1.10
@@ -49,6 +49,9 @@ dependencies:
   file_picker: ^10.3.10
   audioplayers: ^6.5.1
   model_viewer_plus: ^1.10.0
+  cloud_firestore: ^6.1.2
+  firebase_storage: ^13.0.6
+  model_viewer_plus: ^1.7.0
 
 dev_dependencies:
   flutter_test:
@@ -71,8 +74,6 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  assets:
-    - assets/sounds/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
