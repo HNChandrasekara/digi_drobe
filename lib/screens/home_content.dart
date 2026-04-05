@@ -10,6 +10,7 @@ import '../providers/product_provider.dart';
 import '../providers/user_provider.dart';
 import 'style_bot_screen.dart';
 import 'product_details_screen.dart';
+import 'virtual_fitting_room_screen.dart';
 import 'coming_soon_screen.dart';
 
 class HomeContent extends StatefulWidget {
@@ -175,6 +176,7 @@ class _HomeContentState extends State<HomeContent> {
           onTap: () {
             Navigator.push(
               context,
+              MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
               MaterialPageRoute(
                 builder: (context) => const ComingSoonScreen(
                   title: 'Virtual Fitting Room',
