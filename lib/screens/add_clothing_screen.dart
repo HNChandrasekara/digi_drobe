@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../models/wardrobe_item.dart';
 import '../providers/wardrobe_provider.dart';
 import '../utils/colors.dart';
+import '../firebase_options.dart';
 
 class AddClothingScreen extends StatefulWidget {
   const AddClothingScreen({super.key});
@@ -51,32 +52,58 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
   Future<void> _saveClothingItem() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedImageBytes == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an image for your clothing.')),
-      );
-      return;
-    }
 
     setState(() => _isLoading = true);
 
     try {
-      // 1. Upload image to Firebase Storage
-      final fileName =
-          'wardrobe_${DateTime.now().millisecondsSinceEpoch}.$_selectedImageExt';
-      final ref =
-          FirebaseStorage.instance.ref().child('wardrobe_images/$fileName');
-      final uploadTask = await ref.putData(_selectedImageBytes!);
-      final imageUrl = await uploadTask.ref.getDownloadURL();
+      // 1. Try to upload image to Firebase Storage (optional — won't block save)
+      String? imageUrl;
+      if (_selectedImageBytes != null) {
+        try {
+          final extension = _selectedImageExt ?? 'jpg';
+          final fileName =
+              'wardrobe_${DateTime.now().millisecondsSinceEpoch}.$extension';
+          final storage = FirebaseStorage.instanceFor(
+            bucket: DefaultFirebaseOptions.currentPlatform.storageBucket,
+          );
+          final ref = storage.ref().child('wardrobe_images/$fileName');
+          
+          // Added SettableMetadata to help Firebase identify the file type
+          final metadata = SettableMetadata(
+            contentType: 'image/$extension',
+            customMetadata: {'picked-extension': extension},
+          );
+
+          final uploadTask = await ref.putData(_selectedImageBytes!, metadata);
+          imageUrl = await uploadTask.ref.getDownloadURL();
+        } catch (storageError) {
+          // Storage upload failed — save item without image and warn user
+          debugPrint('DEBUG: Storage upload failed details: $storageError');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Image upload failed: ${storageError.toString().contains('unknown') ? 'Connection/Permission error' : storageError}',
+                ),
+                backgroundColor: Colors.orange.shade700,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+              ),
+            );
+          }
+        }
+      }
 
       // 2. Save item to user's Firestore wardrobe sub-collection
+      //    Always runs regardless of whether image upload succeeded
       final newItem = WardrobeItem(
         id: '',
         title: _titleController.text.trim(),
         category: _selectedCategory,
         brand: _brandController.text.trim(),
         description: _descriptionController.text.trim(),
-        imageUrl: imageUrl,
+        imageUrl: imageUrl, // null if upload failed — that's fine
         addedAt: DateTime.now(),
       );
 
@@ -86,20 +113,30 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Item added to your wardrobe!'),
-            backgroundColor: AppColors.primaryMaroon,
-            behavior: SnackBarBehavior.floating,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
+        // Only show success if storage also worked (no pending orange snackbar)
+        if (imageUrl != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Item added to your wardrobe!'),
+              backgroundColor: AppColors.primaryMaroon,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
       }
     } catch (e) {
+      // Firestore write itself failed
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Could not save item: $e'),
+            backgroundColor: Colors.red.shade700,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12)),
+          ),
         );
       }
     } finally {
