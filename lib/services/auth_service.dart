@@ -8,10 +8,11 @@ import 'email_service.dart';
 import '../firebase_options.dart';
 
 class AuthService {
-  static bool _initialized = false;
-  static void markInitialized() => _initialized = true;
-
   bool get _isFirebaseInitialized => Firebase.apps.isNotEmpty;
+
+  static void markInitialized() {
+    // Left empty for backwards compatibility. Remove if not used elsewhere.
+  }
 
   FirebaseAuth get _auth {
     if (!_isFirebaseInitialized) {
