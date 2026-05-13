@@ -49,9 +49,9 @@ class CommunityScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              _buildChannelItem(context, isNavigable: true),
-              _buildChannelItem(context),
-              _buildChannelItem(context),
+              _buildChannelItem(context, title: 'Daily Outfit Inspirations (OOTD)', isNavigable: true),
+              _buildChannelItem(context, title: 'Vintage Fashion Enthusiasts', isNavigable: true),
+              _buildChannelItem(context, title: 'Streetwear Central', isNavigable: true),
 
               const SizedBox(height: 20),
 
@@ -67,8 +67,8 @@ class CommunityScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              _buildChannelItem(context),
-              _buildChannelItem(context),
+              _buildChannelItem(context, title: 'Sustainable Style'),
+              _buildChannelItem(context, title: 'Minimalist Wardrobe'),
               
               const SizedBox(height: 30),
             ],
@@ -120,14 +120,14 @@ class CommunityScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildChannelItem(BuildContext context, {bool isNavigable = false}) {
+  Widget _buildChannelItem(BuildContext context, {required String title, bool isNavigable = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       child: GestureDetector(
         onTap: isNavigable 
             ? () => Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => const ChatScreen(channelName: 'Daily Outfit Inspirations (OOTD)'))
+                MaterialPageRoute(builder: (context) => ChatScreen(channelName: title))
               ) 
             : null,
         child: Container(
@@ -140,10 +140,10 @@ class CommunityScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Daily Outfit Inspirations (OOTD)',
-                    style: TextStyle(
+                    title,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
