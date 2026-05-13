@@ -37,7 +37,7 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
   bool _isLoading = false;
 
   Future<void> _pickImage() async {
-    final result = await FilePicker.platform.pickFiles(
+    final result = await FilePicker.pickFiles(
       type: FileType.image,
       withData: true,
     );

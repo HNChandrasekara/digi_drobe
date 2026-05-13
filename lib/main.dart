@@ -32,9 +32,6 @@ void main() async {
       );
     }
     
-    // Connect to emulators if running on localhost (e.g. debug mode)
-    if (kDebugMode) {
-
     // Connect to emulators if enabled (local development)
     const bool useEmulators = false;
     if (kDebugMode && useEmulators) {

@@ -23,34 +23,24 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
 
   final List<_ModelItem> _models = [
     const _ModelItem(
-      name: 'AI Female',
+      name: 'Three.js Avatar (Xbot)',
       url: 'https://threejs.org/examples/models/gltf/Xbot.glb',
-      icon: Icons.face_3_rounded,
+      icon: Icons.accessibility_new_rounded,
     ),
     const _ModelItem(
-      name: 'AI Male',
+      name: 'Human Male',
       url: 'https://threejs.org/examples/models/gltf/Soldier.glb',
-      icon: Icons.face_6_rounded,
+      icon: Icons.person_rounded,
     ),
     const _ModelItem(
-      name: 'Dresses',
-      url: 'https://modelviewer.dev/shared-assets/models/Astronaut.glb',
-      icon: Icons.dry_cleaning_rounded,
+      name: 'Human Female',
+      url: 'https://threejs.org/examples/models/gltf/Michelle.glb',
+      icon: Icons.person_3_rounded,
     ),
     const _ModelItem(
-      name: 'Bottoms',
-      url: 'https://modelviewer.dev/shared-assets/models/RobotExpressive.glb',
-      icon: Icons.straighten_rounded,
-    ),
-    const _ModelItem(
-      name: 'Footwear',
-      url: 'https://modelviewer.dev/shared-assets/models/DamagedHelmet.glb',
-      icon: Icons.ice_skating_rounded,
-    ),
-    const _ModelItem(
-      name: 'Outerwear',
-      url: 'https://modelviewer.dev/shared-assets/models/Horse.glb',
-      icon: Icons.shield_rounded,
+      name: 'Robot Helper',
+      url: 'https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
+      icon: Icons.smart_toy_rounded,
     ),
   ];
 
@@ -247,7 +237,8 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                     src: currentModel.url,
                     alt: 'A 3D model of ${currentModel.name}',
                     ar: true,
-                    autoRotate: true,
+                    autoRotate: false,
+                    autoPlay: true,
                     disableZoom: false,
                     cameraControls: true,
                   ),
@@ -397,7 +388,58 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
               ),
             ),
           ),
+          // ── Planned Goals ──
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.stars_rounded, color: AppColors.primaryMaroon, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'DEVELOPMENT GOALS',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildGoalItem('Full 3D avatar customization to match your body type', isDark),
+                _buildGoalItem('Real-time fabric physics and lighting simulation', isDark),
+                _buildGoalItem('AI-powered sizing recommendations for a perfect fit', isDark),
+                _buildGoalItem('Augmented Reality (AR) try-on using phone camera', isDark),
+              ],
+            ),
+          ),
           const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGoalItem(String text, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.circle, size: 6, color: AppColors.primaryMaroon.withOpacity(0.5)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              ),
+            ),
+          ),
         ],
       ),
     );

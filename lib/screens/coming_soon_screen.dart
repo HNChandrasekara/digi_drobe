@@ -5,12 +5,14 @@ class ComingSoonScreen extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData icon;
+  final List<String> goals;
 
   const ComingSoonScreen({
     super.key,
     required this.title,
     required this.subtitle,
     required this.icon,
+    this.goals = const [],
   });
 
   @override
@@ -71,6 +73,53 @@ class ComingSoonScreen extends StatelessWidget {
                     color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   ),
                 ),
+                if (goals.isNotEmpty) ...[
+                  const SizedBox(height: 40),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Our Goals for this Feature:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryMaroon,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ...goals.map((goal) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryMaroon.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check_rounded,
+                                size: 16,
+                                color: AppColors.primaryMaroon,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                goal,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: isDark
+                                      ? AppColors.textPrimaryDark
+                                      : AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
+                ],
                 const SizedBox(height: 48),
                 SizedBox(
                   width: double.infinity,
