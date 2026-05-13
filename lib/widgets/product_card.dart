@@ -5,26 +5,23 @@ class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String title;
 
-  const ProductCard({
-    super.key,
-    required this.imageUrl,
-    required this.title,
-  });
+  const ProductCard({super.key, required this.imageUrl, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Card(
+      elevation: 0,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+        side: BorderSide(
+          color: isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05),
+          width: 0.5,
+        ),
       ),
+      color: isDark ? AppColors.cardDark : Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -32,12 +29,33 @@ class ProductCard extends StatelessWidget {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
+                color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                image: DecorationImage(
-                  image: NetworkImage(imageUrl),
-                  fit: BoxFit.cover,
-                ),
               ),
+              child: imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Center(
+                        child: Icon(
+                          Icons.image_not_supported_outlined,
+                          color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                          size: 40,
+                        ),
+                      ),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    )
+                  : Center(
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                        size: 40,
+                      ),
+                    ),
             ),
           ),
           Padding(
@@ -47,23 +65,20 @@ class ProductCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                    color: AppColors.textPrimary,
-                    letterSpacing: -0.3,
-                  ),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                      ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                const Text(
+                Text(
                   'Explore more',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
                 ),
               ],
             ),

@@ -17,38 +17,40 @@ class FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 90,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      child: Card(
+        elevation: 0,
+        color: isDark ? AppColors.cardDark : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: isDark
+                ? AppColors.dividerDark
+                : Colors.black.withOpacity(0.05),
+            width: 0.5,
           ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryMaroon.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(14),
+                    color: AppColors.primaryMaroon.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     icon ?? Icons.auto_awesome_rounded,
                     color: AppColors.primaryMaroon,
-                    size: 24,
+                    size: 28,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -59,29 +61,30 @@ class FeatureCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.5,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
                       ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 2),
                         Text(
                           subtitle!,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 13,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                              ),
                         ),
                       ],
                     ],
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios_rounded,
-                  color: AppColors.systemGray2,
+                  color: isDark
+                      ? AppColors.textSecondaryDark.withOpacity(0.5)
+                      : AppColors.systemGray2.withOpacity(0.5),
                   size: 16,
                 ),
               ],

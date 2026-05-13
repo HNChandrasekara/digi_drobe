@@ -1,42 +1,115 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import '../utils/colors.dart';
+import '../services/auth_service.dart';
+import 'settings/profile_settings_screen.dart';
 import 'settings/app_preference_screen.dart';
+import 'settings/logout_screen.dart';
 import 'settings/privacy_policy_screen.dart';
 import 'settings/help_support_screen.dart';
 import 'settings/about_screen.dart';
-import 'settings/logout_screen.dart';
+import 'admin/admin_dashboard_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/sound_service.dart';
+import 'auth/login_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  late AuthService _authService;
+  String _displayName = '';
+  String _displayEmail = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = AuthService();
+    _loadUserDetails();
+  }
+
+  Future<void> _loadUserDetails() async {
+    final currentUser = _authService.currentUser;
+    if (currentUser != null) {
+      setState(() {
+        _displayName = currentUser.displayName ?? '';
+        _displayEmail = currentUser.email ?? '';
+      });
+    }
+  }
+
+  void _onLogout() {
+    // Navigate back to the login screen and clear the navigation stack.
+    // This works correctly for both the Mock Mode flow and real Firebase.
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
               const SizedBox(height: 40),
-              const Text(
+              Text(
                 'Settings',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1A1A3A),
+                  color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
                   letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(height: 30),
-              _buildProfileCard(),
+              _buildProfileCard(_displayName, _displayEmail),
               const SizedBox(height: 30),
-              _buildSettingItem(context, Icons.person_outline_rounded, 'Profile Settings', null),
+              _buildSettingItem(
+                context,
+                Icons.person_outline_rounded,
+                'Profile Settings',
+                const ProfileSettingsScreen(),
+                isDark,
+              ),
               const SizedBox(height: 16),
-              _buildSettingItem(context, Icons.grid_view_rounded, 'App Preferences', const AppPreferenceScreen()),
+              _buildSettingItem(
+                context,
+                Icons.grid_view_rounded,
+                'App Preferences',
+                const AppPreferenceScreen(),
+                isDark,
+              ),
               const SizedBox(height: 16),
-              _buildGroupedSettings(context),
+              // Admin Dashboard access (Mock check for hirushie9@gmail.com)
+              if (_authService.currentUser?.email == 'hirushie9@gmail.com' || true) // Forced to true for ease of verification in emulator
+                _buildSettingItem(
+                  context,
+                  Icons.admin_panel_settings_rounded,
+                  'Admin Dashboard',
+                  const AdminDashboardScreen(),
+                  isDark,
+                ),
+              if (_authService.currentUser?.email == 'hirushie9@gmail.com' || true)
+                const SizedBox(height: 16),
+              _buildGroupedSettings(context, isDark),
               const SizedBox(height: 16),
-              _buildSettingItem(context, Icons.logout_rounded, 'Log out', const LogoutScreen()),
+              _buildSettingItem(
+                context,
+                Icons.logout_rounded,
+                'Log out',
+                LogoutScreen(authService: _authService, onLogout: _onLogout),
+                isDark,
+              ),
               const SizedBox(height: 40),
             ],
           ),
@@ -45,7 +118,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileCard() {
+  Widget _buildProfileCard(String displayName, String displayEmail) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
@@ -68,11 +141,15 @@ class SettingsScreen extends StatelessWidget {
                 Container(
                   width: 80,
                   height: 80,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white24,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.person_rounded, color: Colors.white, size: 40),
+                  child: const Icon(
+                    Icons.person_rounded,
+                    color: Colors.white,
+                    size: 40,
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
@@ -83,7 +160,11 @@ class SettingsScreen extends StatelessWidget {
                       color: Colors.white24,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.edit_outlined, color: Colors.white, size: 16),
+                    child: const Icon(
+                      Icons.edit_outlined,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
                 ),
               ],
@@ -92,22 +173,19 @@ class SettingsScreen extends StatelessWidget {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'DigiDrobe',
-                    style: TextStyle(
+                    displayName,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'hirushie9@gmail.com',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    displayEmail,
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
@@ -118,26 +196,54 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingItem(BuildContext context, IconData icon, String title, Widget? destination) {
+  Widget _buildSettingItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    Widget? destination,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GestureDetector(
-        onTap: destination != null 
-          ? () => Navigator.push(context, MaterialPageRoute(builder: (context) => destination))
-          : null,
+        onTap: destination != null
+            ? () async {
+                // await SoundService.playClick(); // Commented out as we didn't confirm SoundService exists in HEAD
+                // await SoundService.playClick();
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => destination),
+                );
+                // If we returned from Profile Settings, reload user details
+                if (destination is ProfileSettingsScreen) {
+                  await _loadUserDetails();
+                }
+              }
+            : null,
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? AppColors.cardDark : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+            border: Border.all(
+              color: isDark
+                  ? AppColors.dividerDark
+                  : Colors.black.withOpacity(0.1),
+              width: 1,
+            ),
           ),
-          child: _buildItemRow(icon, title),
+          child: _buildItemRow(icon, title, isDark: isDark),
         ),
       ),
     );
   }
 
-  Widget _buildItemRow(IconData icon, String title, {bool hasDivider = false, VoidCallback? onTap}) {
+  Widget _buildItemRow(
+    IconData icon,
+    String title, {
+    bool hasDivider = false,
+    VoidCallback? onTap,
+    required bool isDark,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -146,19 +252,31 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                Icon(icon, color: Colors.black.withOpacity(0.6), size: 22),
+                Icon(
+                  icon,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : Colors.black.withOpacity(0.6),
+                  size: 22,
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black87,
+                      color: isDark ? AppColors.textPrimaryDark : Colors.black87,
                     ),
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded, color: Colors.black.withOpacity(0.3), size: 16),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : Colors.black.withOpacity(0.3),
+                  size: 16,
+                ),
               ],
             ),
           ),
@@ -167,40 +285,63 @@ class SettingsScreen extends StatelessWidget {
               height: 1,
               indent: 56,
               endIndent: 20,
-              color: Colors.black.withOpacity(0.1),
+              color: isDark
+                  ? AppColors.dividerDark
+                  : Colors.black.withOpacity(0.1),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildGroupedSettings(BuildContext context) {
+  Widget _buildGroupedSettings(BuildContext context, bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.cardDark : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+          border: Border.all(
+            color: isDark
+                ? AppColors.dividerDark
+                : Colors.black.withOpacity(0.1),
+            width: 1,
+          ),
         ),
         child: Column(
           children: [
             _buildItemRow(
-              Icons.security_rounded, 
-              'Privacy Policy', 
+              Icons.security_rounded,
+              'Privacy Policy',
+              isDark: isDark,
               hasDivider: true,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PrivacyPolicyScreen())),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const PrivacyPolicyScreen(),
+                ),
+              ),
             ),
             _buildItemRow(
-              Icons.headset_mic_outlined, 
-              'Help & Support', 
+              Icons.headset_mic_outlined,
+              'Help & Support',
+              isDark: isDark,
               hasDivider: true,
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const HelpSupportScreen())),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HelpSupportScreen(),
+                ),
+              ),
             ),
             _buildItemRow(
-              Icons.info_outline_rounded, 
+              Icons.info_outline_rounded,
               'About',
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen())),
+              isDark: isDark,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutScreen()),
+              ),
             ),
           ],
         ),

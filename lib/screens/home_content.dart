@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/colors.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/search_bar.dart';
 import '../widgets/feature_card.dart';
 import '../widgets/product_card.dart';
+import '../models/product.dart';
+import '../providers/product_provider.dart';
+import '../providers/user_provider.dart';
+import 'style_bot_screen.dart';
 import 'product_details_screen.dart';
-import 'chat_screen.dart';
+import 'virtual_fitting_room_screen.dart';
+import 'coming_soon_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
+  final VoidCallback? onProfileTap;
 
-  const HomeContent({super.key, required this.onTabChange});
+  const HomeContent({super.key, required this.onTabChange, this.onProfileTap});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -18,56 +25,34 @@ class HomeContent extends StatefulWidget {
 
 class _HomeContentState extends State<HomeContent> {
   bool _showFeed = true;
-  List<Map<String, String>> _allItems = [];
-  List<Map<String, String>> _filteredItems = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _allItems = [
-      {'title': 'White Top', 'url': 'https://images.unsplash.com/photo-1598554747436-c92900c73229?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Maroon Heels', 'url': 'https://images.unsplash.com/photo-1596702994291-944ccc40866b?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Designer Bag', 'url': 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Aesthetic Jeans', 'url': 'https://images.unsplash.com/photo-1542272454315-4c01d7abdf4a?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Summer Dress', 'url': 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&q=80&w=400'},
-      {'title': 'Casual Sneakers', 'url': 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&q=80&w=400'},
-    ];
-    _filteredItems = _allItems;
-  }
-
-  void _filterSearchResults(String query) {
-    if (query.isEmpty) {
-      setState(() {
-        _filteredItems = _allItems;
-      });
-      return;
-    }
-    setState(() {
-      _filteredItems = _allItems
-          .where((item) => item['title']!.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
-  }
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final userName = context.watch<UserProvider>().displayName;
+
     return SafeArea(
       child: Column(
         children: [
-          const CustomHeader(userName: 'Hirushie'),
-          DigiSearchBar(onChanged: _filterSearchResults),
-          
+          CustomHeader(userName: userName, onProfileTap: widget.onProfileTap),
+          DigiSearchBar(
+            onChanged: (q) => setState(() => _searchQuery = q),
+          ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Your Favourite Virtual Wardrobe',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                Expanded(
+                  child: Text(
+                    'Your Favourite Virtual Wardrobe',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                 ),
                 GestureDetector(
@@ -75,11 +60,15 @@ class _HomeContentState extends State<HomeContent> {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: AppColors.systemGray6,
+                      color: isDark
+                          ? AppColors.cardDark
+                          : AppColors.systemGray6,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      _showFeed ? Icons.grid_view_rounded : Icons.list_rounded,
+                      _showFeed
+                          ? Icons.grid_view_rounded
+                          : Icons.list_rounded,
                       size: 20,
                       color: AppColors.primaryMaroon,
                     ),
@@ -88,11 +77,12 @@ class _HomeContentState extends State<HomeContent> {
               ],
             ),
           ),
-
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: _showFeed ? _buildProductFeed() : _buildFeatureNavigation(),
+              child: _showFeed
+                  ? _buildProductFeed(isDark)
+                  : _buildFeatureNavigation(),
             ),
           ),
         ],
@@ -100,43 +90,67 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 
-  Widget _buildProductFeed() {
-    return _filteredItems.isEmpty
-        ? Center(
+  Widget _buildProductFeed(bool isDark) {
+    return Consumer<ProductProvider>(
+      builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (provider.error != null) {
+          return Center(
+            child: Text(
+              'Error loading products: ${provider.error}',
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
+            ),
+          );
+        }
+        final items = provider.search(_searchQuery);
+        if (items.isEmpty) {
+          return Center(
             child: Text(
               'No items found',
-              style: TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
             ),
-          )
-        : GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: _filteredItems.length,
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ProductDetailsScreen(
-                        title: _filteredItems[index]['title']!,
-                        imageUrl: _filteredItems[index]['url']!,
-                      ),
-                    ),
-                  );
-                },
-                child: ProductCard(
-                  title: _filteredItems[index]['title']!,
-                  imageUrl: _filteredItems[index]['url']!,
-                ),
-              );
-            },
           );
+        }
+        return GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final product = items[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ProductDetailsScreen(product: product),
+                  ),
+                );
+              },
+              child: ProductCard(
+                title: product.title,
+                imageUrl: product.imageUrl ?? '',
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildFeatureNavigation() {
@@ -144,9 +158,9 @@ class _HomeContentState extends State<HomeContent> {
       padding: const EdgeInsets.symmetric(vertical: 10),
       children: [
         FeatureCard(
-          title: 'My Cart',
-          subtitle: 'View and checkout your items',
-          icon: Icons.shopping_cart_rounded,
+          title: 'My Wardrobe',
+          subtitle: 'View and organize your clothes',
+          icon: Icons.checkroom_rounded,
           onTap: () => widget.onTabChange(3),
         ),
         FeatureCard(
@@ -160,9 +174,17 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Try on clothes digitally',
           icon: Icons.accessibility_new_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Virtual Fitting Room coming soon!')),
-             );
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
+              MaterialPageRoute(
+                builder: (context) => const ComingSoonScreen(
+                  title: 'Virtual Fitting Room',
+                  subtitle: 'This feature will let you virtually try on your clothes to craft the perfect outfit. Stay tuned!',
+                  icon: Icons.accessibility_new_rounded,
+                ),
+              ),
+            );
           },
         ),
         FeatureCard(
@@ -170,9 +192,16 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'Buy and sell pre-loved items',
           icon: Icons.store_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Thrift Store coming soon!')),
-             );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ComingSoonScreen(
+                  title: 'Thrift Store',
+                  subtitle: 'Get ready to buy and sell pre-loved fashion pieces with other style enthusiasts.',
+                  icon: Icons.store_rounded,
+                ),
+              ),
+            );
           },
         ),
         FeatureCard(
@@ -180,9 +209,16 @@ class _HomeContentState extends State<HomeContent> {
           subtitle: 'What we aim to achieve',
           icon: Icons.flag_rounded,
           onTap: () {
-             ScaffoldMessenger.of(context).showSnackBar(
-               const SnackBar(content: Text('Goals feature coming soon!')),
-             );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ComingSoonScreen(
+                  title: 'App Goals',
+                  subtitle: 'We are working on bringing sustainable fashion goals tracking here. Check back later!',
+                  icon: Icons.flag_rounded,
+                ),
+              ),
+            );
           },
         ),
         _buildStylemateCard(),
@@ -197,9 +233,7 @@ class _HomeContentState extends State<HomeContent> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const ChatScreen(channelName: 'StyleMate AI'),
-            ),
+            MaterialPageRoute(builder: (context) => const StyleBotScreen()),
           );
         },
         child: Container(
@@ -230,7 +264,11 @@ class _HomeContentState extends State<HomeContent> {
                     color: Colors.white24,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.psychology_rounded, color: Colors.white, size: 28),
+                  child: const Icon(
+                    Icons.psychology_rounded,
+                    color: Colors.white,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 const Expanded(
@@ -258,7 +296,11 @@ class _HomeContentState extends State<HomeContent> {
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 20),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ],
             ),
           ),

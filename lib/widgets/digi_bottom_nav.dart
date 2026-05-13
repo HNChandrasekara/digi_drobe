@@ -17,10 +17,7 @@ class DigiBottomNav extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.appleWhite.withOpacity(0.8),
         border: Border(
-          top: BorderSide(
-            color: Colors.black.withOpacity(0.05),
-            width: 0.5,
-          ),
+          top: BorderSide(color: Colors.black.withOpacity(0.05), width: 0.5),
         ),
       ),
       child: BottomNavigationBar(
@@ -50,14 +47,14 @@ class DigiBottomNav extends StatelessWidget {
             label: 'Calendar',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            activeIcon: Icon(Icons.shopping_cart_rounded),
-            label: 'Cart',
+            icon: Icon(Icons.checkroom_outlined),
+            activeIcon: Icon(Icons.checkroom_rounded),
+            label: 'Wardrobe',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
+            icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings_rounded),
+            label: 'Settings',
           ),
         ],
       ),

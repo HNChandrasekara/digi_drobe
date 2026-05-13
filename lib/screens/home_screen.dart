@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'home_content.dart';
 import 'community_screen.dart';
 import 'calendar_screen.dart';
-import 'cart_screen.dart';
-import 'auth/login_screen.dart';
+import 'wardrobe_screen.dart';
+import 'settings_screen.dart';
 import '../widgets/digi_bottom_nav.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,18 +25,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
-      HomeContent(onTabChange: _onTabChange),
+      HomeContent(
+        onTabChange: _onTabChange,
+        onProfileTap: () {
+          // Switch to Settings tab (index 4)
+          _onTabChange(4);
+        },
+      ),
       const CommunityScreen(),
       const CalendarScreen(),
-      const CartScreen(),
-      const LoginScreen(),
+      const WardrobeScreen(),
+      const SettingsScreen(),
     ];
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: pages),
       bottomNavigationBar: DigiBottomNav(
         currentIndex: _selectedIndex,
         onTap: _onTabChange,
