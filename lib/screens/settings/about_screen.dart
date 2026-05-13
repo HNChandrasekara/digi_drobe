@@ -16,8 +16,8 @@ class AboutScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 children: [
-                  const Text(
-                    'Welcome to AquaGuard, the fun and interactive quiz app that makes learning exciting! Our mission is to challenge your mind, spark curiosity, and reward knowledge across a variety of categories.',
+                   const Text(
+                    'Welcome to DigiDrobe, the ultimate digital wardrobe companion that brings your closet to life! Our mission is to simplify fashion, promote sustainability, and help you look your best every single day.',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -27,7 +27,7 @@ class AboutScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'We aim to provide a safe, user-friendly experience where players can compete, track progress, and enjoy new quizzes and features based on user feedback. Thank you for choosing AquaGuard - let\'s make learning an adventure!',
+                    'We aim to provide a seamless, AI-powered experience where you can organize your clothes, plan outfits, and discover your unique style. Thank you for choosing DigiDrobe - let\'s redefine your wardrobe together!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
