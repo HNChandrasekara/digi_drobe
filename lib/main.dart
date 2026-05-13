@@ -24,12 +24,16 @@ void main() async {
   bool firebaseInitialized = false;
   String? firebaseInitError;
   try {
+    debugPrint('Firebase: Initializing with currentPlatform options...');
     debugPrint('Firebase: Initializing...');
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
     }
+    
+    // Connect to emulators if running on localhost (e.g. debug mode)
+    if (kDebugMode) {
 
     // Connect to emulators if enabled (local development)
     const bool useEmulators = false;
