@@ -177,13 +177,6 @@ class _HomeContentState extends State<HomeContent> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
-              MaterialPageRoute(
-                builder: (context) => const ComingSoonScreen(
-                  title: 'Virtual Fitting Room',
-                  subtitle: 'This feature will let you virtually try on your clothes to craft the perfect outfit. Stay tuned!',
-                  icon: Icons.accessibility_new_rounded,
-                ),
-              ),
             );
           },
         ),

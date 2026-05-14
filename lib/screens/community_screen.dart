@@ -49,7 +49,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     const SizedBox(height: 20),
 
                     // Stories Section
-                    if (_matchesSearch('stories'))
+                    if (_matchesSearch('stories')) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 8),
@@ -64,27 +64,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ),
                         ),
                       ),
-                    if (_matchesSearch('stories')) _buildStoriesList(isDark),
+                      _buildStoriesList(isDark),
+                    ],
 
-              // Channels Section
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                child: Text(
-                  'Channels',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              _buildChannelItem(context, title: 'Daily Outfit Inspirations (OOTD)', isNavigable: true),
-              _buildChannelItem(context, title: 'Vintage Fashion Enthusiasts', isNavigable: true),
-              _buildChannelItem(context, title: 'Streetwear Central', isNavigable: true),
                     const SizedBox(height: 20),
 
                     // Channels Section
-                    if (_matchesSearch('channels'))
+                    if (_matchesSearch('channels')) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
@@ -99,19 +85,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ),
                         ),
                       ),
-                    if (_matchesSearch('channels'))
                       _buildChannelsList(context, isDark),
+                    ],
 
                     const SizedBox(height: 30),
                   ],
                 ),
               ),
-              _buildChannelItem(context, title: 'Sustainable Style'),
-              _buildChannelItem(context, title: 'Minimalist Wardrobe'),
-              
-              const SizedBox(height: 30),
-            ],
-          ),
             ),
           ],
         ),
@@ -155,16 +135,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  Widget _buildChannelItem(BuildContext context, {required String title, bool isNavigable = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: GestureDetector(
-        onTap: isNavigable 
-            ? () => Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => ChatScreen(channelName: title))
-              ) 
-            : null,
   Widget _buildChannelsList(BuildContext context, bool isDark) {
     return StreamBuilder<List<Channel>>(
       stream: _communityService.getChannelsStream(),
@@ -227,13 +197,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
-                    ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
