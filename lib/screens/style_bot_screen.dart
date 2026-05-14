@@ -34,6 +34,20 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
         'message': text,
       });
       _isLoading = true;
+      _messages.add({'isUser': true, 'message': _messageController.text});
+      // Simulate bot response
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          setState(() {
+            _messages.add({
+              'isUser': false,
+              'message':
+                  'For next week\'s college outfits, you can go for a mix of comfort and style. On Monday, try an oversized cream sweater with straight-leg jeans and white sneakers for a cozy start. Tuesday can be a casual chic look with a black ribbed top, wide-leg pants, and a small crossbody bag. Mid-week on Wednesday, a white tee with a denim jacket and a mini or midi skirt gives a cute, fresh vibe. On Thursday, switch to a relaxed streetwear style with an oversized graphic tee, cargo pants, and sneakers. For Friday, keep it smart casual with a light button-down tucked into mom jeans paired with loafers. These outfits stay comfortable for everyday campus life.',
+            });
+          });
+        }
+      });
+      _messageController.clear();
     });
     _messageController.clear();
 
@@ -71,7 +85,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
           const Text(
             'Hello Hirushie,',
             style: TextStyle(
-              fontSize: 28, // Large serif font 
+              fontSize: 28, // Large serif font
               fontWeight: FontWeight.bold,
               fontFamily: 'Serif', // Using default serif for now
               color: AppColors.textPrimary,
@@ -83,7 +97,9 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             height: 200, // Fixed height for the card look
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             decoration: BoxDecoration(
-              color: const Color(0xFFEBEBEB).withOpacity(0.8), // Light grey/beige
+              color: const Color(
+                0xFFEBEBEB,
+              ).withOpacity(0.8), // Light grey/beige
               borderRadius: BorderRadius.circular(24),
             ),
             child: Stack(
@@ -101,6 +117,12 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                     border: InputBorder.none,
+                Text(
+                  'Ask Stylebot',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 Align(
@@ -127,6 +149,19 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
            // However, to make this functional, tapping the container should switch state or focus input.
            // For this demo, let's make it interactive.
            // Removed redundant bottom TextField
+          const Spacer(flex: 3),
+          // Assuming bottom nav is handled by HomeScreen, so we don't duplicate it here.
+          // However, to make this functional, tapping the container should switch state or focus input.
+          // For this demo, let's make it interactive.
+          TextField(
+            controller: _messageController,
+            onSubmitted: (_) => _sendMessage(),
+            decoration: const InputDecoration(
+              hintText: 'Type your request...',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 24),
+            ),
+          ),
         ],
       ),
     );
@@ -149,7 +184,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             },
           ),
         ),
-         _buildInputBar(),
+        _buildInputBar(),
       ],
     );
   }
@@ -168,11 +203,11 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             ),
           ),
           const Spacer(),
-          // Add close button or back if needed, but image doesn't show one clearly 
+          // Add close button or back if needed, but image doesn't show one clearly
           // (assuming it's a tab or top level).
           // If pushed, we need a back button.
           if (Navigator.canPop(context))
-             IconButton(
+            IconButton(
               icon: const Icon(Icons.close),
               onPressed: () => Navigator.pop(context),
             ),
@@ -185,8 +220,9 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
       child: Column(
-        crossAxisAlignment:
-            isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isUser
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(20),
@@ -222,39 +258,55 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
             Row(
               children: [
                 const Icon(Icons.copy_rounded, size: 18, color: Colors.grey),
-                 const SizedBox(width: 12),
-                const Icon(Icons.thumb_up_alt_outlined, size: 18, color: Colors.grey),
-                 const SizedBox(width: 12),
-                const Icon(Icons.thumb_down_alt_outlined, size: 18, color: Colors.grey),
-                 const SizedBox(width: 12),
-                const Icon(Icons.ios_share_rounded, size: 18, color: Colors.grey),
-                 const SizedBox(width: 12),
-                const Icon(Icons.more_horiz_rounded, size: 18, color: Colors.grey),
+                const SizedBox(width: 12),
+                const Icon(
+                  Icons.thumb_up_alt_outlined,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 12),
+                const Icon(
+                  Icons.thumb_down_alt_outlined,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 12),
+                const Icon(
+                  Icons.ios_share_rounded,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 12),
+                const Icon(
+                  Icons.more_horiz_rounded,
+                  size: 18,
+                  color: Colors.grey,
+                ),
               ],
             ),
           ],
-           if (isUser) ...[
-             const SizedBox(height: 8),
-             const Row(
-               mainAxisAlignment: MainAxisAlignment.end,
-               children: [
-                 Icon(Icons.copy_rounded, size: 16, color: Colors.grey),
-                 SizedBox(width: 8),
-                 Icon(Icons.edit_outlined, size: 16, color: Colors.grey),
-               ],
-             ),
-           ],
+          if (isUser) ...[
+            const SizedBox(height: 8),
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.copy_rounded, size: 16, color: Colors.grey),
+                SizedBox(width: 8),
+                Icon(Icons.edit_outlined, size: 16, color: Colors.grey),
+              ],
+            ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildInputBar() {
-     // This is redundant if we assume the bottom nav is there, 
+    // This is redundant if we assume the bottom nav is there,
     // but in "Chat" view we usually have an input bar.
     // The image shows the bottom nav below the chat.
     // And NO input bar in the "Chat" view image (Right image).
-    // Wait, the Right Image shows the response and action buttons. 
+    // Wait, the Right Image shows the response and action buttons.
     // It DOES NOT show an input bar. It shows the bottom nav.
     // This implies the conversation might be "Request -> Response" and then maybe you tap somewhere to reply?
     // Or maybe the input bar is hidden or I just missed it?
@@ -263,7 +315,7 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
     // Maybe it scrolls?
     // I'll add a minimal input bar similar to the empty state one, or just a placeholder.
     // I'll add a standard input bar for functionality.
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
@@ -298,7 +350,11 @@ class _StyleBotScreenState extends State<StyleBotScreen> {
               color: AppColors.primaryMaroon,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.send_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
         ],
       ),
