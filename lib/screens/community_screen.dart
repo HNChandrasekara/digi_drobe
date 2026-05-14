@@ -49,7 +49,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     const SizedBox(height: 20),
 
                     // Stories Section
-                    if (_matchesSearch('stories'))
+                    if (_matchesSearch('stories')) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 8),
@@ -64,12 +64,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ),
                         ),
                       ),
-                    if (_matchesSearch('stories')) _buildStoriesList(isDark),
+                      _buildStoriesList(isDark),
+                    ],
 
                     const SizedBox(height: 20),
 
                     // Channels Section
-                    if (_matchesSearch('channels'))
+                    if (_matchesSearch('channels')) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 12),
@@ -84,8 +85,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ),
                         ),
                       ),
-                    if (_matchesSearch('channels'))
                       _buildChannelsList(context, isDark),
+                    ],
 
                     const SizedBox(height: 30),
                   ],

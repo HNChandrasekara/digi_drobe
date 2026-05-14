@@ -177,6 +177,7 @@ class _HomeContentState extends State<HomeContent> {
           onTap: () {
             Navigator.push(
               context,
+              MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
               MaterialPageRoute(
                   builder: (context) => const VirtualFittingRoomScreen()),
             );

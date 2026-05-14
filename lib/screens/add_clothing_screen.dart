@@ -30,6 +30,9 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
     'Dresses',
     'Footwear',
     'Accessories',
+    'Knitwear',
+    'Activewear',
+    'Swimwear',
   ];
 
   Uint8List? _selectedImageBytes;
@@ -56,7 +59,6 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // 1. Try to upload image to Firebase Storage (optional — won't block save)
       String? imageUrl;
       if (_selectedImageBytes != null) {
         try {
@@ -68,42 +70,32 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
           );
           final ref = storage.ref().child('wardrobe_images/$fileName');
           
-          // Added SettableMetadata to help Firebase identify the file type
           final metadata = SettableMetadata(
             contentType: 'image/$extension',
-            customMetadata: {'picked-extension': extension},
           );
 
           final uploadTask = await ref.putData(_selectedImageBytes!, metadata);
           imageUrl = await uploadTask.ref.getDownloadURL();
         } catch (storageError) {
-          // Storage upload failed — save item without image and warn user
-          debugPrint('DEBUG: Storage upload failed details: $storageError');
+          debugPrint('DEBUG: Storage upload failed: $storageError');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  'Image upload failed: ${storageError.toString().contains('unknown') ? 'Connection/Permission error' : storageError}',
-                ),
+                content: Text('Image upload failed, saving without image.'),
                 backgroundColor: Colors.orange.shade700,
-                behavior: SnackBarBehavior.floating,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
               ),
             );
           }
         }
       }
 
-      // 2. Save item to user's Firestore wardrobe sub-collection
-      //    Always runs regardless of whether image upload succeeded
       final newItem = WardrobeItem(
         id: '',
         title: _titleController.text.trim(),
         category: _selectedCategory,
         brand: _brandController.text.trim(),
         description: _descriptionController.text.trim(),
-        imageUrl: imageUrl, // null if upload failed — that's fine
+        imageUrl: imageUrl,
         addedAt: DateTime.now(),
       );
 
@@ -113,29 +105,20 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
       if (mounted) {
         Navigator.pop(context);
-        // Only show success if storage also worked (no pending orange snackbar)
-        if (imageUrl != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Item added to your wardrobe!'),
-              backgroundColor: AppColors.primaryMaroon,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Item added to your wardrobe!'),
+            backgroundColor: AppColors.primaryMaroon,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     } catch (e) {
-      // Firestore write itself failed
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Could not save item: $e'),
             backgroundColor: Colors.red.shade700,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12)),
           ),
         );
       }
@@ -157,156 +140,74 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
       appBar: AppBar(
         title: Text(
           'Add to Wardrobe',
           style: TextStyle(
             fontWeight: FontWeight.w700,
+            fontSize: 22,
             color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
           ),
         ),
+        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: _isLoading
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const CircularProgressIndicator(
-                        color: AppColors.primaryMaroon),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Saving your piece...',
-                      style: TextStyle(
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryMaroon),
               )
             : SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Image picker ──────────────────────────────────────
+                      // ── Image Upload Placeholder ──────────────────────────
                       GestureDetector(
                         onTap: _pickImage,
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
+                        child: Container(
                           width: double.infinity,
-                          height: 240,
+                          height: 220,
                           decoration: BoxDecoration(
-                            color: isDark
-                                ? AppColors.cardDark
-                                : AppColors.systemGray6,
-                            borderRadius: BorderRadius.circular(24),
-                            border: _selectedImageBytes == null
-                                ? Border.all(
-                                    color: AppColors.primaryMaroon
-                                        .withOpacity(0.3),
-                                    width: 1.5,
-                                    style: BorderStyle.solid,
-                                  )
-                                : null,
-                            boxShadow: _selectedImageBytes != null && !isDark
-                                ? [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 6),
-                                    )
-                                  ]
-                                : null,
+                            color: isDark ? AppColors.cardDark : const Color(0xFFEDEEF3),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: _selectedImageBytes != null
-                              ? Stack(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(24),
-                                      child: Image.memory(
-                                        _selectedImageBytes!,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                      ),
-                                    ),
-                                    // Edit overlay
-                                    Positioned(
-                                      bottom: 12,
-                                      right: 12,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 14, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.65),
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.edit_rounded,
-                                                color: Colors.white, size: 14),
-                                            SizedBox(width: 6),
-                                            Text(
-                                              'Change Photo',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.memory(
+                                    _selectedImageBytes!,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  ),
                                 )
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Container(
-                                      width: 64,
-                                      height: 64,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primaryMaroon
-                                            .withOpacity(0.12),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(
-                                        Icons.add_a_photo_rounded,
-                                        size: 30,
-                                        color: AppColors.primaryMaroon,
-                                      ),
+                                    Icon(
+                                      Icons.add_a_photo_outlined,
+                                      size: 48,
+                                      color: Colors.grey.shade500,
                                     ),
-                                    const SizedBox(height: 14),
-                                    const Text(
-                                      'Add a Photo',
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'Tap to upload a photo',
                                       style: TextStyle(
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.primaryMaroon,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Tap to upload from your gallery',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: isDark
-                                            ? AppColors.textSecondaryDark
-                                            : AppColors.textSecondary,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey.shade600,
                                       ),
                                     ),
                                   ],
@@ -317,121 +218,84 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
                       // ── Clothing Name ─────────────────────────────────────
                       _fieldLabel('Clothing Name', isDark),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       TextFormField(
                         controller: _titleController,
-                        decoration: _inputDecoration(
-                            isDark, 'e.g. Favourite Denim Jacket'),
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Please enter a name'
-                            : null,
+                        decoration: _inputDecoration(isDark, 'e.g. Favorite Denim Jack...'),
+                        validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a name' : null,
                       ),
                       const SizedBox(height: 24),
 
                       // ── Category ──────────────────────────────────────────
                       _fieldLabel('Category', isDark),
-                      const SizedBox(height: 8),
-                      // Horizontal chip row
-                      SizedBox(
-                        height: 40,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 8),
-                          itemCount: _categories.length,
-                          itemBuilder: (_, i) {
-                            final cat = _categories[i];
-                            final selected = cat == _selectedCategory;
-                            return GestureDetector(
-                              onTap: () =>
-                                  setState(() => _selectedCategory = cat),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 180),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: selected
-                                      ? AppColors.primaryMaroon
-                                      : (isDark
-                                          ? AppColors.cardDark
-                                          : Colors.white),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: selected
-                                        ? AppColors.primaryMaroon
-                                        : (isDark
-                                            ? AppColors.dividerDark
-                                            : Colors.black.withOpacity(0.1)),
-                                  ),
-                                ),
-                                child: Text(
-                                  cat,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: selected
-                                        ? FontWeight.w700
-                                        : FontWeight.w500,
-                                    color: selected
-                                        ? Colors.white
-                                        : (isDark
-                                            ? AppColors.textSecondaryDark
-                                            : AppColors.textSecondary),
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: _selectedCategory,
+                        items: _categories.map((String category) {
+                          return DropdownMenuItem<String>(
+                            value: category,
+                            child: Text(category),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() => _selectedCategory = newValue);
+                          }
+                        },
+                        decoration: _inputDecoration(isDark, ''),
+                        icon: const Icon(Icons.arrow_drop_down_rounded, size: 30),
+                        dropdownColor: isDark ? AppColors.cardDark : Colors.white,
+                        style: TextStyle(
+                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 24),
 
                       // ── Brand ─────────────────────────────────────────────
                       _fieldLabel('Brand (Optional)', isDark),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       TextFormField(
                         controller: _brandController,
-                        decoration:
-                            _inputDecoration(isDark, "e.g. Levi's, Zara"),
+                        decoration: _inputDecoration(isDark, "e.g. Levi's"),
                       ),
                       const SizedBox(height: 24),
 
                       // ── Description ───────────────────────────────────────
-                      _fieldLabel('Notes (Optional)', isDark),
-                      const SizedBox(height: 8),
+                      _fieldLabel('Description', isDark),
+                      const SizedBox(height: 10),
                       TextFormField(
                         controller: _descriptionController,
                         maxLines: 4,
-                        decoration: _inputDecoration(
-                          isDark,
-                          'Size, condition, when you wear it...',
-                        ),
+                        decoration: _inputDecoration(isDark, 'Add more details about this item...'),
                       ),
-                      const SizedBox(height: 48),
+                      const SizedBox(height: 40),
 
-                      // ── Save button ───────────────────────────────────────
+                      // ── Save Button ───────────────────────────────────────
                       SizedBox(
                         width: double.infinity,
-                        height: 56,
+                        height: 58,
                         child: ElevatedButton(
                           onPressed: _saveClothingItem,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryMaroon,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(16),
                             ),
                             elevation: 0,
                           ),
                           child: const Text(
                             'Save to Wardrobe',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
@@ -444,9 +308,9 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
     return Text(
       text,
       style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: Colors.grey.shade600,
       ),
     );
   }
@@ -455,36 +319,26 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(
-        color:
-            isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
-        fontWeight: FontWeight.w400,
-        fontSize: 14,
+        color: Colors.grey.shade400,
+        fontWeight: FontWeight.w500,
+        fontSize: 16,
       ),
       filled: true,
-      fillColor: isDark ? AppColors.cardDark : Colors.white,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      fillColor: isDark ? AppColors.cardDark : const Color(0xFFF2F3F7),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(
-          color: isDark
-              ? AppColors.dividerDark
-              : Colors.black.withOpacity(0.08),
-        ),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide:
-            const BorderSide(color: AppColors.primaryMaroon, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: Colors.red, width: 1),
+        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 1.5),
       ),
     );
   }
 }
+

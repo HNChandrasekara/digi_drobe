@@ -21,7 +21,16 @@ class _WardrobeScreenState extends State<WardrobeScreen>
   late final TextEditingController _searchCtrl;
 
   static const List<String> _fixedCategories = [
-    'All', 'Tops', 'Bottoms', 'Outerwear', 'Dresses', 'Footwear', 'Accessories',
+    'All',
+    'Tops',
+    'Bottoms',
+    'Outerwear',
+    'Dresses',
+    'Footwear',
+    'Accessories',
+    'Knitwear',
+    'Activewear',
+    'Swimwear',
   ];
 
   // Category icon map
@@ -33,6 +42,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     'Dresses': Icons.accessibility_new_rounded,
     'Footwear': Icons.directions_walk_rounded,
     'Accessories': Icons.watch_rounded,
+    'Knitwear': Icons.stroller_rounded, // Best fit for knitwear/sweaters
+    'Activewear': Icons.fitness_center_rounded,
+    'Swimwear': Icons.pool_rounded,
   };
 
   @override
