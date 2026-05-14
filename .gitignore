@@ -64,3 +64,4 @@ lib/generated_plugin_registrant.dart
 **/windows/flutter/ephemeral/
 **/linux/flutter/ephemeral/
 **/macos/flutter/ephemeral/
+.env

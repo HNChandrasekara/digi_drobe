@@ -1,15 +1,14 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 class GeminiService {
   late final GenerativeModel _model;
   // TODO: Replace with your actual valid API key
   // You can get one from https://makersuite.google.com/app/apikey
-  static const String _apiKey = 'YOUR_API_KEY_HERE';
-  // static const String _apiKey = 'AIzaSy...'; // Example of a real key
+  String get _apiKey => dotenv.env['GEMINI_API_KEY'] ?? '';
 
   GeminiService() {
     _model = GenerativeModel(
-      model: 'gemini-pro',
+      model: 'gemini-1.5-flash',
       apiKey: _apiKey,
       systemInstruction: Content.system('You are a helpful assistant for Digi Drobe. You strictly only answer questions related to fashion, outfits, vr, avatar, and weather. If the user asks about anything else, politely decline and state that you can only discuss these topics.'),
     );
