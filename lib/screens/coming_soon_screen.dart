@@ -36,7 +36,7 @@ class ComingSoonScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Center(
+        child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(32.0),
             child: Column(

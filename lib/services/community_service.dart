@@ -51,9 +51,29 @@ class CommunityService {
         'memberCount': 892,
       },
       {
-        'name': 'Wardrobe Essentials',
-        'description': 'Tips for building the perfect capsule wardrobe',
-        'memberCount': 2103,
+        'name': 'Sustainable Fashion Rebels',
+        'description': 'Eco-friendly style tips and ethical brand discussions',
+        'memberCount': 567,
+      },
+      {
+        'name': 'DIY Upcycling & Customization',
+        'description': 'Turn your old clothes into new masterpieces',
+        'memberCount': 432,
+      },
+      {
+        'name': 'Streetwear Culture & Drops',
+        'description': 'Latest releases, sneakers, and urban fashion',
+        'memberCount': 3105,
+      },
+      {
+        'name': 'Minimalist Aesthetics',
+        'description': 'Focusing on capsule wardrobes and clean lines',
+        'memberCount': 1820,
+      },
+      {
+        'name': 'Accessories & Jewelry Spotlight',
+        'description': 'The small details that make a big statement',
+        'memberCount': 945,
       },
     ];
 

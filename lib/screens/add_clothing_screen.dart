@@ -65,23 +65,23 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
           final extension = _selectedImageExt ?? 'jpg';
           final fileName =
               'wardrobe_${DateTime.now().millisecondsSinceEpoch}.$extension';
-          final storage = FirebaseStorage.instanceFor(
-            bucket: DefaultFirebaseOptions.currentPlatform.storageBucket,
-          );
+          
+          final storage = FirebaseStorage.instance;
           final ref = storage.ref().child('wardrobe_images/$fileName');
           
           final metadata = SettableMetadata(
             contentType: 'image/$extension',
           );
 
-          final uploadTask = await ref.putData(_selectedImageBytes!, metadata);
-          imageUrl = await uploadTask.ref.getDownloadURL();
+          final TaskSnapshot snapshot = await ref.putData(_selectedImageBytes!, metadata);
+          imageUrl = await snapshot.ref.getDownloadURL();
+          debugPrint('DEBUG: Image uploaded successfully: $imageUrl');
         } catch (storageError) {
           debugPrint('DEBUG: Storage upload failed: $storageError');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Image upload failed, saving without image.'),
+                content: Text('Image upload failed: ${storageError.toString()}'),
                 backgroundColor: Colors.orange.shade700,
               ),
             );

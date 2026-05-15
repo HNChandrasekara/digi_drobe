@@ -16,6 +16,7 @@ import 'providers/product_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/wardrobe_provider.dart';
+import 'providers/thrift_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,6 +78,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => WardrobeProvider()),
+        ChangeNotifierProvider(create: (_) => ThriftProvider()),
       ],
       child: MyApp(
         firebaseInitialized: firebaseInitialized,

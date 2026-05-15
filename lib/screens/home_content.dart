@@ -13,6 +13,7 @@ import 'product_details_screen.dart';
 import 'virtual_fitting_room_screen.dart';
 import 'coming_soon_screen.dart';
 import 'goals_screen.dart';
+import 'thrift_store_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final Function(int) onTabChange;
@@ -178,8 +179,6 @@ class _HomeContentState extends State<HomeContent> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
-              MaterialPageRoute(
-                  builder: (context) => const VirtualFittingRoomScreen()),
             );
           },
         ),
@@ -190,19 +189,7 @@ class _HomeContentState extends State<HomeContent> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ComingSoonScreen(
-                  title: 'Thrift Store',
-                  subtitle: 'Get ready to buy and sell pre-loved fashion pieces with other style enthusiasts.',
-                  icon: Icons.store_rounded,
-                  goals: [
-                    'Secure peer-to-peer fashion marketplace',
-                    'Direct chat with buyers and sellers',
-                    'Authentication service for premium items',
-                    'Sustainable fashion community building'
-                  ],
-                ),
-              ),
+              MaterialPageRoute(builder: (context) => const ThriftStoreScreen()),
             );
           },
         ),

@@ -19,6 +19,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
   String _searchQuery = '';
   final CommunityService _communityService = CommunityService();
 
+  @override
+  void initState() {
+    super.initState();
+    _communityService.seedChannelsIfEmpty();
+  }
+
   bool _matchesSearch(String text) {
     if (_searchQuery.isEmpty) return true;
     return text.toLowerCase().contains(_searchQuery);
