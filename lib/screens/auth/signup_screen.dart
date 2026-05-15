@@ -14,6 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -28,6 +29,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
+        backgroundColor: AppColors.backgroundLight,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary),
           onPressed: () => Navigator.pop(context),
@@ -46,16 +49,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Text(
                     'Create Account',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      fontSize: 32,
-                      color: AppColors.textPrimary,
-                    ),
+                          fontSize: 32,
+                          color: AppColors.textPrimary,
+                        ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign up to get started',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontSize: 16,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
                   // Name Field
@@ -75,7 +79,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -83,11 +90,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   // Email Field
                   TextFormField(
                     controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -100,7 +109,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -126,38 +138,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 2),
+                        borderSide: const BorderSide(
+                          color: AppColors.primaryMaroon,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 32),
-                  // Sign Up Button
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          try {
-                            await AuthService().signUpWithEmailPassword(
-                              _emailController.text.trim(),
-                              _passwordController.text.trim(),
-                            );
-                            if (mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Account Created! Please Login.')),
-                              );
-                              Navigator.pop(context); // Go back to login
-                            }
-                          } catch (e) {
-                             if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Sign Up Failed: $e')),
-                              );
-                            }
-                          }
-                        }
-                      },
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() => _isLoading = true);
+                                try {
+                                  await AuthService().signUpWithEmailPassword(
+                                    _emailController.text.trim(),
+                                    _passwordController.text.trim(),
+                                    displayName: _nameController.text.trim(),
+                                  );
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Account Created! Please Login.'),
+                                    ),
+                                  );
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  if (!context.mounted) return;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content:
+                                            Text('Sign Up Failed: $e')),
+                                  );
+                                } finally {
+                                  if (mounted) {
+                                    setState(() => _isLoading = false);
+                                  }
+                                }
+                              }
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryMaroon,
                         foregroundColor: Colors.white,
@@ -166,14 +191,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         elevation: 0,
                       ),
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // Login Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -182,10 +219,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(color: AppColors.textSecondary),
                       ),
                       GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
+                        onTap: () => Navigator.pop(context),
+                        child: const Text(
                           'Login',
                           style: TextStyle(
                             color: AppColors.primaryMaroon,

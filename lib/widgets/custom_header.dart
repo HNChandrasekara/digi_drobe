@@ -3,11 +3,14 @@ import '../utils/colors.dart';
 
 class CustomHeader extends StatelessWidget {
   final String userName;
+  final VoidCallback? onProfileTap;
 
-  const CustomHeader({super.key, required this.userName});
+  const CustomHeader({super.key, required this.userName, this.onProfileTap});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
@@ -19,7 +22,7 @@ class CustomHeader extends StatelessWidget {
               Text(
                 'DigiDrobe',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: AppColors.primaryMaroon,
+                  color: AppColors.primaryMaroon, // Brand color stays the same
                   fontWeight: FontWeight.w900,
                   letterSpacing: -1.0,
                 ),
@@ -27,7 +30,7 @@ class CustomHeader extends StatelessWidget {
               Text(
                 'Welcome, $userName!',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -35,9 +38,12 @@ class CustomHeader extends StatelessWidget {
           ),
           Row(
             children: [
-              _buildIconButton(Icons.person_rounded),
+              GestureDetector(
+                onTap: onProfileTap,
+                child: _buildIconButton(Icons.settings_rounded, isDark),
+              ),
               const SizedBox(width: 12),
-              _buildIconButton(Icons.tune_rounded),
+              _buildIconButton(Icons.tune_rounded, isDark),
             ],
           ),
         ],
@@ -45,14 +51,18 @@ class CustomHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildIconButton(IconData icon) {
+  Widget _buildIconButton(IconData icon, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.systemGray6,
+        color: isDark ? AppColors.cardDark : AppColors.systemGray6,
         shape: BoxShape.circle,
       ),
-      child: Icon(icon, color: AppColors.iconColor, size: 22),
+      child: Icon(
+        icon,
+        color: isDark ? AppColors.iconColorDark : AppColors.iconColor,
+        size: 22,
+      ),
     );
   }
 }
