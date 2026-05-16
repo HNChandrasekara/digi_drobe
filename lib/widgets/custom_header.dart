@@ -10,7 +10,7 @@ class CustomHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
@@ -30,7 +30,9 @@ class CustomHeader extends StatelessWidget {
               Text(
                 'Welcome, $userName!',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontWeight: FontWeight.w500,
                 ),
               ),

@@ -11,7 +11,8 @@ class ThriftItem {
   final String sellerId;
   final String sellerName;
   final DateTime? addedAt;
-  final String condition; // e.g., "New", "Used - Like New", "Used - Good", "Used - Fair"
+  final String
+  condition; // e.g., "New", "Used - Like New", "Used - Good", "Used - Fair"
 
   const ThriftItem({
     required this.id,
@@ -45,17 +46,17 @@ class ThriftItem {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'title': title,
-        'price': price,
-        'description': description,
-        'category': category,
-        'brand': brand,
-        'imageUrl': imageUrl,
-        'sellerId': sellerId,
-        'sellerName': sellerName,
-        'addedAt': addedAt != null
-            ? Timestamp.fromDate(addedAt!)
-            : FieldValue.serverTimestamp(),
-        'condition': condition,
-      };
+    'title': title,
+    'price': price,
+    'description': description,
+    'category': category,
+    'brand': brand,
+    'imageUrl': imageUrl,
+    'sellerId': sellerId,
+    'sellerName': sellerName,
+    'addedAt': addedAt != null
+        ? Timestamp.fromDate(addedAt!)
+        : FieldValue.serverTimestamp(),
+    'condition': condition,
+  };
 }

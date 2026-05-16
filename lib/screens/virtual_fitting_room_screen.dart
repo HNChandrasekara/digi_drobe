@@ -39,7 +39,8 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
     ),
     const _ModelItem(
       name: 'Robot Helper',
-      url: 'https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
+      url:
+          'https://threejs.org/examples/models/gltf/RobotExpressive/RobotExpressive.glb',
       icon: Icons.smart_toy_rounded,
     ),
   ];
@@ -61,8 +62,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
             ),
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
             child: Column(
@@ -82,18 +84,18 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                 const SizedBox(height: 20),
                 Text(
                   'Add 3D Model',
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'Paste a .glb or .gltf model URL',
                   style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
-                      ),
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 TextField(
@@ -108,7 +110,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(
-                          color: AppColors.primaryMaroon, width: 2),
+                        color: AppColors.primaryMaroon,
+                        width: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -125,7 +129,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: const BorderSide(
-                          color: AppColors.primaryMaroon, width: 2),
+                        color: AppColors.primaryMaroon,
+                        width: 2,
+                      ),
                     ),
                   ),
                   keyboardType: TextInputType.url,
@@ -140,11 +146,13 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                       final name = nameController.text.trim();
                       if (url.isNotEmpty) {
                         setState(() {
-                          _models.add(_ModelItem(
-                            name: name.isEmpty ? 'Custom Model' : name,
-                            url: url,
-                            icon: Icons.view_in_ar_rounded,
-                          ));
+                          _models.add(
+                            _ModelItem(
+                              name: name.isEmpty ? 'Custom Model' : name,
+                              url: url,
+                              icon: Icons.view_in_ar_rounded,
+                            ),
+                          );
                           _selectedIndex = _models.length - 1;
                         });
                         Navigator.pop(ctx);
@@ -154,7 +162,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                     label: const Text(
                       'Add Model',
                       style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryMaroon,
@@ -181,8 +191,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
     final currentModel = _models[_selectedIndex];
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('Virtual Fitting Room'),
         backgroundColor: Colors.transparent,
@@ -195,9 +206,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Text(
               'Interactive 3D Prototype',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
           ),
@@ -206,10 +217,10 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
             child: Text(
               'Rotate, zoom, and explore items in 3D to see how they look from every angle.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary,
-                  ),
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -248,7 +259,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                     left: 12,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primaryMaroon.withOpacity(0.85),
                         borderRadius: BorderRadius.circular(20),
@@ -256,8 +269,11 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(currentModel.icon,
-                              color: Colors.white, size: 16),
+                          Icon(
+                            currentModel.icon,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             currentModel.name,
@@ -291,8 +307,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                         final model = _models[index];
                         final isSelected = index == _selectedIndex;
                         return GestureDetector(
-                          onTap: () =>
-                              setState(() => _selectedIndex = index),
+                          onTap: () => setState(() => _selectedIndex = index),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             width: 88,
@@ -300,12 +315,14 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                               color: isSelected
                                   ? AppColors.primaryMaroon
                                   : (isDark
-                                      ? AppColors.cardDark
-                                      : AppColors.systemGray6),
+                                        ? AppColors.cardDark
+                                        : AppColors.systemGray6),
                               borderRadius: BorderRadius.circular(16),
                               border: isSelected
                                   ? Border.all(
-                                      color: AppColors.accentMaroon, width: 2)
+                                      color: AppColors.accentMaroon,
+                                      width: 2,
+                                    )
                                   : null,
                               boxShadow: isSelected
                                   ? [
@@ -326,8 +343,8 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                                   color: isSelected
                                       ? Colors.white
                                       : (isDark
-                                          ? AppColors.textSecondaryDark
-                                          : AppColors.textSecondary),
+                                            ? AppColors.textSecondaryDark
+                                            : AppColors.textSecondary),
                                   size: 26,
                                 ),
                                 const SizedBox(height: 4),
@@ -339,8 +356,8 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                                     color: isSelected
                                         ? Colors.white
                                         : (isDark
-                                            ? AppColors.textSecondaryDark
-                                            : AppColors.textSecondary),
+                                              ? AppColors.textSecondaryDark
+                                              : AppColors.textSecondary),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -370,8 +387,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                AppColors.primaryMaroon.withOpacity(0.35),
+                            color: AppColors.primaryMaroon.withOpacity(0.35),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -396,24 +412,42 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.stars_rounded, color: AppColors.primaryMaroon, size: 20),
+                    const Icon(
+                      Icons.stars_rounded,
+                      color: AppColors.primaryMaroon,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'DEVELOPMENT GOALS',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimary,
                         letterSpacing: 1.1,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                _buildGoalItem('Full 3D avatar customization to match your body type', isDark),
-                _buildGoalItem('Real-time fabric physics and lighting simulation', isDark),
-                _buildGoalItem('AI-powered sizing recommendations for a perfect fit', isDark),
-                _buildGoalItem('Augmented Reality (AR) try-on using phone camera', isDark),
+                _buildGoalItem(
+                  'Full 3D avatar customization to match your body type',
+                  isDark,
+                ),
+                _buildGoalItem(
+                  'Real-time fabric physics and lighting simulation',
+                  isDark,
+                ),
+                _buildGoalItem(
+                  'AI-powered sizing recommendations for a perfect fit',
+                  isDark,
+                ),
+                _buildGoalItem(
+                  'Augmented Reality (AR) try-on using phone camera',
+                  isDark,
+                ),
               ],
             ),
           ),
@@ -429,14 +463,20 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.circle, size: 6, color: AppColors.primaryMaroon.withOpacity(0.5)),
+          Icon(
+            Icons.circle,
+            size: 6,
+            color: AppColors.primaryMaroon.withOpacity(0.5),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
                 fontSize: 11,
-                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
               ),
             ),
           ),

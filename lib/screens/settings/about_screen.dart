@@ -16,7 +16,7 @@ class AboutScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 children: [
-                   const Text(
+                  const Text(
                     'Welcome to DigiDrobe, the ultimate digital wardrobe companion that brings your closet to life! Our mission is to simplify fashion, promote sustainability, and help you look your best every single day.',
                     textAlign: TextAlign.center,
                     style: TextStyle(

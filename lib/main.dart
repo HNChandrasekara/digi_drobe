@@ -32,7 +32,7 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
     }
-    
+
     // Connect to emulators if enabled (local development)
     const bool useEmulators = false;
     if (kDebugMode && useEmulators) {
@@ -46,13 +46,17 @@ void main() async {
         await FirebaseStorage.instance.useStorageEmulator(host, 9199);
         debugPrint('Firebase: Connected to Emulators at $host');
       } catch (e) {
-        debugPrint('Firebase: Emulator connection failed (already connected?): $e');
+        debugPrint(
+          'Firebase: Emulator connection failed (already connected?): $e',
+        );
       }
     }
 
     AuthService.markInitialized();
     firebaseInitialized = true;
-    debugPrint('Firebase: Initialized successfully with project: ${DefaultFirebaseOptions.currentPlatform.projectId}');
+    debugPrint(
+      'Firebase: Initialized successfully with project: ${DefaultFirebaseOptions.currentPlatform.projectId}',
+    );
   } catch (e) {
     firebaseInitError = e.toString();
     debugPrint('Firebase: Initialization failure: $e');
@@ -91,7 +95,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   final bool firebaseInitialized;
   final String? firebaseInitError;
-  const MyApp({super.key, required this.firebaseInitialized, this.firebaseInitError});
+  const MyApp({
+    super.key,
+    required this.firebaseInitialized,
+    this.firebaseInitError,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +110,9 @@ class MyApp extends StatelessWidget {
           title: 'Digi Drobe',
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
-          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: themeProvider.isDarkMode
+              ? ThemeMode.dark
+              : ThemeMode.light,
           builder: (context, child) {
             return Stack(
               children: [
@@ -124,7 +134,10 @@ class MyApp extends StatelessWidget {
                         child: Text(
                           'Mock Mode: Firebase Not Configured (Using Dummy Keys)',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white, fontSize: 10),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
                     ),

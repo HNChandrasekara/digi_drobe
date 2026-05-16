@@ -6,7 +6,7 @@ import '../services/product_service.dart';
 
 class ProductProvider extends ChangeNotifier {
   final ProductService _service = ProductService();
-  
+
   List<Product> _products = [];
   bool _isLoading = false;
   String? _error;
@@ -30,9 +30,11 @@ class ProductProvider extends ChangeNotifier {
         'Designer Leather Handbag',
         'Classic Blue Denim Jeans',
         'Floral Summer Dress',
-        'White Casual Sneakers'
+        'White Casual Sneakers',
       ];
-      final snap = await FirebaseFirestore.instance.collection('products').get();
+      final snap = await FirebaseFirestore.instance
+          .collection('products')
+          .get();
       for (var doc in snap.docs) {
         if (dummyTitles.contains((doc.data())['title'])) {
           await doc.reference.delete();
@@ -60,10 +62,12 @@ class ProductProvider extends ChangeNotifier {
     if (query.isEmpty) return _products;
     final q = query.toLowerCase();
     return _products
-        .where((p) =>
-            p.title.toLowerCase().contains(q) ||
-            p.description.toLowerCase().contains(q) ||
-            p.category.toLowerCase().contains(q))
+        .where(
+          (p) =>
+              p.title.toLowerCase().contains(q) ||
+              p.description.toLowerCase().contains(q) ||
+              p.category.toLowerCase().contains(q),
+        )
         .toList();
   }
 

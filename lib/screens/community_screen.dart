@@ -58,7 +58,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     if (_matchesSearch('stories')) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8),
+                          horizontal: 20,
+                          vertical: 8,
+                        ),
                         child: Text(
                           'Stories',
                           style: TextStyle(
@@ -79,7 +81,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     if (_matchesSearch('channels')) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                         child: Text(
                           'Channels',
                           style: TextStyle(
@@ -181,10 +185,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ChatScreen(
-              channelId: channel.id,
-              channelName: channel.name,
-            ),
+            builder: (context) =>
+                ChatScreen(channelId: channel.id, channelName: channel.name),
           ),
         ),
         child: Container(

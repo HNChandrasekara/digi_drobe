@@ -28,17 +28,19 @@ class CartProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     _sub?.cancel();
-    _sub = _service.getCartStream(uid).listen(
-      (list) {
-        _items = list;
-        _isLoading = false;
-        notifyListeners();
-      },
-      onError: (_) {
-        _isLoading = false;
-        notifyListeners();
-      },
-    );
+    _sub = _service
+        .getCartStream(uid)
+        .listen(
+          (list) {
+            _items = list;
+            _isLoading = false;
+            notifyListeners();
+          },
+          onError: (_) {
+            _isLoading = false;
+            notifyListeners();
+          },
+        );
   }
 
   /// Call this after sign-in to start listening to the cart.

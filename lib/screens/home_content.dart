@@ -38,9 +38,7 @@ class _HomeContentState extends State<HomeContent> {
       child: Column(
         children: [
           CustomHeader(userName: userName, onProfileTap: widget.onProfileTap),
-          DigiSearchBar(
-            onChanged: (q) => setState(() => _searchQuery = q),
-          ),
+          DigiSearchBar(onChanged: (q) => setState(() => _searchQuery = q)),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
@@ -50,11 +48,11 @@ class _HomeContentState extends State<HomeContent> {
                   child: Text(
                     'Your Favourite Virtual Wardrobe',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: isDark
-                              ? AppColors.textPrimaryDark
-                              : AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
                 GestureDetector(
@@ -68,9 +66,7 @@ class _HomeContentState extends State<HomeContent> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      _showFeed
-                          ? Icons.grid_view_rounded
-                          : Icons.list_rounded,
+                      _showFeed ? Icons.grid_view_rounded : Icons.list_rounded,
                       size: 20,
                       color: AppColors.primaryMaroon,
                     ),
@@ -178,7 +174,9 @@ class _HomeContentState extends State<HomeContent> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const VirtualFittingRoomScreen()),
+              MaterialPageRoute(
+                builder: (context) => const VirtualFittingRoomScreen(),
+              ),
             );
           },
         ),
@@ -189,7 +187,9 @@ class _HomeContentState extends State<HomeContent> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ThriftStoreScreen()),
+              MaterialPageRoute(
+                builder: (context) => const ThriftStoreScreen(),
+              ),
             );
           },
         ),
@@ -200,9 +200,7 @@ class _HomeContentState extends State<HomeContent> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const GoalsScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const GoalsScreen()),
             );
           },
         ),

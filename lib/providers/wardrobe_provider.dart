@@ -66,10 +66,12 @@ class WardrobeProvider extends ChangeNotifier {
     if (query.isEmpty) return base;
     final q = query.toLowerCase();
     return base
-        .where((i) =>
-            i.title.toLowerCase().contains(q) ||
-            i.brand.toLowerCase().contains(q) ||
-            i.category.toLowerCase().contains(q))
+        .where(
+          (i) =>
+              i.title.toLowerCase().contains(q) ||
+              i.brand.toLowerCase().contains(q) ||
+              i.category.toLowerCase().contains(q),
+        )
         .toList();
   }
 

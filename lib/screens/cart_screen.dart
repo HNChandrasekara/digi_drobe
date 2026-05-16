@@ -22,8 +22,7 @@ class CartScreen extends StatelessWidget {
           children: [
             CustomHeader(userName: userName),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               child: Row(
                 children: [
                   Text(
@@ -59,8 +58,12 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartList(BuildContext context, List<CartItem> items, bool isDark,
-      CartProvider cart) {
+  Widget _buildCartList(
+    BuildContext context,
+    List<CartItem> items,
+    bool isDark,
+    CartProvider cart,
+  ) {
     if (items.isEmpty) {
       return Center(
         child: Column(
@@ -69,7 +72,9 @@ class CartScreen extends StatelessWidget {
             Icon(
               Icons.shopping_cart_outlined,
               size: 64,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary,
             ),
             const SizedBox(height: 16),
             Text(
@@ -228,7 +233,10 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildCheckoutFooter(
-      BuildContext context, bool isDark, CartProvider cart) {
+    BuildContext context,
+    bool isDark,
+    CartProvider cart,
+  ) {
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -297,8 +305,7 @@ class CartScreen extends StatelessWidget {
               ),
               child: const Text(
                 'Checkout',
-                style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),

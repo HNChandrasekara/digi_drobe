@@ -74,13 +74,17 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
     try {
       String? imageUrl;
       final extension = _selectedImageExt ?? 'jpg';
-      final fileName = 'thrift_${DateTime.now().millisecondsSinceEpoch}.$extension';
-      
+      final fileName =
+          'thrift_${DateTime.now().millisecondsSinceEpoch}.$extension';
+
       final storage = FirebaseStorage.instance;
       final ref = storage.ref().child('thrift_images/$fileName');
-      
+
       final metadata = SettableMetadata(contentType: 'image/$extension');
-      final TaskSnapshot snapshot = await ref.putData(_selectedImageBytes!, metadata);
+      final TaskSnapshot snapshot = await ref.putData(
+        _selectedImageBytes!,
+        metadata,
+      );
       imageUrl = await snapshot.ref.getDownloadURL();
 
       final user = FirebaseAuth.instance.currentUser;
@@ -102,7 +106,10 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
         await context.read<ThriftProvider>().addItem(newItem);
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Item listed in Thrift Store!'), backgroundColor: AppColors.primaryMaroon),
+          const SnackBar(
+            content: Text('Item listed in Thrift Store!'),
+            backgroundColor: AppColors.primaryMaroon,
+          ),
         );
       }
     } catch (e) {
@@ -121,7 +128,9 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(title: const Text('Sell Item')),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -138,13 +147,18 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
                         width: double.infinity,
                         height: 200,
                         decoration: BoxDecoration(
-                          color: isDark ? AppColors.cardDark : Colors.grey.shade200,
+                          color: isDark
+                              ? AppColors.cardDark
+                              : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: _selectedImageBytes != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
-                                child: Image.memory(_selectedImageBytes!, fit: BoxFit.cover),
+                                child: Image.memory(
+                                  _selectedImageBytes!,
+                                  fit: BoxFit.cover,
+                                ),
                               )
                             : const Icon(Icons.add_a_photo_outlined, size: 50),
                       ),
@@ -152,19 +166,42 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
                     const SizedBox(height: 24),
                     _buildField('Item Title', _titleController, isDark),
                     const SizedBox(height: 16),
-                    _buildField('Price (\$)', _priceController, isDark, keyboardType: TextInputType.number),
+                    _buildField(
+                      'Price (\$)',
+                      _priceController,
+                      isDark,
+                      keyboardType: TextInputType.number,
+                    ),
                     const SizedBox(height: 16),
-                    _buildDropdown('Category', _categories, _selectedCategory, (v) => setState(() => _selectedCategory = v!), isDark),
+                    _buildDropdown(
+                      'Category',
+                      _categories,
+                      _selectedCategory,
+                      (v) => setState(() => _selectedCategory = v!),
+                      isDark,
+                    ),
                     const SizedBox(height: 16),
-                    _buildDropdown('Condition', _conditions, _selectedCondition, (v) => setState(() => _selectedCondition = v!), isDark),
+                    _buildDropdown(
+                      'Condition',
+                      _conditions,
+                      _selectedCondition,
+                      (v) => setState(() => _selectedCondition = v!),
+                      isDark,
+                    ),
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
                         onPressed: _saveThriftItem,
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryMaroon, foregroundColor: Colors.white),
-                        child: const Text('List Item', style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryMaroon,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text(
+                          'List Item',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
                   ],
@@ -174,7 +211,12 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
     );
   }
 
-  Widget _buildField(String label, TextEditingController controller, bool isDark, {TextInputType? keyboardType}) {
+  Widget _buildField(
+    String label,
+    TextEditingController controller,
+    bool isDark, {
+    TextInputType? keyboardType,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -186,7 +228,10 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
           decoration: InputDecoration(
             filled: true,
             fillColor: isDark ? AppColors.cardDark : Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
           ),
           validator: (v) => v == null || v.isEmpty ? 'Required' : null,
         ),
@@ -194,7 +239,13 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
     );
   }
 
-  Widget _buildDropdown(String label, List<String> items, String current, Function(String?) onChanged, bool isDark) {
+  Widget _buildDropdown(
+    String label,
+    List<String> items,
+    String current,
+    Function(String?) onChanged,
+    bool isDark,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -202,12 +253,17 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           value: current,
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items: items
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
           onChanged: onChanged,
           decoration: InputDecoration(
             filled: true,
             fillColor: isDark ? AppColors.cardDark : Colors.white,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
       ],

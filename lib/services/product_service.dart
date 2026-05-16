@@ -7,9 +7,10 @@ class ProductService {
 
   // ── Stream of all products ──────────────────────────────────────────────────
   Stream<List<Product>> getProductsStream() {
-    return _db.collection(_col).snapshots().map(
-          (snap) => snap.docs.map(Product.fromFirestore).toList(),
-        );
+    return _db
+        .collection(_col)
+        .snapshots()
+        .map((snap) => snap.docs.map(Product.fromFirestore).toList());
   }
 
   // ── One-time fetch ──────────────────────────────────────────────────────────

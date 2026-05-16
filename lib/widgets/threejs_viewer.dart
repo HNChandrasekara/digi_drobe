@@ -52,7 +52,9 @@ class _ThreeJsViewerState extends State<ThreeJsViewer> {
   }
 
   Future<void> _loadHtmlFromAssets() async {
-    final String htmlContent = await rootBundle.loadString('assets/threejs/index.html');
+    final String htmlContent = await rootBundle.loadString(
+      'assets/threejs/index.html',
+    );
     await _controller.loadHtmlString(htmlContent);
   }
 

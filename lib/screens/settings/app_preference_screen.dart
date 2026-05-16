@@ -76,7 +76,9 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: isDark ? AppColors.textPrimaryDark : Colors.black87,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : Colors.black87,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -122,7 +124,6 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
         ),
         child: Column(
           children: [
-
             _buildToggleItem(
               icon: Icons.notifications_none_rounded,
               title: 'Notifications',
@@ -226,7 +227,9 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? AppColors.textPrimaryDark : Colors.black87,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : Colors.black87,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -271,7 +274,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
 
   Widget _buildHeader(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Row(
@@ -280,7 +283,9 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
             onPressed: () => Navigator.pop(context),
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : const Color(0xFF1A1A3A),
             ),
           ),
           Expanded(
@@ -290,7 +295,9 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+                color: isDark
+                    ? AppColors.textPrimaryDark
+                    : const Color(0xFF1A1A3A),
               ),
             ),
           ),

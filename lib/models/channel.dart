@@ -24,8 +24,8 @@ class Channel {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'name': name,
-        'description': description,
-        'memberCount': memberCount,
-      };
+    'name': name,
+    'description': description,
+    'memberCount': memberCount,
+  };
 }

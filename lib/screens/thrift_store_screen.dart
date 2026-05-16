@@ -20,7 +20,9 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('Thrift Store'),
         centerTitle: true,
@@ -30,7 +32,9 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddThriftItemScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const AddThriftItemScreen(),
+                ),
               );
             },
           ),
@@ -47,8 +51,12 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
                 }
 
                 final items = provider.items.where((item) {
-                  return item.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                      item.category.toLowerCase().contains(_searchQuery.toLowerCase());
+                  return item.title.toLowerCase().contains(
+                        _searchQuery.toLowerCase(),
+                      ) ||
+                      item.category.toLowerCase().contains(
+                        _searchQuery.toLowerCase(),
+                      );
                 }).toList();
 
                 if (items.isEmpty) {
@@ -113,7 +121,9 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -121,20 +131,31 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
                       ? Image.network(item.imageUrl!, fit: BoxFit.cover)
                       : Container(
                           color: AppColors.primaryMaroon.withOpacity(0.1),
-                          child: const Icon(Icons.shopping_bag_outlined, size: 50, color: AppColors.primaryMaroon),
+                          child: const Icon(
+                            Icons.shopping_bag_outlined,
+                            size: 50,
+                            color: AppColors.primaryMaroon,
+                          ),
                         ),
                   Positioned(
                     top: 8,
                     right: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primaryMaroon,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         '\$${item.price.toStringAsFixed(0)}',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -149,19 +170,29 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
               children: [
                 Text(
                   item.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'Seller: ${item.sellerName}',
-                  style: TextStyle(fontSize: 11, color: isDark ? Colors.white70 : Colors.black54),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   item.condition,
-                  style: const TextStyle(fontSize: 10, color: AppColors.primaryMaroon, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.primaryMaroon,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -176,11 +207,19 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.storefront_rounded, size: 80, color: isDark ? Colors.white24 : Colors.black12),
+          Icon(
+            Icons.storefront_rounded,
+            size: 80,
+            color: isDark ? Colors.white24 : Colors.black12,
+          ),
           const SizedBox(height: 16),
           Text(
             'No items found',
-            style: TextStyle(fontSize: 18, color: isDark ? Colors.white54 : Colors.black45, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              color: isDark ? Colors.white54 : Colors.black45,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

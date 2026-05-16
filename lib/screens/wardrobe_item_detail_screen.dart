@@ -14,13 +14,14 @@ class WardrobeItemDetailScreen extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor:
-            Theme.of(context).brightness == Brightness.dark
-                ? AppColors.cardDark
-                : Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.cardDark
+            : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Remove Item',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Remove Item',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Text(
           'Remove "${item.title}" from your wardrobe?',
           style: const TextStyle(fontSize: 15),
@@ -36,7 +37,8 @@ class WardrobeItemDetailScreen extends StatelessWidget {
               backgroundColor: Colors.red.shade600,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Remove'),
           ),
@@ -50,9 +52,9 @@ class WardrobeItemDetailScreen extends StatelessWidget {
         if (context.mounted) Navigator.pop(context);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error removing item: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error removing item: $e')));
         }
       }
     }
@@ -63,16 +65,18 @@ class WardrobeItemDetailScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: CustomScrollView(
         slivers: [
           // ── Hero image app bar ──────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 380,
             pinned: true,
-            backgroundColor:
-                isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+            backgroundColor: isDark
+                ? AppColors.backgroundDark
+                : AppColors.backgroundLight,
             leading: Padding(
               padding: const EdgeInsets.all(8),
               child: GestureDetector(
@@ -103,8 +107,11 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                       color: Colors.red.shade600.withOpacity(0.9),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.delete_outline_rounded,
-                        color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
@@ -126,11 +133,13 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                                   : AppColors.systemGray6,
                               child: const Center(
                                 child: CircularProgressIndicator(
-                                    color: AppColors.primaryMaroon),
+                                  color: AppColors.primaryMaroon,
+                                ),
                               ),
                             );
                           },
-                          errorBuilder: (_, __, ___) => _imagePlaceholder(isDark),
+                          errorBuilder: (_, __, ___) =>
+                              _imagePlaceholder(isDark),
                         )
                       : _imagePlaceholder(isDark),
                   // Bottom gradient
@@ -145,7 +154,9 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                           colors: [
-                            (isDark ? AppColors.backgroundDark : AppColors.backgroundLight),
+                            (isDark
+                                ? AppColors.backgroundDark
+                                : AppColors.backgroundLight),
                             Colors.transparent,
                           ],
                         ),
@@ -167,7 +178,9 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   // Category chip
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primaryMaroon.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
@@ -202,11 +215,13 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   if (item.brand.isNotEmpty) ...[
                     Row(
                       children: [
-                        Icon(Icons.label_outline_rounded,
-                            size: 16,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondary),
+                        Icon(
+                          Icons.label_outline_rounded,
+                          size: 16,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           item.brand,
@@ -227,11 +242,13 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   if (item.addedAt != null) ...[
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_outlined,
-                            size: 14,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondary),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 14,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Added ${_formatDate(item.addedAt!)}',
@@ -287,8 +304,10 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                     height: 56,
                     child: OutlinedButton.icon(
                       onPressed: () => _confirmDelete(context),
-                      icon: const Icon(Icons.delete_outline_rounded,
-                          color: Colors.red),
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                      ),
                       label: const Text(
                         'Remove from Wardrobe',
                         style: TextStyle(
@@ -324,14 +343,17 @@ class WardrobeItemDetailScreen extends StatelessWidget {
             Icon(
               Icons.checkroom_rounded,
               size: 72,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.systemGray,
             ),
             const SizedBox(height: 12),
             Text(
               'No Image',
               style: TextStyle(
-                color:
-                    isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.systemGray,
                 fontSize: 14,
               ),
             ),
@@ -343,8 +365,18 @@ class WardrobeItemDetailScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

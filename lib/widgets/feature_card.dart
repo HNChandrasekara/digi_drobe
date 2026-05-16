@@ -18,7 +18,7 @@ class FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       child: Card(
@@ -63,7 +63,9 @@ class FeatureCard extends StatelessWidget {
                         title,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
-                              color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                              color: isDark
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.textPrimary,
                               fontWeight: FontWeight.w700,
                             ),
                       ),
@@ -73,7 +75,9 @@ class FeatureCard extends StatelessWidget {
                           subtitle!,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                                color: isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.textSecondary,
                               ),
                         ),
                       ],

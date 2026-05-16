@@ -27,12 +27,12 @@ class ThriftService {
   Future<void> deleteThriftItem(String id) async {
     final doc = await _db.collection(_col).doc(id).get();
     if (!doc.exists) return;
-    
+
     final data = doc.data() as Map<String, dynamic>;
     if (data['sellerId'] != _uid) {
       throw Exception('You can only delete your own items');
     }
-    
+
     await _db.collection(_col).doc(id).delete();
   }
 

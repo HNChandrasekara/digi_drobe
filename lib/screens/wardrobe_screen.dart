@@ -65,8 +65,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     final userName = context.watch<UserProvider>().displayName;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       floatingActionButton: _buildFAB(context),
       body: SafeArea(
         child: Column(
@@ -152,7 +153,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                         color: Colors.black.withOpacity(0.06),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
-                      )
+                      ),
                     ],
             ),
             child: Icon(
@@ -194,8 +195,12 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     );
   }
 
-  Widget _statChip(String value, String label, bool isDark,
-      {bool highlighted = false}) {
+  Widget _statChip(
+    String value,
+    String label,
+    bool isDark, {
+    bool highlighted = false,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
@@ -210,7 +215,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
-                )
+                ),
               ],
       ),
       child: RichText(
@@ -223,7 +228,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 fontWeight: FontWeight.w800,
                 color: highlighted
                     ? Colors.white
-                    : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimary),
+                    : (isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimary),
               ),
             ),
             TextSpan(
@@ -234,8 +241,8 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 color: highlighted
                     ? Colors.white70
                     : (isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary),
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary),
               ),
             ),
           ],
@@ -254,13 +261,16 @@ class _WardrobeScreenState extends State<WardrobeScreen>
         decoration: InputDecoration(
           hintText: 'Search clothes, brands...',
           hintStyle: TextStyle(
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
             fontSize: 14,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
-            color:
-                isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
           ),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
@@ -276,8 +286,10 @@ class _WardrobeScreenState extends State<WardrobeScreen>
               : null,
           filled: true,
           fillColor: isDark ? AppColors.cardDark : Colors.white,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 14,
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
             borderSide: BorderSide.none,
@@ -303,8 +315,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             onTap: () => setState(() => _selectedCategory = cat),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: selected
                     ? AppColors.primaryMaroon
@@ -317,7 +328,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                           color: Colors.black.withOpacity(0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
-                        )
+                        ),
                       ],
               ),
               child: Row(
@@ -329,21 +340,20 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                     color: selected
                         ? Colors.white
                         : (isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary),
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     cat,
                     style: TextStyle(
                       fontSize: 13,
-                      fontWeight:
-                          selected ? FontWeight.w700 : FontWeight.w500,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                       color: selected
                           ? Colors.white
                           : (isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary),
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary),
                     ),
                   ),
                 ],
@@ -370,8 +380,11 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.wifi_off_rounded,
-                    size: 48, color: AppColors.primaryMaroon),
+                const Icon(
+                  Icons.wifi_off_rounded,
+                  size: 48,
+                  color: AppColors.primaryMaroon,
+                ),
                 const SizedBox(height: 12),
                 Text(
                   'Could not load wardrobe',
@@ -387,7 +400,10 @@ class _WardrobeScreenState extends State<WardrobeScreen>
           );
         }
 
-        final items = provider.search(_searchQuery, category: _selectedCategory);
+        final items = provider.search(
+          _searchQuery,
+          category: _selectedCategory,
+        );
 
         if (items.isEmpty) {
           return _buildEmptyState(isDark);
@@ -420,9 +436,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (_) => WardrobeItemDetailScreen(item: item),
-        ),
+        MaterialPageRoute(builder: (_) => WardrobeItemDetailScreen(item: item)),
       ),
       child: Dismissible(
         key: Key(item.id),
@@ -437,14 +451,16 @@ class _WardrobeScreenState extends State<WardrobeScreen>
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.delete_outline_rounded,
-                  color: Colors.white, size: 26),
+              Icon(Icons.delete_outline_rounded, color: Colors.white, size: 26),
               SizedBox(height: 4),
-              Text('Remove',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600)),
+              Text(
+                'Remove',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ),
@@ -452,12 +468,14 @@ class _WardrobeScreenState extends State<WardrobeScreen>
           return await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              backgroundColor:
-                  isDark ? AppColors.cardDark : Colors.white,
+              backgroundColor: isDark ? AppColors.cardDark : Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text('Remove Item',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text(
+                'Remove Item',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               content: Text('Remove "${item.title}" from wardrobe?'),
               actions: [
                 TextButton(
@@ -470,7 +488,8 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                     backgroundColor: Colors.red.shade600,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: const Text('Remove'),
                 ),
@@ -483,9 +502,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             await provider.deleteItem(item.id);
           } catch (e) {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error: $e')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('Error: $e')));
             }
           }
         },
@@ -500,7 +519,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                       color: Colors.black.withOpacity(0.07),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
-                    )
+                    ),
                   ],
           ),
           child: Column(
@@ -509,16 +528,18 @@ class _WardrobeScreenState extends State<WardrobeScreen>
               // Image area
               Expanded(
                 child: ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(24)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(24),
+                  ),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
                       // Background
                       Container(
-                          color: isDark
-                              ? AppColors.surfaceDark
-                              : AppColors.systemGray6),
+                        color: isDark
+                            ? AppColors.surfaceDark
+                            : AppColors.systemGray6,
+                      ),
                       // Image
                       if (item.imageUrl != null && item.imageUrl!.isNotEmpty)
                         Image.network(
@@ -534,7 +555,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                                   strokeWidth: 2,
                                   value: progress.expectedTotalBytes != null
                                       ? progress.cumulativeBytesLoaded /
-                                          progress.expectedTotalBytes!
+                                            progress.expectedTotalBytes!
                                       : null,
                                   color: AppColors.primaryMaroon,
                                 ),
@@ -567,7 +588,9 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                         left: 10,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.55),
                             borderRadius: BorderRadius.circular(20),
@@ -633,8 +656,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
 
   // ── Empty state ───────────────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final isFiltered =
-        _searchQuery.isNotEmpty || _selectedCategory != 'All';
+    final isFiltered = _searchQuery.isNotEmpty || _selectedCategory != 'All';
 
     return Center(
       child: Padding(
@@ -650,18 +672,14 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                isFiltered
-                    ? Icons.search_off_rounded
-                    : Icons.checkroom_rounded,
+                isFiltered ? Icons.search_off_rounded : Icons.checkroom_rounded,
                 size: 48,
                 color: AppColors.primaryMaroon,
               ),
             ),
             const SizedBox(height: 20),
             Text(
-              isFiltered
-                  ? 'No matching items'
-                  : 'Your wardrobe is empty',
+              isFiltered ? 'No matching items' : 'Your wardrobe is empty',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
@@ -692,15 +710,20 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                   MaterialPageRoute(builder: (_) => const AddClothingScreen()),
                 ),
                 icon: const Icon(Icons.add_rounded),
-                label: const Text('Add First Item',
-                    style: TextStyle(fontWeight: FontWeight.w700)),
+                label: const Text(
+                  'Add First Item',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryMaroon,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 28, vertical: 14),
+                    horizontal: 28,
+                    vertical: 14,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
             ],

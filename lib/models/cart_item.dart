@@ -27,12 +27,12 @@ class CartItem {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'productId': productId,
-        'title': title,
-        'imageUrl': imageUrl,
-        'price': price,
-        'quantity': quantity,
-      };
+    'productId': productId,
+    'title': title,
+    'imageUrl': imageUrl,
+    'price': price,
+    'quantity': quantity,
+  };
 
   double get subtotal => price * quantity;
 }

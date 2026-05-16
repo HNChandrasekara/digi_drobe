@@ -19,9 +19,11 @@ class UserProfileService {
 
   // ── Stream profile ──────────────────────────────────────────────────────────
   Stream<UserProfile?> profileStream(String uid) {
-    return _db.collection(_col).doc(uid).snapshots().map(
-          (doc) => doc.exists ? UserProfile.fromFirestore(doc) : null,
-        );
+    return _db
+        .collection(_col)
+        .doc(uid)
+        .snapshots()
+        .map((doc) => doc.exists ? UserProfile.fromFirestore(doc) : null);
   }
 
   // ── Update profile ──────────────────────────────────────────────────────────
@@ -35,9 +37,10 @@ class UserProfileService {
 
   // ── Get all users (admin) ────────────────────────────────────────────────────
   Stream<List<UserProfile>> getAllUsersStream() {
-    return _db.collection(_col).snapshots().map(
-          (snap) => snap.docs.map(UserProfile.fromFirestore).toList(),
-        );
+    return _db
+        .collection(_col)
+        .snapshots()
+        .map((snap) => snap.docs.map(UserProfile.fromFirestore).toList());
   }
 
   // ── Set admin role ───────────────────────────────────────────────────────────

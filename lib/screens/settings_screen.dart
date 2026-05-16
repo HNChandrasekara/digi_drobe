@@ -54,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -67,7 +67,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : const Color(0xFF1A1A3A),
                   letterSpacing: -0.5,
                 ),
               ),
@@ -91,7 +93,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: 16),
               // Admin Dashboard access (Mock check for hirushie9@gmail.com)
-              if (_authService.currentUser?.email == 'hirushie9@gmail.com' || true) // Forced to true for ease of verification in emulator
+              if (_authService.currentUser?.email == 'hirushie9@gmail.com' ||
+                  true) // Forced to true for ease of verification in emulator
                 _buildSettingItem(
                   context,
                   Icons.admin_panel_settings_rounded,
@@ -99,7 +102,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const AdminDashboardScreen(),
                   isDark,
                 ),
-              if (_authService.currentUser?.email == 'hirushie9@gmail.com' || true)
+              if (_authService.currentUser?.email == 'hirushie9@gmail.com' ||
+                  true)
                 const SizedBox(height: 16),
               _buildGroupedSettings(context, isDark),
               const SizedBox(height: 16),
@@ -266,7 +270,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? AppColors.textPrimaryDark : Colors.black87,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : Colors.black87,
                     ),
                   ),
                 ),

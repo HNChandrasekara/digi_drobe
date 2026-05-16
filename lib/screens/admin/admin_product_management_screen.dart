@@ -76,45 +76,58 @@ class AdminProductManagementScreen extends StatelessWidget {
                                 product.imageUrl!,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) => const Icon(
-                                    Icons.image_not_supported_rounded,
-                                    color: Colors.grey,
-                                    size: 24),
+                                  Icons.image_not_supported_rounded,
+                                  color: Colors.grey,
+                                  size: 24,
+                                ),
                               ),
                             )
-                          : const Icon(Icons.image_not_supported_rounded,
-                              color: Colors.grey, size: 24),
+                          : const Icon(
+                              Icons.image_not_supported_rounded,
+                              color: Colors.grey,
+                              size: 24,
+                            ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(product.title,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14)),
+                          Text(
+                            product.title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
                           const SizedBox(height: 4),
                           Text(
-                              '\$${product.price.toStringAsFixed(2)} | Stock: ${product.stock ?? '–'}',
-                              style: TextStyle(
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.black54,
-                                  fontSize: 12)),
+                            '\$${product.price.toStringAsFixed(2)} | Stock: ${product.stock ?? '–'}',
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black54,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.edit_outlined,
-                          size: 20, color: Colors.grey),
-                      onPressed: () => _showProductDialog(
-                          context, product, productService),
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () =>
+                          _showProductDialog(context, product, productService),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline_rounded,
-                          size: 20, color: Colors.redAccent),
-                      onPressed: () => _confirmDelete(
-                          context, product, productService),
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        size: 20,
+                        color: Colors.redAccent,
+                      ),
+                      onPressed: () =>
+                          _confirmDelete(context, product, productService),
                     ),
                   ],
                 ),
@@ -126,28 +139,27 @@ class AdminProductManagementScreen extends StatelessWidget {
     );
   }
 
-  void _showProductDialog(BuildContext context, Product? existing,
-      ProductService service) {
-    final titleC =
-        TextEditingController(text: existing?.title ?? '');
+  void _showProductDialog(
+    BuildContext context,
+    Product? existing,
+    ProductService service,
+  ) {
+    final titleC = TextEditingController(text: existing?.title ?? '');
     final priceC = TextEditingController(
-        text: existing != null ? '${existing.price}' : '');
-    final descC =
-        TextEditingController(text: existing?.description ?? '');
-    final catC =
-        TextEditingController(text: existing?.category ?? '');
-    final brandC =
-        TextEditingController(text: existing?.brand ?? '');
-    final imgC =
-        TextEditingController(text: existing?.imageUrl ?? '');
+      text: existing != null ? '${existing.price}' : '',
+    );
+    final descC = TextEditingController(text: existing?.description ?? '');
+    final catC = TextEditingController(text: existing?.category ?? '');
+    final brandC = TextEditingController(text: existing?.brand ?? '');
+    final imgC = TextEditingController(text: existing?.imageUrl ?? '');
     final stockC = TextEditingController(
-        text: existing?.stock != null ? '${existing!.stock}' : '');
+      text: existing?.stock != null ? '${existing!.stock}' : '',
+    );
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title:
-            Text(existing == null ? 'Add Product' : 'Edit Product'),
+        title: Text(existing == null ? 'Add Product' : 'Edit Product'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -169,8 +181,9 @@ class AdminProductManagementScreen extends StatelessWidget {
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryMaroon,
-                foregroundColor: Colors.white),
+              backgroundColor: AppColors.primaryMaroon,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () async {
               final product = Product(
                 id: existing?.id ?? '',
@@ -179,9 +192,7 @@ class AdminProductManagementScreen extends StatelessWidget {
                 description: descC.text.trim(),
                 category: catC.text.trim(),
                 brand: brandC.text.trim(),
-                imageUrl: imgC.text.trim().isEmpty
-                    ? null
-                    : imgC.text.trim(),
+                imageUrl: imgC.text.trim().isEmpty ? null : imgC.text.trim(),
                 stock: int.tryParse(stockC.text.trim()),
               );
               if (existing == null) {
@@ -198,8 +209,12 @@ class AdminProductManagementScreen extends StatelessWidget {
     );
   }
 
-  Widget _dialogField(TextEditingController c, String label,
-      {bool isNum = false, int maxLines = 1}) {
+  Widget _dialogField(
+    TextEditingController c,
+    String label, {
+    bool isNum = false,
+    int maxLines = 1,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: TextField(
@@ -209,15 +224,20 @@ class AdminProductManagementScreen extends StatelessWidget {
         decoration: InputDecoration(
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 10,
+          ),
         ),
       ),
     );
   }
 
   void _confirmDelete(
-      BuildContext context, Product product, ProductService service) {
+    BuildContext context,
+    Product product,
+    ProductService service,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -225,12 +245,14 @@ class AdminProductManagementScreen extends StatelessWidget {
         content: Text('Delete "${product.title}"?'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white),
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
             onPressed: () async {
               await service.deleteProduct(product.id);
               if (context.mounted) Navigator.pop(context);

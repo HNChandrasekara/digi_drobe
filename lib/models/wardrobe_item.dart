@@ -33,13 +33,13 @@ class WardrobeItem {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'title': title,
-        'category': category,
-        'brand': brand,
-        'description': description,
-        'imageUrl': imageUrl,
-        'addedAt': addedAt != null
-            ? Timestamp.fromDate(addedAt!)
-            : FieldValue.serverTimestamp(),
-      };
+    'title': title,
+    'category': category,
+    'brand': brand,
+    'description': description,
+    'imageUrl': imageUrl,
+    'addedAt': addedAt != null
+        ? Timestamp.fromDate(addedAt!)
+        : FieldValue.serverTimestamp(),
+  };
 }

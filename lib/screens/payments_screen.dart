@@ -26,7 +26,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -47,12 +47,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimary,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildPaymentMethod('PayHere', Icons.payments_rounded, isDark),
+                    _buildPaymentMethod(
+                      'PayHere',
+                      Icons.payments_rounded,
+                      isDark,
+                    ),
                     const SizedBox(height: 12),
                     _buildPaymentMethod(
                       'PayPal',
@@ -90,7 +96,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimary,
               ),
             ),
           ),
@@ -107,7 +115,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? AppColors.dividerDark
+              : Colors.black.withOpacity(0.05),
         ),
         boxShadow: [
           BoxShadow(
@@ -126,14 +136,18 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
               Text(
                 'Items (2)',
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                 ),
               ),
               Text(
                 'Rs.40,000.00',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
               ),
             ],
@@ -145,7 +159,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
               Text(
                 'Delivery',
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                 ),
               ),
               const Text(
@@ -169,7 +185,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
               ),
               const Text(
@@ -201,7 +219,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           border: Border.all(
             color: isSelected
                 ? AppColors.primaryMaroon
-                : (isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05)),
+                : (isDark
+                      ? AppColors.dividerDark
+                      : Colors.black.withOpacity(0.05)),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -211,7 +231,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
               icon,
               color: isSelected
                   ? AppColors.primaryMaroon
-                  : (isDark ? AppColors.textSecondaryDark : Colors.black.withOpacity(0.6)),
+                  : (isDark
+                        ? AppColors.textSecondaryDark
+                        : Colors.black.withOpacity(0.6)),
               size: 24,
             ),
             const SizedBox(width: 16),
@@ -223,7 +245,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   color: isSelected
                       ? AppColors.primaryMaroon
-                      : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimary),
+                      : (isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimary),
                 ),
               ),
             ),
@@ -246,7 +270,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         color: isDark ? AppColors.cardDark : Colors.white,
         border: Border(
           top: BorderSide(
-            color: isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05),
+            color: isDark
+                ? AppColors.dividerDark
+                : Colors.black.withOpacity(0.05),
             width: 1,
           ),
         ),

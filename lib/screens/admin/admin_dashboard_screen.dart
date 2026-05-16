@@ -16,8 +16,10 @@ class AdminDashboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Admin Dashboard',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Admin Dashboard',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: isDark ? Colors.white : Colors.black,
@@ -74,10 +76,20 @@ class AdminDashboardScreen extends StatelessWidget {
               crossAxisSpacing: 16,
               childAspectRatio: 1.5,
               children: [
-                _buildStatCard('Total Users', '$userCount',
-                    Icons.person, Colors.blue, isDark),
-                _buildStatCard('Products', '$productCount',
-                    Icons.shopping_bag, Colors.green, isDark),
+                _buildStatCard(
+                  'Total Users',
+                  '$userCount',
+                  Icons.person,
+                  Colors.blue,
+                  isDark,
+                ),
+                _buildStatCard(
+                  'Products',
+                  '$productCount',
+                  Icons.shopping_bag,
+                  Colors.green,
+                  isDark,
+                ),
               ],
             );
           },
@@ -86,17 +98,20 @@ class AdminDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon,
-      Color color, bool isDark) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? AppColors.dividerDark
-              : Colors.grey.withOpacity(0.2),
+          color: isDark ? AppColors.dividerDark : Colors.grey.withOpacity(0.2),
         ),
       ),
       child: Column(
@@ -106,16 +121,20 @@ class AdminDashboardScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title,
-                  style: TextStyle(
-                      color: isDark ? Colors.white70 : Colors.black54,
-                      fontSize: 12)),
+              Text(
+                title,
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : Colors.black54,
+                  fontSize: 12,
+                ),
+              ),
               Icon(icon, color: color, size: 20),
             ],
           ),
-          Text(value,
-              style:
-                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -131,7 +150,9 @@ class AdminDashboardScreen extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (_) => destination)),
+        context,
+        MaterialPageRoute(builder: (_) => destination),
+      ),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -158,19 +179,28 @@ class AdminDashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold)),
-                  Text(subtitle,
-                      style: TextStyle(
-                          color:
-                              isDark ? Colors.white70 : Colors.black54,
-                          fontSize: 12)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : Colors.black54,
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded,
-                size: 16, color: Colors.grey),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: Colors.grey,
+            ),
           ],
         ),
       ),
