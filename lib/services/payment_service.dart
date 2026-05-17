@@ -118,7 +118,7 @@ class PaymentService {
           'purchase_units': [
             {
               'reference_id': orderId,
-              'amount': {'currency_code': 'USD', 'value': amount},
+              'amount': {'currency_code': 'LKR', 'value': amount},
             },
           ],
           'payer': {'email_address': customerEmail},

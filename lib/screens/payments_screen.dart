@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/colors.dart';
 import '../services/payment_service.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../services/product_data_service.dart';
 import '../services/auth_service.dart';
+import '../providers/cart_provider.dart';
+import '../models/cart_item.dart';
+import '../models/order.dart' as app_order;
+import '../services/order_service.dart';
+import 'billing_paid_screen.dart';
 
 class PaymentsScreen extends StatefulWidget {
   const PaymentsScreen({super.key});
@@ -14,18 +19,11 @@ class PaymentsScreen extends StatefulWidget {
 
 class _PaymentsScreenState extends State<PaymentsScreen> {
   String selectedMethod = 'PayHere';
-  bool _payHereSandbox = true;
-  bool _payPalSandbox = true;
-
-  double get _cartTotal {
-    final allProducts = ProductDataService.getAllProducts();
-    final cartProducts = allProducts.take(3).toList();
-    return ProductDataService.calculateCartTotal(cartProducts);
-  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cart = context.watch<CartProvider>();
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -40,7 +38,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    _buildOrderSummary(isDark),
+                    _buildOrderSummary(isDark, cart.itemCount, cart.total),
                     const SizedBox(height: 24),
                     Text(
                       'Payment Method',
@@ -70,7 +68,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 ),
               ),
             ),
-            _buildFooter(isDark),
+            _buildFooter(isDark, cart),
           ],
         ),
       ),
@@ -108,7 +106,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 
-  Widget _buildOrderSummary(bool isDark) {
+  Widget _buildOrderSummary(bool isDark, int itemCount, double total) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -134,7 +132,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Items (2)',
+                'Items ($itemCount)',
                 style: TextStyle(
                   color: isDark
                       ? AppColors.textSecondaryDark
@@ -142,7 +140,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 ),
               ),
               Text(
-                'Rs.40,000.00',
+                'Rs.${total.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: isDark
@@ -190,9 +188,9 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                       : AppColors.textPrimary,
                 ),
               ),
-              const Text(
-                'Rs.40,000.00',
-                style: TextStyle(
+              Text(
+                'Rs.${total.toStringAsFixed(2)}',
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: AppColors.primaryMaroon,
@@ -263,7 +261,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     );
   }
 
-  Widget _buildFooter(bool isDark) {
+  Widget _buildFooter(bool isDark, CartProvider cart) {
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -282,6 +280,13 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         height: 54,
         child: ElevatedButton(
           onPressed: () async {
+            if (cart.items.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Your cart is empty')),
+              );
+              return;
+            }
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Processing Payment...')),
             );
@@ -292,7 +297,21 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
             final phone = '';
 
             final orderId = 'ORDER-${DateTime.now().millisecondsSinceEpoch}';
-            final amountStr = _cartTotal.toStringAsFixed(2);
+            final amountStr = cart.total.toStringAsFixed(2);
+            final itemsSnapshot = cart.items
+                .map(
+                  (item) => CartItem(
+                    productId: item.productId,
+                    title: item.title,
+                    brand: item.brand,
+                    imageUrl: item.imageUrl,
+                    imageDataUrl: item.imageDataUrl,
+                    price: item.price,
+                    quantity: item.quantity,
+                  ),
+                )
+                .toList();
+            final totalSnapshot = cart.total;
 
             if (selectedMethod == 'PayHere') {
               final redirectUrl = await PaymentService.processPayHerePayment(
@@ -335,12 +354,34 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
             if (!mounted) return;
 
             if (success) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '$selectedMethod payment initiated successfully!',
+              final user = AuthService().currentUser;
+              final billingOrder = app_order.Order(
+                id: orderId,
+                userId: user?.uid ?? 'unknown',
+                items: itemsSnapshot,
+                total: totalSnapshot,
+                status: 'paid',
+                paymentMethod: selectedMethod,
+                createdAt: DateTime.now(),
+              );
+
+              try {
+                await OrderService().placeOrder(billingOrder);
+                await cart.clearCart();
+              } catch (e) {
+                debugPrint('[PaymentsScreen] Could not save paid order: $e');
+              }
+
+              if (!mounted) return;
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BillingPaidScreen(
+                    orderId: orderId,
+                    paymentMethod: selectedMethod,
+                    total: totalSnapshot,
+                    items: itemsSnapshot,
                   ),
-                  backgroundColor: Colors.green,
                 ),
               );
             } else {

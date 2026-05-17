@@ -193,7 +193,7 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
                     _buildField('Item Title', _titleController, isDark),
                     const SizedBox(height: 16),
                     _buildField(
-                      'Price (\$)',
+                      'Price (Rs.)',
                       _priceController,
                       isDark,
                       keyboardType: TextInputType.number,

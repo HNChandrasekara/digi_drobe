@@ -59,14 +59,9 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<void> addItem(CartItem item) async {
+    _addItemLocally(item);
+
     if (_shouldUseMock) {
-      final index = _items.indexWhere((i) => i.productId == item.productId);
-      if (index != null && index >= 0) {
-        _items[index].quantity += 1;
-      } else {
-        _items.add(item);
-      }
-      notifyListeners();
       return;
     }
 
@@ -79,10 +74,21 @@ class CartProvider extends ChangeNotifier {
   Future<void> decreaseQuantity(String productId) => decrementItem(productId);
   Future<void> removeFromCart(String productId) => removeItem(productId);
 
+  void _addItemLocally(CartItem item) {
+    final index = _items.indexWhere((i) => i.productId == item.productId);
+    if (index >= 0) {
+      _items[index].quantity += 1;
+    } else {
+      _items.add(item);
+    }
+    notifyListeners();
+  }
+
   Future<void> removeItem(String productId) async {
+    _items.removeWhere((i) => i.productId == productId);
+    notifyListeners();
+
     if (_shouldUseMock) {
-      _items.removeWhere((i) => i.productId == productId);
-      notifyListeners();
       return;
     }
 
@@ -92,16 +98,17 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<void> decrementItem(String productId) async {
-    if (_shouldUseMock) {
-      final index = _items.indexWhere((i) => i.productId == productId);
-      if (index != null && index >= 0) {
-        if (_items[index].quantity > 1) {
-          _items[index].quantity -= 1;
-        } else {
-          _items.removeAt(index);
-        }
+    final index = _items.indexWhere((i) => i.productId == productId);
+    if (index >= 0) {
+      if (_items[index].quantity > 1) {
+        _items[index].quantity -= 1;
+      } else {
+        _items.removeAt(index);
       }
       notifyListeners();
+    }
+
+    if (_shouldUseMock) {
       return;
     }
 
@@ -111,9 +118,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<void> clearCart() async {
+    _items.clear();
+    notifyListeners();
+
     if (_shouldUseMock) {
-      _items.clear();
-      notifyListeners();
       return;
     }
 

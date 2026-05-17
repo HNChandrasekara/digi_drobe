@@ -148,7 +148,7 @@ class CartScreen extends StatelessWidget {
                     ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${item.price.toStringAsFixed(2)}',
+                    'Rs.${item.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -302,7 +302,7 @@ class CartScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$${cart.total.toStringAsFixed(2)}',
+                'Rs.${cart.total.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,

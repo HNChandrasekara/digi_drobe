@@ -114,7 +114,7 @@ class _AdminProductManagementScreenState
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '\$${product.price.toStringAsFixed(2)} | Stock: ${product.stock ?? '–'}',
+                            'Rs.${product.price.toStringAsFixed(2)} | Stock: ${product.stock ?? '–'}',
                             style: TextStyle(
                               color: isDark ? Colors.white70 : Colors.black54,
                               fontSize: 12,
