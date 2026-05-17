@@ -5,6 +5,7 @@ class CartItem {
   final String title;
   final String? brand;
   final String? imageUrl;
+  final String? imageDataUrl;
   final double price;
   int quantity;
 
@@ -13,6 +14,7 @@ class CartItem {
     required this.title,
     this.brand,
     this.imageUrl,
+    this.imageDataUrl,
     required this.price,
     this.quantity = 1,
   });
@@ -24,6 +26,7 @@ class CartItem {
       title: data['title'] as String? ?? '',
       brand: data['brand'] as String?,
       imageUrl: data['imageUrl'] as String?,
+      imageDataUrl: data['imageDataUrl'] as String?,
       price: (data['price'] as num?)?.toDouble() ?? 0.0,
       quantity: (data['quantity'] as num?)?.toInt() ?? 1,
     );
@@ -34,6 +37,7 @@ class CartItem {
     'title': title,
     'brand': brand,
     'imageUrl': imageUrl,
+    'imageDataUrl': imageDataUrl,
     'price': price,
     'quantity': quantity,
   };

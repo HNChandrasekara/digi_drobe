@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/colors.dart';
@@ -107,32 +109,10 @@ class CartScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
               ),
-              child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        item.imageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.photo,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.systemGray,
-                            size: 40,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Icon(
-                        Icons.photo,
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.systemGray,
-                        size: 40,
-                      ),
-                    ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _buildCartItemImage(item, isDark),
+              ),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -225,6 +205,44 @@ class CartScreen extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildCartItemImage(CartItem item, bool isDark) {
+    if (item.imageUrl != null && item.imageUrl!.isNotEmpty) {
+      return Image.network(
+        item.imageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) =>
+            _buildSavedImageFallback(item.imageDataUrl, isDark),
+      );
+    }
+
+    return _buildSavedImageFallback(item.imageDataUrl, isDark);
+  }
+
+  Widget _buildSavedImageFallback(String? imageDataUrl, bool isDark) {
+    if (imageDataUrl != null && imageDataUrl.isNotEmpty) {
+      try {
+        final base64Data = imageDataUrl.contains(',')
+            ? imageDataUrl.split(',').last
+            : imageDataUrl;
+        return Image.memory(base64Decode(base64Data), fit: BoxFit.cover);
+      } catch (_) {
+        return _cartImagePlaceholder(isDark);
+      }
+    }
+
+    return _cartImagePlaceholder(isDark);
+  }
+
+  Widget _cartImagePlaceholder(bool isDark) {
+    return Center(
+      child: Icon(
+        Icons.photo,
+        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+        size: 40,
+      ),
     );
   }
 
