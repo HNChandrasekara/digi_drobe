@@ -279,76 +279,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Calendar Connected",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: isDark
-                                    ? AppColors.textPrimaryDark
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                            if (_calendarService.isDemoMode) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Text(
-                                  'DEMO',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                         Text(
-                          _calendarService.isDemoMode
-                              ? 'Using demo data (configure Google OAuth to use real calendar)'
-                              : "Connected as: ",
+                          "Calendar Connected",
                           style: TextStyle(
-                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
                             color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondary,
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.logout,
-                      size: 20,
-                      color: isDark
-                          ? AppColors.textSecondaryDark
-                          : Colors.black54,
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: Icon(
+                        Icons.logout,
+                        size: 20,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.black54,
+                      ),
+                      onPressed: () async {
+                        await _calendarService.signOut();
+                        if (mounted) {
+                          setState(() {
+                            _isSignedIn = false;
+                            _events = [];
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Google Calendar disconnected'),
+                            ),
+                          );
+                        }
+                      },
                     ),
-                    onPressed: () async {
-                      await _calendarService.signOut();
-                      if (mounted) {
-                        setState(() {
-                          _isSignedIn = false;
-                          _events = [];
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Google Calendar disconnected'),
-                          ),
-                        );
-                      }
-                    },
                   ),
                 ],
               ),
