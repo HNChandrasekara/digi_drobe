@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
@@ -47,15 +48,19 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
   bool _isLoading = false;
 
   Future<void> _pickImage() async {
-    final result = await FilePicker.pickFiles(
-      type: FileType.image,
-      withData: true,
+    final picker = ImagePicker();
+    final image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+      maxWidth: 600,
+      maxHeight: 600,
     );
 
-    if (result != null && result.files.isNotEmpty) {
+    if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _selectedImageBytes = result.files.first.bytes;
-        _selectedImageExt = result.files.first.extension;
+        _selectedImageBytes = bytes;
+        _selectedImageExt = image.name.split('.').last;
       });
     }
   }
@@ -73,19 +78,39 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
 
     try {
       String? imageUrl;
-      final extension = _selectedImageExt ?? 'jpg';
-      final fileName =
-          'thrift_${DateTime.now().millisecondsSinceEpoch}.$extension';
+      final extension = (_selectedImageExt ?? 'jpg').toLowerCase();
+      final contentType = (extension == 'jpg' || extension == 'jpeg')
+          ? 'image/jpeg'
+          : (extension == 'png' ? 'image/png' : 'image/$extension');
+      final imageDataUrl =
+          'data:$contentType;base64,${base64Encode(_selectedImageBytes!)}';
 
-      final storage = FirebaseStorage.instance;
-      final ref = storage.ref().child('thrift_images/$fileName');
+      try {
+        final fileName =
+            'thrift_${DateTime.now().millisecondsSinceEpoch}.$extension';
 
-      final metadata = SettableMetadata(contentType: 'image/$extension');
-      final TaskSnapshot snapshot = await ref.putData(
-        _selectedImageBytes!,
-        metadata,
-      );
-      imageUrl = await snapshot.ref.getDownloadURL();
+        final storage = FirebaseStorage.instance;
+        final ref = storage.ref().child('thrift_images/$fileName');
+
+        final metadata = SettableMetadata(contentType: contentType);
+        final TaskSnapshot snapshot = await ref.putData(
+          _selectedImageBytes!,
+          metadata,
+        );
+        imageUrl = await snapshot.ref.getDownloadURL();
+      } catch (storageError) {
+        debugPrint('DEBUG: Thrift image upload failed: $storageError');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Photo saved with the listing. Cloud image upload is not allowed yet.',
+              ),
+              backgroundColor: Colors.orange.shade700,
+            ),
+          );
+        }
+      }
 
       final user = FirebaseAuth.instance.currentUser;
       final newItem = ThriftItem(
@@ -96,6 +121,7 @@ class _AddThriftItemScreenState extends State<AddThriftItemScreen> {
         brand: _brandController.text.trim(),
         description: _descriptionController.text.trim(),
         imageUrl: imageUrl,
+        imageDataUrl: imageDataUrl,
         sellerId: user?.uid ?? 'unknown',
         sellerName: user?.displayName ?? 'Anonymous',
         condition: _selectedCondition,

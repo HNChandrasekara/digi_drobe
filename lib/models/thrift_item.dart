@@ -8,6 +8,7 @@ class ThriftItem {
   final String category;
   final String brand;
   final String? imageUrl;
+  final String? imageDataUrl;
   final String sellerId;
   final String sellerName;
   final DateTime? addedAt;
@@ -22,6 +23,7 @@ class ThriftItem {
     required this.category,
     required this.brand,
     this.imageUrl,
+    this.imageDataUrl,
     required this.sellerId,
     required this.sellerName,
     this.addedAt,
@@ -38,6 +40,7 @@ class ThriftItem {
       category: data['category'] as String? ?? '',
       brand: data['brand'] as String? ?? '',
       imageUrl: data['imageUrl'] as String?,
+      imageDataUrl: data['imageDataUrl'] as String?,
       sellerId: data['sellerId'] as String? ?? '',
       sellerName: data['sellerName'] as String? ?? 'Anonymous',
       addedAt: (data['addedAt'] as Timestamp?)?.toDate(),
@@ -52,6 +55,7 @@ class ThriftItem {
     'category': category,
     'brand': brand,
     'imageUrl': imageUrl,
+    'imageDataUrl': imageDataUrl,
     'sellerId': sellerId,
     'sellerName': sellerName,
     'addedAt': addedAt != null

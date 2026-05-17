@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/thrift_provider.dart';
@@ -173,16 +175,7 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  item.imageUrl != null && item.imageUrl!.isNotEmpty
-                      ? Image.network(item.imageUrl!, fit: BoxFit.cover)
-                      : Container(
-                          color: AppColors.primaryMaroon.withValues(alpha: 0.1),
-                          child: const Icon(
-                            Icons.shopping_bag_outlined,
-                            size: 50,
-                            color: AppColors.primaryMaroon,
-                          ),
-                        ),
+                  _buildItemImage(item),
                   Positioned(
                     top: 8,
                     right: 8,
@@ -244,6 +237,47 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildItemImage(ThriftItem item) {
+    final imageUrl = item.imageUrl;
+    final imageDataUrl = item.imageDataUrl;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _buildSavedImageFallback(imageDataUrl),
+      );
+    }
+
+    return _buildSavedImageFallback(imageDataUrl);
+  }
+
+  Widget _buildSavedImageFallback(String? imageDataUrl) {
+    if (imageDataUrl != null && imageDataUrl.isNotEmpty) {
+      try {
+        final base64Data = imageDataUrl.contains(',')
+            ? imageDataUrl.split(',').last
+            : imageDataUrl;
+        return Image.memory(base64Decode(base64Data), fit: BoxFit.cover);
+      } catch (_) {
+        return _buildImagePlaceholder();
+      }
+    }
+
+    return _buildImagePlaceholder();
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      color: AppColors.primaryMaroon.withValues(alpha: 0.1),
+      child: const Icon(
+        Icons.shopping_bag_outlined,
+        size: 50,
+        color: AppColors.primaryMaroon,
       ),
     );
   }
