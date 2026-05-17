@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,7 +7,6 @@ import 'package:provider/provider.dart';
 import '../models/wardrobe_item.dart';
 import '../providers/wardrobe_provider.dart';
 import '../utils/colors.dart';
-import '../firebase_options.dart';
 
 class AddClothingScreen extends StatefulWidget {
   const AddClothingScreen({super.key});
@@ -41,11 +41,12 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    // Compress image automatically to 85% quality and max 1080px
+    // Keep wardrobe photos compact enough for the Firestore fallback copy.
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 85,
-      maxWidth: 1080,
+      imageQuality: 70,
+      maxWidth: 600,
+      maxHeight: 600,
     );
 
     if (image != null) {
@@ -64,14 +65,18 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
     try {
       String? imageUrl;
+      String? imageDataUrl;
       if (_selectedImageBytes != null) {
-        try {
-          final extension =
-              _selectedImageName?.split('.').last.toLowerCase() ?? 'jpg';
-          final contentType = (extension == 'jpg' || extension == 'jpeg')
-              ? 'image/jpeg'
-              : (extension == 'png' ? 'image/png' : 'image/$extension');
+        final extension =
+            _selectedImageName?.split('.').last.toLowerCase() ?? 'jpg';
+        final contentType = (extension == 'jpg' || extension == 'jpeg')
+            ? 'image/jpeg'
+            : (extension == 'png' ? 'image/png' : 'image/$extension');
 
+        imageDataUrl =
+            'data:$contentType;base64,${base64Encode(_selectedImageBytes!)}';
+
+        try {
           final fileName =
               'wardrobe_${DateTime.now().millisecondsSinceEpoch}.$extension';
 
@@ -99,15 +104,12 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Image upload failed: ${storageError.toString()}',
+                  'Saved photo with the item. Cloud upload failed: ${storageError.toString()}',
                 ),
                 backgroundColor: Colors.orange.shade700,
               ),
             );
           }
-          // Stop the save process if image upload failed but an image was selected
-          setState(() => _isLoading = false);
-          return;
         }
       }
 
@@ -118,6 +120,7 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
         brand: _brandController.text.trim(),
         description: _descriptionController.text.trim(),
         imageUrl: imageUrl,
+        imageDataUrl: imageDataUrl,
         addedAt: DateTime.now(),
       );
 

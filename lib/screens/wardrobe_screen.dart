@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/colors.dart';
@@ -540,48 +542,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                             ? AppColors.surfaceDark
                             : AppColors.systemGray6,
                       ),
-                      // Image
-                      if (item.imageUrl != null && item.imageUrl!.isNotEmpty)
-                        Image.network(
-                          item.imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (_, child, progress) {
-                            if (progress == null) return child;
-                            return Center(
-                              child: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  value: progress.expectedTotalBytes != null
-                                      ? progress.cumulativeBytesLoaded /
-                                            progress.expectedTotalBytes!
-                                      : null,
-                                  color: AppColors.primaryMaroon,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (_, __, ___) => Center(
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              size: 36,
-                              color: isDark
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.systemGray,
-                            ),
-                          ),
-                        )
-                      else
-                        Center(
-                          child: Icon(
-                            Icons.checkroom_rounded,
-                            size: 44,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.systemGray,
-                          ),
-                        ),
+                      _buildItemImage(item, isDark),
                       // Category badge top-left
                       Positioned(
                         top: 10,
@@ -650,6 +611,74 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // ── Image helpers ─────────────────────────────────────────────────────────────
+  Widget _buildItemImage(WardrobeItem item, bool isDark) {
+    final imageUrl = item.imageUrl;
+    final imageDataUrl = item.imageDataUrl;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (_, child, progress) {
+          if (progress == null) return child;
+          return Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                value: progress.expectedTotalBytes != null
+                    ? progress.cumulativeBytesLoaded /
+                          progress.expectedTotalBytes!
+                    : null,
+                color: AppColors.primaryMaroon,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (_, __, ___) => _buildSavedImageFallback(
+          imageDataUrl,
+          isDark,
+          brokenNetworkImage: true,
+        ),
+      );
+    }
+
+    return _buildSavedImageFallback(imageDataUrl, isDark);
+  }
+
+  Widget _buildSavedImageFallback(
+    String? imageDataUrl,
+    bool isDark, {
+    bool brokenNetworkImage = false,
+  }) {
+    if (imageDataUrl != null && imageDataUrl.isNotEmpty) {
+      try {
+        final base64Data = imageDataUrl.contains(',')
+            ? imageDataUrl.split(',').last
+            : imageDataUrl;
+        return Image.memory(base64Decode(base64Data), fit: BoxFit.cover);
+      } catch (_) {
+        return _imageIcon(isDark, brokenNetworkImage: true);
+      }
+    }
+
+    return _imageIcon(isDark, brokenNetworkImage: brokenNetworkImage);
+  }
+
+  Widget _imageIcon(bool isDark, {bool brokenNetworkImage = false}) {
+    return Center(
+      child: Icon(
+        brokenNetworkImage
+            ? Icons.broken_image_outlined
+            : Icons.checkroom_rounded,
+        size: brokenNetworkImage ? 36 : 44,
+        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
       ),
     );
   }

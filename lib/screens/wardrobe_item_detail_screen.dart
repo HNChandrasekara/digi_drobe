@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/wardrobe_item.dart';
@@ -120,28 +122,7 @@ class WardrobeItemDetailScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Image
-                  item.imageUrl != null && item.imageUrl!.isNotEmpty
-                      ? Image.network(
-                          item.imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return Container(
-                              color: isDark
-                                  ? AppColors.cardDark
-                                  : AppColors.systemGray6,
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primaryMaroon,
-                                ),
-                              ),
-                            );
-                          },
-                          errorBuilder: (_, __, ___) =>
-                              _imagePlaceholder(isDark),
-                        )
-                      : _imagePlaceholder(isDark),
+                  _buildHeroImage(isDark),
                   // Bottom gradient
                   Positioned(
                     bottom: 0,
@@ -331,6 +312,46 @@ class WardrobeItemDetailScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildHeroImage(bool isDark) {
+    final imageUrl = item.imageUrl;
+    final imageDataUrl = item.imageDataUrl;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Container(
+            color: isDark ? AppColors.cardDark : AppColors.systemGray6,
+            child: const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryMaroon),
+            ),
+          );
+        },
+        errorBuilder: (_, __, ___) =>
+            _buildSavedImageFallback(imageDataUrl, isDark),
+      );
+    }
+
+    return _buildSavedImageFallback(imageDataUrl, isDark);
+  }
+
+  Widget _buildSavedImageFallback(String? imageDataUrl, bool isDark) {
+    if (imageDataUrl != null && imageDataUrl.isNotEmpty) {
+      try {
+        final base64Data = imageDataUrl.contains(',')
+            ? imageDataUrl.split(',').last
+            : imageDataUrl;
+        return Image.memory(base64Decode(base64Data), fit: BoxFit.cover);
+      } catch (_) {
+        return _imagePlaceholder(isDark);
+      }
+    }
+
+    return _imagePlaceholder(isDark);
   }
 
   Widget _imagePlaceholder(bool isDark) {
