@@ -27,9 +27,9 @@ class ChatMessage {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'senderId': senderId,
-        'senderName': senderName,
-        'text': text,
-        'timestamp': Timestamp.fromDate(timestamp),
-      };
+    'senderId': senderId,
+    'senderName': senderName,
+    'text': text,
+    'timestamp': Timestamp.fromDate(timestamp),
+  };
 }

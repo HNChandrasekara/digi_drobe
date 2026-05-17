@@ -8,10 +8,12 @@ class ThriftItem {
   final String category;
   final String brand;
   final String? imageUrl;
+  final String? imageDataUrl;
   final String sellerId;
   final String sellerName;
   final DateTime? addedAt;
-  final String condition; // e.g., "New", "Used - Like New", "Used - Good", "Used - Fair"
+  final String
+  condition; // e.g., "New", "Used - Like New", "Used - Good", "Used - Fair"
 
   const ThriftItem({
     required this.id,
@@ -21,6 +23,7 @@ class ThriftItem {
     required this.category,
     required this.brand,
     this.imageUrl,
+    this.imageDataUrl,
     required this.sellerId,
     required this.sellerName,
     this.addedAt,
@@ -37,6 +40,7 @@ class ThriftItem {
       category: data['category'] as String? ?? '',
       brand: data['brand'] as String? ?? '',
       imageUrl: data['imageUrl'] as String?,
+      imageDataUrl: data['imageDataUrl'] as String?,
       sellerId: data['sellerId'] as String? ?? '',
       sellerName: data['sellerName'] as String? ?? 'Anonymous',
       addedAt: (data['addedAt'] as Timestamp?)?.toDate(),
@@ -45,17 +49,18 @@ class ThriftItem {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'title': title,
-        'price': price,
-        'description': description,
-        'category': category,
-        'brand': brand,
-        'imageUrl': imageUrl,
-        'sellerId': sellerId,
-        'sellerName': sellerName,
-        'addedAt': addedAt != null
-            ? Timestamp.fromDate(addedAt!)
-            : FieldValue.serverTimestamp(),
-        'condition': condition,
-      };
+    'title': title,
+    'price': price,
+    'description': description,
+    'category': category,
+    'brand': brand,
+    'imageUrl': imageUrl,
+    'imageDataUrl': imageDataUrl,
+    'sellerId': sellerId,
+    'sellerName': sellerName,
+    'addedAt': addedAt != null
+        ? Timestamp.fromDate(addedAt!)
+        : FieldValue.serverTimestamp(),
+    'condition': condition,
+  };
 }

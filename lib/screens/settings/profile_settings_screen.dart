@@ -39,7 +39,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
       setState(() {
         _nameController.text = user.displayName ?? 'User';
         _emailController.text = user.email ?? '';
-        _phoneController.text = ''; // Phone not avail in generic firebase auth user
+        _phoneController.text =
+            ''; // Phone not avail in generic firebase auth user
       });
     }
   }
@@ -78,7 +79,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -101,7 +102,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
-                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -110,7 +113,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.green),
                         ),
@@ -254,7 +257,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             onPressed: () => Navigator.pop(context),
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : const Color(0xFF1A1A3A),
             ),
           ),
           Expanded(
@@ -264,7 +269,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+                color: isDark
+                    ? AppColors.textPrimaryDark
+                    : const Color(0xFF1A1A3A),
               ),
             ),
           ),
@@ -285,7 +292,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: AppColors.primaryMaroon.withOpacity(0.08),
+              color: AppColors.primaryMaroon.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               image: photoUrl != null && photoUrl.isNotEmpty
                   ? DecorationImage(
@@ -336,7 +343,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
         withData: true,
       );
       if (result == null || result.files.isEmpty) return;
-      
+
       final fileBytes = result.files.first.bytes;
       if (fileBytes == null) return;
 
@@ -351,28 +358,28 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           .child('users')
           .child(user.uid)
           .child('avatar.jpg');
-          
+
       await storageRef.putData(
         fileBytes,
         SettableMetadata(contentType: 'image/jpeg'),
       );
-      
+
       final downloadUrl = await storageRef.getDownloadURL();
-      
+
       await user.updatePhotoURL(downloadUrl);
       await user.reload();
 
       setState(() {
         _successMessage = 'Profile photo updated successfully!';
       });
-      
+
       await Future.delayed(const Duration(seconds: 2));
       if (mounted) setState(() => _successMessage = '');
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update photo: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to update photo: $e')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -387,7 +394,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     String? hint,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -409,7 +416,9 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary,
             ),
             prefixIcon: Icon(icon, color: AppColors.primaryMaroon),
             border: OutlineInputBorder(
@@ -423,20 +432,22 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               borderSide: BorderSide(
                 color: isDark
                     ? AppColors.dividerDark
-                    : Colors.grey.withOpacity(0.3),
+                    : Colors.grey.withValues(alpha: 0.3),
               ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: isDark
-                    ? AppColors.dividerDark.withOpacity(0.5)
-                    : Colors.grey.withOpacity(0.2),
+                    ? AppColors.dividerDark.withValues(alpha: 0.5)
+                    : Colors.grey.withValues(alpha: 0.2),
               ),
             ),
             filled: !enabled || isDark,
             fillColor: !enabled
-                ? (isDark ? AppColors.surfaceDark : Colors.grey.withOpacity(0.05))
+                ? (isDark
+                      ? AppColors.surfaceDark
+                      : Colors.grey.withValues(alpha: 0.05))
                 : (isDark ? AppColors.cardDark : Colors.white),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,

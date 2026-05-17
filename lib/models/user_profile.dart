@@ -35,12 +35,12 @@ class UserProfile {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'uid': uid,
-        'displayName': displayName,
-        'email': email,
-        'phone': phone,
-        'role': role,
-        'photoUrl': photoUrl,
-        'createdAt': Timestamp.fromDate(createdAt),
-      };
+    'uid': uid,
+    'displayName': displayName,
+    'email': email,
+    'phone': phone,
+    'role': role,
+    'photoUrl': photoUrl,
+    'createdAt': Timestamp.fromDate(createdAt),
+  };
 }

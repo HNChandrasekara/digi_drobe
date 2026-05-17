@@ -91,7 +91,9 @@ class LogoutScreen extends StatelessWidget {
             onPressed: () => Navigator.pop(context),
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+              color: isDark
+                  ? AppColors.textPrimaryDark
+                  : const Color(0xFF1A1A3A),
             ),
           ),
           Expanded(
@@ -101,7 +103,9 @@ class LogoutScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: isDark ? AppColors.textPrimaryDark : const Color(0xFF1A1A3A),
+                color: isDark
+                    ? AppColors.textPrimaryDark
+                    : const Color(0xFF1A1A3A),
               ),
             ),
           ),

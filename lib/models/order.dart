@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' hide Order;
 import 'cart_item.dart';
 
 class Order {
@@ -46,11 +46,11 @@ class Order {
   }
 
   Map<String, dynamic> toFirestore() => {
-        'userId': userId,
-        'items': items.map((item) => item.toFirestore()).toList(),
-        'total': total,
-        'status': status,
-        'paymentMethod': paymentMethod,
-        'createdAt': Timestamp.fromDate(createdAt),
-      };
+    'userId': userId,
+    'items': items.map((item) => item.toFirestore()).toList(),
+    'total': total,
+    'status': status,
+    'paymentMethod': paymentMethod,
+    'createdAt': Timestamp.fromDate(createdAt),
+  };
 }

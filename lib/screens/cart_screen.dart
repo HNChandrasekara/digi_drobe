@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/colors.dart';
@@ -22,8 +24,7 @@ class CartScreen extends StatelessWidget {
           children: [
             CustomHeader(userName: userName),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               child: Row(
                 children: [
                   Text(
@@ -59,8 +60,12 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartList(BuildContext context, List<CartItem> items, bool isDark,
-      CartProvider cart) {
+  Widget _buildCartList(
+    BuildContext context,
+    List<CartItem> items,
+    bool isDark,
+    CartProvider cart,
+  ) {
     if (items.isEmpty) {
       return Center(
         child: Column(
@@ -69,7 +74,9 @@ class CartScreen extends StatelessWidget {
             Icon(
               Icons.shopping_cart_outlined,
               size: 64,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondary,
             ),
             const SizedBox(height: 16),
             Text(
@@ -102,32 +109,10 @@ class CartScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
                 color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
               ),
-              child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                        item.imageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Center(
-                          child: Icon(
-                            Icons.photo,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.systemGray,
-                            size: 40,
-                          ),
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Icon(
-                        Icons.photo,
-                        color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.systemGray,
-                        size: 40,
-                      ),
-                    ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: _buildCartItemImage(item, isDark),
+              ),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -145,10 +130,25 @@ class CartScreen extends StatelessWidget {
                           : AppColors.textPrimary,
                       height: 1.4,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  if (item.brand != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        item.brand!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 8),
                   Text(
-                    '\$${item.price.toStringAsFixed(2)}',
+                    'Rs.${item.price.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -164,7 +164,7 @@ class CartScreen extends StatelessWidget {
                       _qtyButton(
                         icon: Icons.remove,
                         isDark: isDark,
-                        onTap: () => cart.decrementItem(item.productId),
+                        onTap: () => cart.decreaseQuantity(item.productId),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -182,7 +182,7 @@ class CartScreen extends StatelessWidget {
                       _qtyButton(
                         icon: Icons.add,
                         isDark: isDark,
-                        onTap: () => cart.addItem(item),
+                        onTap: () => cart.increaseQuantity(item),
                       ),
                     ],
                   ),
@@ -196,7 +196,7 @@ class CartScreen extends StatelessWidget {
                   Icons.delete_outline_rounded,
                   color: isDark
                       ? AppColors.textSecondaryDark
-                      : Colors.black.withOpacity(0.7),
+                      : Colors.black.withValues(alpha: 0.7),
                   size: 24,
                 ),
                 onPressed: () => cart.removeItem(item.productId),
@@ -205,6 +205,44 @@ class CartScreen extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildCartItemImage(CartItem item, bool isDark) {
+    if (item.imageUrl != null && item.imageUrl!.isNotEmpty) {
+      return Image.network(
+        item.imageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) =>
+            _buildSavedImageFallback(item.imageDataUrl, isDark),
+      );
+    }
+
+    return _buildSavedImageFallback(item.imageDataUrl, isDark);
+  }
+
+  Widget _buildSavedImageFallback(String? imageDataUrl, bool isDark) {
+    if (imageDataUrl != null && imageDataUrl.isNotEmpty) {
+      try {
+        final base64Data = imageDataUrl.contains(',')
+            ? imageDataUrl.split(',').last
+            : imageDataUrl;
+        return Image.memory(base64Decode(base64Data), fit: BoxFit.cover);
+      } catch (_) {
+        return _cartImagePlaceholder(isDark);
+      }
+    }
+
+    return _cartImagePlaceholder(isDark);
+  }
+
+  Widget _cartImagePlaceholder(bool isDark) {
+    return Center(
+      child: Icon(
+        Icons.photo,
+        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+        size: 40,
+      ),
     );
   }
 
@@ -228,7 +266,10 @@ class CartScreen extends StatelessWidget {
   }
 
   Widget _buildCheckoutFooter(
-      BuildContext context, bool isDark, CartProvider cart) {
+    BuildContext context,
+    bool isDark,
+    CartProvider cart,
+  ) {
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
@@ -236,7 +277,7 @@ class CartScreen extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -261,7 +302,7 @@ class CartScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                '\$${cart.total.toStringAsFixed(2)}',
+                'Rs.${cart.total.toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
@@ -297,8 +338,7 @@ class CartScreen extends StatelessWidget {
               ),
               child: const Text(
                 'Checkout',
-                style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ),

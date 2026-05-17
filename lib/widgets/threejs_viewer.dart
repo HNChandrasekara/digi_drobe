@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -52,7 +51,9 @@ class _ThreeJsViewerState extends State<ThreeJsViewer> {
   }
 
   Future<void> _loadHtmlFromAssets() async {
-    final String htmlContent = await rootBundle.loadString('assets/threejs/index.html');
+    final String htmlContent = await rootBundle.loadString(
+      'assets/threejs/index.html',
+    );
     await _controller.loadHtmlString(htmlContent);
   }
 

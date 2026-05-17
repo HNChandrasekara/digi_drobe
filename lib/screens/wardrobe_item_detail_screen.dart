@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/wardrobe_item.dart';
@@ -14,13 +16,14 @@ class WardrobeItemDetailScreen extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor:
-            Theme.of(context).brightness == Brightness.dark
-                ? AppColors.cardDark
-                : Colors.white,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.cardDark
+            : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Remove Item',
-            style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Remove Item',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Text(
           'Remove "${item.title}" from your wardrobe?',
           style: const TextStyle(fontSize: 15),
@@ -36,7 +39,8 @@ class WardrobeItemDetailScreen extends StatelessWidget {
               backgroundColor: Colors.red.shade600,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Remove'),
           ),
@@ -50,9 +54,9 @@ class WardrobeItemDetailScreen extends StatelessWidget {
         if (context.mounted) Navigator.pop(context);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error removing item: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Error removing item: $e')));
         }
       }
     }
@@ -63,16 +67,18 @@ class WardrobeItemDetailScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: CustomScrollView(
         slivers: [
           // ── Hero image app bar ──────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 380,
             pinned: true,
-            backgroundColor:
-                isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+            backgroundColor: isDark
+                ? AppColors.backgroundDark
+                : AppColors.backgroundLight,
             leading: Padding(
               padding: const EdgeInsets.all(8),
               child: GestureDetector(
@@ -80,8 +86,8 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.black.withOpacity(0.6)
-                        : Colors.white.withOpacity(0.9),
+                        ? Colors.black.withValues(alpha: 0.6)
+                        : Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -100,11 +106,14 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade600.withOpacity(0.9),
+                      color: Colors.red.shade600.withValues(alpha: 0.9),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.delete_outline_rounded,
-                        color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
@@ -113,26 +122,7 @@ class WardrobeItemDetailScreen extends StatelessWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Image
-                  item.imageUrl != null && item.imageUrl!.isNotEmpty
-                      ? Image.network(
-                          item.imageUrl!,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, progress) {
-                            if (progress == null) return child;
-                            return Container(
-                              color: isDark
-                                  ? AppColors.cardDark
-                                  : AppColors.systemGray6,
-                              child: const Center(
-                                child: CircularProgressIndicator(
-                                    color: AppColors.primaryMaroon),
-                              ),
-                            );
-                          },
-                          errorBuilder: (_, __, ___) => _imagePlaceholder(isDark),
-                        )
-                      : _imagePlaceholder(isDark),
+                  _buildHeroImage(isDark),
                   // Bottom gradient
                   Positioned(
                     bottom: 0,
@@ -145,7 +135,9 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
                           colors: [
-                            (isDark ? AppColors.backgroundDark : AppColors.backgroundLight),
+                            (isDark
+                                ? AppColors.backgroundDark
+                                : AppColors.backgroundLight),
                             Colors.transparent,
                           ],
                         ),
@@ -167,9 +159,11 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   // Category chip
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryMaroon.withOpacity(0.12),
+                      color: AppColors.primaryMaroon.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -202,11 +196,13 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   if (item.brand.isNotEmpty) ...[
                     Row(
                       children: [
-                        Icon(Icons.label_outline_rounded,
-                            size: 16,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondary),
+                        Icon(
+                          Icons.label_outline_rounded,
+                          size: 16,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           item.brand,
@@ -227,11 +223,13 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   if (item.addedAt != null) ...[
                     Row(
                       children: [
-                        Icon(Icons.calendar_today_outlined,
-                            size: 14,
-                            color: isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondary),
+                        Icon(
+                          Icons.calendar_today_outlined,
+                          size: 14,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Added ${_formatDate(item.addedAt!)}',
@@ -251,7 +249,7 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   Divider(
                     color: isDark
                         ? AppColors.dividerDark
-                        : Colors.black.withOpacity(0.08),
+                        : Colors.black.withValues(alpha: 0.08),
                   ),
                   const SizedBox(height: 16),
 
@@ -287,8 +285,10 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                     height: 56,
                     child: OutlinedButton.icon(
                       onPressed: () => _confirmDelete(context),
-                      icon: const Icon(Icons.delete_outline_rounded,
-                          color: Colors.red),
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                      ),
                       label: const Text(
                         'Remove from Wardrobe',
                         style: TextStyle(
@@ -314,6 +314,46 @@ class WardrobeItemDetailScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildHeroImage(bool isDark) {
+    final imageUrl = item.imageUrl;
+    final imageDataUrl = item.imageDataUrl;
+
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Container(
+            color: isDark ? AppColors.cardDark : AppColors.systemGray6,
+            child: const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryMaroon),
+            ),
+          );
+        },
+        errorBuilder: (_, __, ___) =>
+            _buildSavedImageFallback(imageDataUrl, isDark),
+      );
+    }
+
+    return _buildSavedImageFallback(imageDataUrl, isDark);
+  }
+
+  Widget _buildSavedImageFallback(String? imageDataUrl, bool isDark) {
+    if (imageDataUrl != null && imageDataUrl.isNotEmpty) {
+      try {
+        final base64Data = imageDataUrl.contains(',')
+            ? imageDataUrl.split(',').last
+            : imageDataUrl;
+        return Image.memory(base64Decode(base64Data), fit: BoxFit.cover);
+      } catch (_) {
+        return _imagePlaceholder(isDark);
+      }
+    }
+
+    return _imagePlaceholder(isDark);
+  }
+
   Widget _imagePlaceholder(bool isDark) {
     return Container(
       color: isDark ? AppColors.cardDark : AppColors.systemGray6,
@@ -324,14 +364,17 @@ class WardrobeItemDetailScreen extends StatelessWidget {
             Icon(
               Icons.checkroom_rounded,
               size: 72,
-              color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.systemGray,
             ),
             const SizedBox(height: 12),
             Text(
               'No Image',
               style: TextStyle(
-                color:
-                    isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.systemGray,
                 fontSize: 14,
               ),
             ),
@@ -343,8 +386,18 @@ class WardrobeItemDetailScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

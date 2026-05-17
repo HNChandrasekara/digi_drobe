@@ -1,12 +1,12 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
 import '../models/wardrobe_item.dart';
 import '../providers/wardrobe_provider.dart';
 import '../utils/colors.dart';
-import '../firebase_options.dart';
 
 class AddClothingScreen extends StatefulWidget {
   const AddClothingScreen({super.key});
@@ -36,19 +36,24 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
   ];
 
   Uint8List? _selectedImageBytes;
-  String? _selectedImageExt;
+  String? _selectedImageName;
   bool _isLoading = false;
 
   Future<void> _pickImage() async {
-    final result = await FilePicker.pickFiles(
-      type: FileType.image,
-      withData: true,
+    final ImagePicker picker = ImagePicker();
+    // Keep wardrobe photos compact enough for the Firestore fallback copy.
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+      maxWidth: 600,
+      maxHeight: 600,
     );
 
-    if (result != null && result.files.isNotEmpty) {
+    if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _selectedImageBytes = result.files.first.bytes;
-        _selectedImageExt = result.files.first.extension;
+        _selectedImageBytes = bytes;
+        _selectedImageName = image.name;
       });
     }
   }
@@ -60,20 +65,37 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
 
     try {
       String? imageUrl;
+      String? imageDataUrl;
       if (_selectedImageBytes != null) {
+        final extension =
+            _selectedImageName?.split('.').last.toLowerCase() ?? 'jpg';
+        final contentType = (extension == 'jpg' || extension == 'jpeg')
+            ? 'image/jpeg'
+            : (extension == 'png' ? 'image/png' : 'image/$extension');
+
+        imageDataUrl =
+            'data:$contentType;base64,${base64Encode(_selectedImageBytes!)}';
+
         try {
-          final extension = _selectedImageExt ?? 'jpg';
           final fileName =
               'wardrobe_${DateTime.now().millisecondsSinceEpoch}.$extension';
-          
-          final storage = FirebaseStorage.instance;
+
+          final storage = FirebaseStorage.instanceFor(
+            bucket: 'gs://digidrobe-f0de3.firebasestorage.app',
+          );
           final ref = storage.ref().child('wardrobe_images/$fileName');
-          
-          final metadata = SettableMetadata(
-            contentType: 'image/$extension',
+
+          final metadata = SettableMetadata(contentType: contentType);
+
+          debugPrint(
+            'DEBUG: Starting upload to wardrobe_images/$fileName with type $contentType',
           );
 
-          final TaskSnapshot snapshot = await ref.putData(_selectedImageBytes!, metadata);
+          final TaskSnapshot snapshot = await ref.putData(
+            _selectedImageBytes!,
+            metadata,
+          );
+
           imageUrl = await snapshot.ref.getDownloadURL();
           debugPrint('DEBUG: Image uploaded successfully: $imageUrl');
         } catch (storageError) {
@@ -81,7 +103,9 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Image upload failed: ${storageError.toString()}'),
+                content: Text(
+                  'Saved photo with the item. Cloud upload failed: ${storageError.toString()}',
+                ),
                 backgroundColor: Colors.orange.shade700,
               ),
             );
@@ -96,6 +120,7 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
         brand: _brandController.text.trim(),
         description: _descriptionController.text.trim(),
         imageUrl: imageUrl,
+        imageDataUrl: imageDataUrl,
         addedAt: DateTime.now(),
       );
 
@@ -140,7 +165,9 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: Text(
           'Add to Wardrobe',
@@ -164,10 +191,15 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
       body: SafeArea(
         child: _isLoading
             ? const Center(
-                child: CircularProgressIndicator(color: AppColors.primaryMaroon),
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryMaroon,
+                ),
               )
             : SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -180,7 +212,9 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
                           width: double.infinity,
                           height: 220,
                           decoration: BoxDecoration(
-                            color: isDark ? AppColors.cardDark : const Color(0xFFEDEEF3),
+                            color: isDark
+                                ? AppColors.cardDark
+                                : const Color(0xFFEDEEF3),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: _selectedImageBytes != null
@@ -221,8 +255,13 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
                       const SizedBox(height: 10),
                       TextFormField(
                         controller: _titleController,
-                        decoration: _inputDecoration(isDark, 'e.g. Favorite Denim Jack...'),
-                        validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter a name' : null,
+                        decoration: _inputDecoration(
+                          isDark,
+                          'e.g. Favorite Denim Jack...',
+                        ),
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'Please enter a name'
+                            : null,
                       ),
                       const SizedBox(height: 24),
 
@@ -243,10 +282,17 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
                           }
                         },
                         decoration: _inputDecoration(isDark, ''),
-                        icon: const Icon(Icons.arrow_drop_down_rounded, size: 30),
-                        dropdownColor: isDark ? AppColors.cardDark : Colors.white,
+                        icon: const Icon(
+                          Icons.arrow_drop_down_rounded,
+                          size: 30,
+                        ),
+                        dropdownColor: isDark
+                            ? AppColors.cardDark
+                            : Colors.white,
                         style: TextStyle(
-                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -268,7 +314,10 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
                       TextFormField(
                         controller: _descriptionController,
                         maxLines: 4,
-                        decoration: _inputDecoration(isDark, 'Add more details about this item...'),
+                        decoration: _inputDecoration(
+                          isDark,
+                          'Add more details about this item...',
+                        ),
                       ),
                       const SizedBox(height: 40),
 
@@ -336,9 +385,11 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: AppColors.primaryMaroon, width: 1.5),
+        borderSide: const BorderSide(
+          color: AppColors.primaryMaroon,
+          width: 1.5,
+        ),
       ),
     );
   }
 }
-

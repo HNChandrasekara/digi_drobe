@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 100,
                       width: 100,
                       decoration: BoxDecoration(
-                        color: AppColors.primaryMaroon.withOpacity(0.1),
+                        color: AppColors.primaryMaroon.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
@@ -58,17 +58,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Welcome Back',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          fontSize: 32,
-                          color: AppColors.textPrimary,
-                        ),
+                      fontSize: 32,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to continue',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(fontSize: 16),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
@@ -78,8 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -171,11 +171,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                   debugPrint('Login Error details: $e');
                                   String errorMsg = e.toString();
                                   if (errorMsg.startsWith('Exception: ')) {
-                                    errorMsg = errorMsg.replaceFirst('Exception: ', '');
+                                    errorMsg = errorMsg.replaceFirst(
+                                      'Exception: ',
+                                      '',
+                                    );
                                   }
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content: Text('Login Failed: [${e.runtimeType}] $errorMsg')),
+                                      content: Text(
+                                        'Login Failed: [${e.runtimeType}] $errorMsg',
+                                      ),
+                                    ),
                                   );
                                 } finally {
                                   if (mounted) {
@@ -198,8 +204,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation(Colors.white),
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text(

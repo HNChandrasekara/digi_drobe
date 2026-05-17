@@ -9,7 +9,9 @@ class GoalsScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('Our Master Plan'),
         backgroundColor: Colors.transparent,
@@ -25,49 +27,56 @@ class GoalsScreen extends StatelessWidget {
             const SizedBox(height: 32),
             _buildGoalCard(
               title: "Save the Planet",
-              subtitle: "Because 'Naked' is technically sustainable, but not very office-appropriate.",
+              subtitle:
+                  "Because 'Naked' is technically sustainable, but not very office-appropriate.",
               icon: Icons.public_rounded,
               color: Colors.green,
               isDark: isDark,
             ),
             _buildGoalCard(
               title: "End Morning Drama",
-              subtitle: "Stop the 20-minute floor-staring session where you claim you have 'nothing to wear'.",
+              subtitle:
+                  "Stop the 20-minute floor-staring session where you claim you have 'nothing to wear'.",
               icon: Icons.sentiment_very_dissatisfied_rounded,
               color: Colors.orange,
               isDark: isDark,
             ),
             _buildGoalCard(
               title: "AI Overlords (Friendly ones)",
-              subtitle: "Make our AI smarter than your ex, and much better at picking shoes.",
+              subtitle:
+                  "Make our AI smarter than your ex, and much better at picking shoes.",
               icon: Icons.psychology_rounded,
               color: Colors.purple,
               isDark: isDark,
             ),
             _buildGoalCard(
               title: "Stylemate Superiority",
-              subtitle: "Prove to the world that looking good is 90% confidence and 10% not wearing socks with sandals.",
+              subtitle:
+                  "Prove to the world that looking good is 90% confidence and 10% not wearing socks with sandals.",
               icon: Icons.auto_awesome_rounded,
               color: AppColors.primaryMaroon,
               isDark: isDark,
             ),
             _buildGoalCard(
               title: "Fit-Check Confidence",
-              subtitle: "Because 'does this look okay?' shouldn't require a 3-person committee and a psychic.",
+              subtitle:
+                  "Because 'does this look okay?' shouldn't require a 3-person committee and a psychic.",
               icon: Icons.check_circle_outline_rounded,
               color: Colors.blue,
               isDark: isDark,
             ),
             _buildGoalCard(
               title: "Sustainability Hero",
-              subtitle: "Reduce textile waste by helping you love and wear what you already own.",
+              subtitle:
+                  "Reduce textile waste by helping you love and wear what you already own.",
               icon: Icons.eco_rounded,
               color: Colors.teal,
               isDark: isDark,
             ),
             _buildGoalCard(
               title: "Wardrobe Analytics",
-              subtitle: "Finally understand why you own 12 white t-shirts but only wear the one from 2018.",
+              subtitle:
+                  "Finally understand why you own 12 white t-shirts but only wear the one from 2018.",
               icon: Icons.analytics_rounded,
               color: Colors.amber,
               isDark: isDark,
@@ -77,7 +86,9 @@ class GoalsScreen extends StatelessWidget {
               child: Text(
                 "Disclaimer: No pixels were harmed in the making of this app.",
                 style: TextStyle(
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
                   fontSize: 12,
                   fontStyle: FontStyle.italic,
                 ),
@@ -106,7 +117,9 @@ class GoalsScreen extends StatelessWidget {
           "No, just helping you look fabulous. But maybe world domination later. We'll see.",
           style: TextStyle(
             fontSize: 16,
-            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
           ),
         ),
       ],
@@ -128,7 +141,7 @@ class GoalsScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -140,7 +153,7 @@ class GoalsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: color, size: 28),
@@ -162,7 +175,9 @@ class GoalsScreen extends StatelessWidget {
                   subtitle,
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                     height: 1.4,
                   ),
                 ),

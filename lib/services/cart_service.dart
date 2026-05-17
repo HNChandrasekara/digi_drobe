@@ -9,9 +9,9 @@ class CartService {
 
   // ── Stream current user's cart ──────────────────────────────────────────────
   Stream<List<CartItem>> getCartStream(String userId) {
-    return _cartRef(userId).snapshots().map(
-          (snap) => snap.docs.map(CartItem.fromFirestore).toList(),
-        );
+    return _cartRef(
+      userId,
+    ).snapshots().map((snap) => snap.docs.map(CartItem.fromFirestore).toList());
   }
 
   // ── Add or increment item ───────────────────────────────────────────────────
@@ -19,7 +19,8 @@ class CartService {
     final ref = _cartRef(userId).doc(item.productId);
     final existing = await ref.get();
     if (existing.exists) {
-      final currentQty = (existing.data() as Map<String, dynamic>)['quantity'] as int? ?? 1;
+      final currentQty =
+          (existing.data() as Map<String, dynamic>)['quantity'] as int? ?? 1;
       await ref.update({'quantity': currentQty + 1});
     } else {
       await ref.set(item.toFirestore());
@@ -31,7 +32,8 @@ class CartService {
     final ref = _cartRef(userId).doc(productId);
     final existing = await ref.get();
     if (!existing.exists) return;
-    final currentQty = (existing.data() as Map<String, dynamic>)['quantity'] as int? ?? 1;
+    final currentQty =
+        (existing.data() as Map<String, dynamic>)['quantity'] as int? ?? 1;
     if (currentQty <= 1) {
       await ref.delete();
     } else {

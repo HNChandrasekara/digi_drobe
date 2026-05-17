@@ -17,7 +17,8 @@ class UserProvider extends ChangeNotifier {
       return _profile!.displayName!;
     }
     final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser?.displayName != null && currentUser!.displayName!.isNotEmpty) {
+    if (currentUser?.displayName != null &&
+        currentUser!.displayName!.isNotEmpty) {
       return currentUser.displayName!;
     }
     // Fallback for Mock Mode / Specific test user
@@ -26,7 +27,11 @@ class UserProvider extends ChangeNotifier {
     }
     return '';
   }
-  String get email => _profile?.email ?? FirebaseAuth.instance.currentUser?.email ?? 'digidrobe88@gmail.com';
+
+  String get email =>
+      _profile?.email ??
+      FirebaseAuth.instance.currentUser?.email ??
+      'digidrobe88@gmail.com';
 
   UserProvider() {
     _listenToAuthState();
@@ -46,18 +51,23 @@ class UserProvider extends ChangeNotifier {
 
   void _startProfileStream(String uid) {
     _sub?.cancel();
-    _sub = _service.profileStream(uid).listen(
-      (profile) {
-        _profile = profile;
-        notifyListeners();
-      },
-      onError: (_) {
-        notifyListeners();
-      },
-    );
+    _sub = _service
+        .profileStream(uid)
+        .listen(
+          (profile) {
+            _profile = profile;
+            notifyListeners();
+          },
+          onError: (_) {
+            notifyListeners();
+          },
+        );
   }
 
-  Future<void> updateProfile({required String displayName, required String phone}) async {
+  Future<void> updateProfile({
+    required String displayName,
+    required String phone,
+  }) async {
     if (_profile == null) return;
     _profile!.displayName = displayName;
     _profile!.phone = phone;

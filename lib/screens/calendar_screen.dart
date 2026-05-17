@@ -126,7 +126,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -158,7 +158,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimary,
                 ),
               ),
               if (_isSignedIn)
@@ -166,7 +168,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   icon: Icon(
                     Icons.refresh,
                     size: 20,
-                    color: isDark ? AppColors.textSecondaryDark : Colors.black87,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : Colors.black87,
                   ),
                   onPressed: _fetchEvents,
                 ),
@@ -181,7 +185,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.02),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -196,7 +200,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(isDark ? 0.2 : 0.1),
+                      color: Colors.blue.withValues(alpha: isDark ? 0.2 : 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -213,14 +217,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           'Connect Google Calendar',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
                           ),
                         ),
                         Text(
                           'Sync your events for outfit advice',
                           style: TextStyle(
                             fontSize: 12,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ],
@@ -253,11 +261,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 color: isDark ? AppColors.cardDark : Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 border: Border.all(
-                  color: Colors.green.withOpacity(isDark ? 0.5 : 0.3),
+                  color: Colors.green.withValues(alpha: isDark ? 0.5 : 0.3),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.02),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -271,70 +279,45 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Calendar Connected",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                              ),
-                            ),
-                            if (_calendarService.isDemoMode) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: const Text(
-                                  'DEMO',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.orange,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
                         Text(
-                          _calendarService.isDemoMode
-                              ? 'Using demo data (configure Google OAuth to use real calendar)'
-                              : "Connected as: ",
+                          "Calendar Connected",
                           style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.logout,
-                      size: 20,
-                      color: isDark ? AppColors.textSecondaryDark : Colors.black54,
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: Icon(
+                        Icons.logout,
+                        size: 20,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : Colors.black54,
+                      ),
+                      onPressed: () async {
+                        await _calendarService.signOut();
+                        if (mounted) {
+                          setState(() {
+                            _isSignedIn = false;
+                            _events = [];
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Google Calendar disconnected'),
+                            ),
+                          );
+                        }
+                      },
                     ),
-                    onPressed: () async {
-                      await _calendarService.signOut();
-                      if (mounted) {
-                        setState(() {
-                          _isSignedIn = false;
-                          _events = [];
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Google Calendar disconnected'),
-                          ),
-                        );
-                      }
-                    },
                   ),
                 ],
               ),
@@ -354,7 +337,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 10,
               offset: const Offset(0, 2),
             ),
@@ -369,113 +352,129 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               )
             : _weatherForecast.isEmpty
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.cloud_off,
+                      color: isDark
+                          ? AppColors.textSecondaryDark
+                          : AppColors.systemGray,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Weather data unavailable',
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 8),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          Icons.cloud_off,
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                          _weatherForecast[0]['isSunny'] == true
+                              ? Icons.wb_sunny
+                              : Icons.wb_cloudy,
+                          color: _weatherForecast[0]['isSunny'] == true
+                              ? Colors.amber
+                              : (isDark
+                                    ? AppColors.textSecondaryDark
+                                    : AppColors.systemGray),
+                          size: 18,
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Weather data unavailable',
+                          _weatherForecast[0]['condition'] ?? 'N/A',
                           style: TextStyle(
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
-                            fontSize: 12,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          _weatherForecast[0]['temp'] ?? '--',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ],
                     ),
-                  )
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4, bottom: 8),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _weatherForecast[0]['isSunny'] == true
-                                  ? Icons.wb_sunny
-                                  : Icons.wb_cloudy,
-                              color: _weatherForecast[0]['isSunny'] == true
-                                  ? Colors.amber
-                                  : (isDark ? AppColors.textSecondaryDark : AppColors.systemGray),
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _weatherForecast[0]['condition'] ?? 'N/A',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              _weatherForecast[0]['temp'] ?? '--',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (_weatherForecast.length > 1)
-                        SizedBox(
-                          height: 35,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _weatherForecast.length - 1,
-                            itemBuilder: (context, index) {
-                              final forecast = _weatherForecast[index + 1];
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? AppColors.surfaceDark
-                                        : AppColors.systemGray6.withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        forecast['isSunny'] == true
-                                            ? Icons.wb_sunny
-                                            : Icons.wb_cloudy,
-                                        color: forecast['isSunny'] == true
-                                            ? Colors.amber
-                                            : (isDark ? AppColors.textSecondaryDark : AppColors.systemGray),
-                                        size: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        forecast['temp'] ?? '--',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w500,
-                                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                    ],
                   ),
+                  if (_weatherForecast.length > 1)
+                    SizedBox(
+                      height: 35,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _weatherForecast.length - 1,
+                        itemBuilder: (context, index) {
+                          final forecast = _weatherForecast[index + 1];
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.surfaceDark
+                                    : AppColors.systemGray6.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    forecast['isSunny'] == true
+                                        ? Icons.wb_sunny
+                                        : Icons.wb_cloudy,
+                                    color: forecast['isSunny'] == true
+                                        ? Colors.amber
+                                        : (isDark
+                                              ? AppColors.textSecondaryDark
+                                              : AppColors.systemGray),
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    forecast['temp'] ?? '--',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: isDark
+                                          ? AppColors.textSecondaryDark
+                                          : AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                ],
+              ),
       ),
     );
   }
@@ -501,7 +500,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
               borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.02),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -518,7 +517,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryMaroon.withOpacity(0.1),
+                    color: AppColors.primaryMaroon.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -539,14 +538,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
-                          color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                          color: isDark
+                              ? AppColors.textPrimaryDark
+                              : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Suggested: ${index % 2 == 0 ? "Formal Suit" : "Casual Chic"}',
                         style: TextStyle(
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
@@ -555,7 +558,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 Icon(
                   Icons.chevron_right,
-                  color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                  color: isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.systemGray,
                 ),
               ],
             ),
@@ -610,7 +615,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -639,12 +644,16 @@ class _CalendarScreenState extends State<CalendarScreen> {
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
+                          color: isDark
+                              ? AppColors.surfaceDark
+                              : AppColors.systemGray6,
                         ),
                         child: Center(
                           child: Icon(
                             Icons.photo,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.systemGray,
                             size: 40,
                           ),
                         ),
@@ -661,7 +670,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           child: Icon(
                             Icons.calendar_today_rounded,
                             size: 14,
-                            color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                            color: isDark
+                                ? AppColors.textSecondaryDark
+                                : AppColors.systemGray,
                           ),
                         ),
                       ),
@@ -669,13 +680,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   )
                 : Container(
                     decoration: BoxDecoration(
-                      color: isDark ? AppColors.surfaceDark : AppColors.systemGray6.withOpacity(0.5),
+                      color: isDark
+                          ? AppColors.surfaceDark
+                          : AppColors.systemGray6.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Icon(
                         Icons.checkroom_rounded,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.systemGray,
                         size: 30,
                       ),
                     ),
@@ -687,7 +702,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
               "Today's look-$type",
               style: TextStyle(
                 fontSize: 10,
-                color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.systemGray,
               ),
             ),
           ],

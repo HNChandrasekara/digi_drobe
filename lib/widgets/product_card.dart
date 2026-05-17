@@ -10,14 +10,16 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Card(
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
         side: BorderSide(
-          color: isDark ? AppColors.dividerDark : Colors.black.withOpacity(0.05),
+          color: isDark
+              ? AppColors.dividerDark
+              : Colors.black.withValues(alpha: 0.05),
           width: 0.5,
         ),
       ),
@@ -30,7 +32,9 @@ class ProductCard extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 color: isDark ? AppColors.surfaceDark : AppColors.systemGray6,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
               ),
               child: imageUrl.isNotEmpty
                   ? Image.network(
@@ -40,7 +44,9 @@ class ProductCard extends StatelessWidget {
                       errorBuilder: (context, error, stackTrace) => Center(
                         child: Icon(
                           Icons.image_not_supported_outlined,
-                          color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.systemGray,
                           size: 40,
                         ),
                       ),
@@ -52,7 +58,9 @@ class ProductCard extends StatelessWidget {
                   : Center(
                       child: Icon(
                         Icons.image_not_supported_outlined,
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.systemGray,
+                        color: isDark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.systemGray,
                         size: 40,
                       ),
                     ),
@@ -66,9 +74,11 @@ class ProductCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
-                      ),
+                    fontWeight: FontWeight.w700,
+                    color: isDark
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -76,9 +86,11 @@ class ProductCard extends StatelessWidget {
                 Text(
                   'Explore more',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),

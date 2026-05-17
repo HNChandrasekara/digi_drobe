@@ -7,6 +7,7 @@ class WardrobeItem {
   final String brand;
   final String description;
   final String? imageUrl;
+  final String? imageDataUrl;
   final DateTime? addedAt;
 
   const WardrobeItem({
@@ -16,6 +17,7 @@ class WardrobeItem {
     this.brand = '',
     this.description = '',
     this.imageUrl,
+    this.imageDataUrl,
     this.addedAt,
   });
 
@@ -28,18 +30,20 @@ class WardrobeItem {
       brand: data['brand'] as String? ?? '',
       description: data['description'] as String? ?? '',
       imageUrl: data['imageUrl'] as String?,
+      imageDataUrl: data['imageDataUrl'] as String?,
       addedAt: (data['addedAt'] as Timestamp?)?.toDate(),
     );
   }
 
   Map<String, dynamic> toFirestore() => {
-        'title': title,
-        'category': category,
-        'brand': brand,
-        'description': description,
-        'imageUrl': imageUrl,
-        'addedAt': addedAt != null
-            ? Timestamp.fromDate(addedAt!)
-            : FieldValue.serverTimestamp(),
-      };
+    'title': title,
+    'category': category,
+    'brand': brand,
+    'description': description,
+    'imageUrl': imageUrl,
+    'imageDataUrl': imageDataUrl,
+    'addedAt': addedAt != null
+        ? Timestamp.fromDate(addedAt!)
+        : FieldValue.serverTimestamp(),
+  };
 }

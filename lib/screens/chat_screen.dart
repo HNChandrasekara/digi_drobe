@@ -23,8 +23,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  String get _currentUserId =>
-      FirebaseAuth.instance.currentUser?.uid ?? '';
+  String get _currentUserId => FirebaseAuth.instance.currentUser?.uid ?? '';
   String get _currentUserName =>
       FirebaseAuth.instance.currentUser?.displayName ?? 'User';
 
@@ -65,9 +64,9 @@ class _ChatScreenState extends State<ChatScreen> {
       _scrollToBottom();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send message: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to send message: $e')));
       }
     }
   }
@@ -75,10 +74,11 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: SafeArea(
         child: Column(
           children: [
@@ -105,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                   ),
                 ],
@@ -124,7 +124,9 @@ class _ChatScreenState extends State<ChatScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimary,
                 letterSpacing: -0.5,
               ),
             ),
@@ -136,8 +138,7 @@ class _ChatScreenState extends State<ChatScreen> {
               backgroundColor: AppColors.primaryMaroon,
               foregroundColor: Colors.white,
               elevation: 0,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
@@ -193,15 +194,16 @@ class _ChatScreenState extends State<ChatScreen> {
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           if (!isMe) ...[
             Container(
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppColors.primaryMaroon.withOpacity(0.15),
+                color: AppColors.primaryMaroon.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -225,8 +227,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: isMe
                     ? AppColors.primaryMaroon
                     : (isDark
-                        ? AppColors.cardDark
-                        : const Color(0xFFD9D9D9).withOpacity(0.5)),
+                          ? AppColors.cardDark
+                          : const Color(0xFFD9D9D9).withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -255,8 +257,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       color: isMe
                           ? Colors.white
                           : (isDark
-                              ? AppColors.textPrimaryDark
-                              : Colors.black87),
+                                ? AppColors.textPrimaryDark
+                                : Colors.black87),
                     ),
                   ),
                 ],
@@ -278,12 +280,12 @@ class _ChatScreenState extends State<ChatScreen> {
           color: isDark ? AppColors.cardDark : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: AppColors.primaryMaroon.withOpacity(0.3),
+            color: AppColors.primaryMaroon.withValues(alpha: 0.3),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

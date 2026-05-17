@@ -48,11 +48,7 @@ class ComingSoonScreen extends StatelessWidget {
                     color: isDark ? AppColors.cardDark : AppColors.systemGray6,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    size: 80,
-                    color: AppColors.primaryMaroon,
-                  ),
+                  child: Icon(icon, size: 80, color: AppColors.primaryMaroon),
                 ),
                 const SizedBox(height: 32),
                 Text(
@@ -60,7 +56,9 @@ class ComingSoonScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                    color: isDark
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -70,7 +68,9 @@ class ComingSoonScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     height: 1.5,
-                    color: isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                   ),
                 ),
                 if (goals.isNotEmpty) ...[
@@ -88,37 +88,41 @@ class ComingSoonScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ...goals.map((goal) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryMaroon.withOpacity(0.1),
-                                shape: BoxShape.circle,
+                  ...goals.map(
+                    (goal) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryMaroon.withValues(
+                                alpha: 0.1,
                               ),
-                              child: const Icon(
-                                Icons.check_rounded,
-                                size: 16,
-                                color: AppColors.primaryMaroon,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.check_rounded,
+                              size: 16,
+                              color: AppColors.primaryMaroon,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              goal,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isDark
+                                    ? AppColors.textPrimaryDark
+                                    : AppColors.textPrimary,
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                goal,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: isDark
-                                      ? AppColors.textPrimaryDark
-                                      : AppColors.textPrimary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 48),
                 SizedBox(

@@ -49,17 +49,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Text(
                     'Create Account',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                          fontSize: 32,
-                          color: AppColors.textPrimary,
-                        ),
+                      fontSize: 32,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign up to get started',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(fontSize: 16),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: 40),
                   // Name Field
@@ -95,8 +94,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your email';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return 'Please enter a valid email';
                       }
                       return null;
@@ -165,7 +165,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text(
-                                          'Account Created! Please Login.'),
+                                        'Account Created! Please Login.',
+                                      ),
                                     ),
                                   );
                                   Navigator.pop(context);
@@ -173,8 +174,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                        content:
-                                            Text('Sign Up Failed: $e')),
+                                      content: Text('Sign Up Failed: $e'),
+                                    ),
                                   );
                                 } finally {
                                   if (mounted) {
@@ -197,8 +198,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor:
-                                    AlwaysStoppedAnimation(Colors.white),
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text(

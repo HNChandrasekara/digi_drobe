@@ -17,6 +17,7 @@ import 'providers/cart_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/wardrobe_provider.dart';
 import 'providers/thrift_provider.dart';
+import 'providers/payment_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,7 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
     }
-    
+
     // Connect to emulators if enabled (local development)
     const bool useEmulators = false;
     if (kDebugMode && useEmulators) {
@@ -46,13 +47,17 @@ void main() async {
         await FirebaseStorage.instance.useStorageEmulator(host, 9199);
         debugPrint('Firebase: Connected to Emulators at $host');
       } catch (e) {
-        debugPrint('Firebase: Emulator connection failed (already connected?): $e');
+        debugPrint(
+          'Firebase: Emulator connection failed (already connected?): $e',
+        );
       }
     }
 
     AuthService.markInitialized();
     firebaseInitialized = true;
-    debugPrint('Firebase: Initialized successfully with project: ${DefaultFirebaseOptions.currentPlatform.projectId}');
+    debugPrint(
+      'Firebase: Initialized successfully with project: ${DefaultFirebaseOptions.currentPlatform.projectId}',
+    );
   } catch (e) {
     firebaseInitError = e.toString();
     debugPrint('Firebase: Initialization failure: $e');
@@ -79,6 +84,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => WardrobeProvider()),
         ChangeNotifierProvider(create: (_) => ThriftProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentProvider()),
       ],
       child: MyApp(
         firebaseInitialized: firebaseInitialized,
@@ -91,7 +97,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   final bool firebaseInitialized;
   final String? firebaseInitError;
-  const MyApp({super.key, required this.firebaseInitialized, this.firebaseInitError});
+  const MyApp({
+    super.key,
+    required this.firebaseInitialized,
+    this.firebaseInitError,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +112,9 @@ class MyApp extends StatelessWidget {
           title: 'Digi Drobe',
           theme: _buildLightTheme(),
           darkTheme: _buildDarkTheme(),
-          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: themeProvider.isDarkMode
+              ? ThemeMode.dark
+              : ThemeMode.light,
           builder: (context, child) {
             return Stack(
               children: [
@@ -118,13 +130,16 @@ class MyApp extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Material(
-                      color: Colors.orange.withOpacity(0.8),
+                      color: Colors.orange.withValues(alpha: 0.8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
                           'Mock Mode: Firebase Not Configured (Using Dummy Keys)',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white, fontSize: 10),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
                     ),
@@ -192,7 +207,7 @@ class MyApp extends StatelessWidget {
         titleSmall: TextStyle(color: AppColors.textSecondary),
       ),
       iconTheme: const IconThemeData(color: AppColors.iconColor),
-      dividerColor: Colors.black.withOpacity(0.1),
+      dividerColor: Colors.black.withValues(alpha: 0.1),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryMaroon,
         foregroundColor: Colors.white,

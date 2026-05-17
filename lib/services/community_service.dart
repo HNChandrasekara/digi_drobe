@@ -8,9 +8,10 @@ class CommunityService {
 
   // ── Stream channels ──────────────────────────────────────────────────────────
   Stream<List<Channel>> getChannelsStream() {
-    return _db.collection(_channelsCol).snapshots().map(
-          (snap) => snap.docs.map(Channel.fromFirestore).toList(),
-        );
+    return _db
+        .collection(_channelsCol)
+        .snapshots()
+        .map((snap) => snap.docs.map(Channel.fromFirestore).toList());
   }
 
   // ── Stream messages for a channel ───────────────────────────────────────────

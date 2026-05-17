@@ -1,6 +1,9 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'package:crypto/crypto.dart';
+import 'package:payhere_mobilesdk_flutter/payhere_mobilesdk_flutter.dart';
+import '../models/cart_item.dart';
 
 class PaymentService {
   // PayHere Configuration
@@ -8,10 +11,20 @@ class PaymentService {
       'https://sandbox.payhere.lk/api/v2'; // Sandbox URL
   static const String _payHereProductionUrl =
       'https://api.payhere.lk/api/v2'; // Production URL
-  static const String _payHereMerchantId = '1233880';
+  static const String _payHereMerchantId = '1235807';
   static const String _payHereMerchantSecret =
-      'NDY0ODM3NDQzMzY0MzAxMzk1MzU5OTM2MjY1MzQxMjEzNzU4ODM=';
+      'MTA0MDY3ODIyNjE2NTk1NzE3NzEzNDg0MTkwNTM3ODE3NzEyMzc=';
   static bool _payHereUseSandbox = true; // Toggle for sandbox/production
+  static const String _payHereNotifyUrl =
+      'https://digi-drobe.com/payment/notify';
+  static const String payHereSuccessUrl =
+      'https://digi-drobe.com/payment/success';
+  static const String payHereCancelUrl =
+      'https://digi-drobe.com/payment/cancel';
+
+  static String get payHereCheckoutBaseUrl => _payHereUseSandbox
+      ? 'https://sandbox.payhere.lk/pay/checkout'
+      : 'https://www.payhere.lk/pay/checkout';
 
   // PayPal Configuration
   static const String _payPalSandboxUrl =
@@ -28,6 +41,12 @@ class PaymentService {
     required String orderId,
     required String customerEmail,
     required String customerPhone,
+    String firstName = 'Customer',
+    String lastName = 'Name',
+    String address = 'No. 1, Galle Road',
+    String city = 'Colombo',
+    String country = 'Sri Lanka',
+    String items = 'Fashion Items',
   }) async {
     // In mock mode return a fake sandbox checkout URL
     if (_payHereMerchantId.contains('YOUR_') ||
@@ -38,15 +57,11 @@ class PaymentService {
     }
 
     try {
-      // PayHere hosted checkout - construct URL directly
-      // Hash format: md5(amount|merchant_id|order_id|merchant_secret)
-      final hash = md5
-          .convert(
-            utf8.encode(
-              '$amount|$_payHereMerchantId|$orderId|$_payHereMerchantSecret',
-            ),
-          )
-          .toString();
+      final hash = _generatePayHereHash(
+        orderId: orderId,
+        amount: amount,
+        currency: 'LKR',
+      );
 
       final base = _payHereUseSandbox
           ? 'https://sandbox.payhere.lk'
@@ -54,7 +69,7 @@ class PaymentService {
 
       // PayHere hosted checkout URL - correct endpoint
       final checkoutUrl =
-          '$base/pay/checkout?merchant_id=$_payHereMerchantId&return_url=${Uri.encodeComponent('https://digi-drobe.com/payment/success')}&cancel_url=${Uri.encodeComponent('https://digi-drobe.com/payment/cancel')}&notify_url=${Uri.encodeComponent('https://digi-drobe.com/payment/notify')}&order_id=$orderId&items=${Uri.encodeComponent('Fashion Items')}&amount=$amount&currency=LKR&first_name=Customer&last_name=Name&email=${Uri.encodeComponent(customerEmail)}&phone=${Uri.encodeComponent(customerPhone)}&address=${Uri.encodeComponent('123 Fashion St')}&city=Colombo&country=${Uri.encodeComponent('Sri Lanka')}&hash=$hash';
+          '$base/pay/checkout?merchant_id=$_payHereMerchantId&return_url=${Uri.encodeComponent(payHereSuccessUrl)}&cancel_url=${Uri.encodeComponent(payHereCancelUrl)}&notify_url=${Uri.encodeComponent(_payHereNotifyUrl)}&order_id=$orderId&items=${Uri.encodeComponent(items)}&amount=$amount&currency=LKR&first_name=${Uri.encodeComponent(firstName)}&last_name=${Uri.encodeComponent(lastName)}&email=${Uri.encodeComponent(customerEmail)}&phone=${Uri.encodeComponent(customerPhone)}&address=${Uri.encodeComponent(address)}&city=${Uri.encodeComponent(city)}&country=${Uri.encodeComponent(country)}&hash=$hash';
 
       print('[PaymentService] PayHere checkout URL: $checkoutUrl');
       return checkoutUrl;
@@ -62,6 +77,128 @@ class PaymentService {
       print('[PaymentService] PayHere error: $e');
       return null;
     }
+  }
+
+  static Map<String, String> buildPayHereFormFields({
+    required String amount,
+    required String orderId,
+    required String customerEmail,
+    required String customerPhone,
+    required String firstName,
+    required String lastName,
+    required String address,
+    required String city,
+    required String country,
+    required String items,
+  }) {
+    final normalizedAmount = double.parse(amount).toStringAsFixed(2);
+    final hash = _generatePayHereHash(
+      orderId: orderId,
+      amount: normalizedAmount,
+      currency: 'LKR',
+    );
+
+    return {
+      'merchant_id': _payHereMerchantId,
+      'return_url': payHereSuccessUrl,
+      'cancel_url': payHereCancelUrl,
+      'notify_url': _payHereNotifyUrl,
+      'order_id': orderId,
+      'items': items,
+      'amount': normalizedAmount,
+      'currency': 'LKR',
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': customerEmail,
+      'phone': customerPhone,
+      'address': address,
+      'city': city,
+      'country': country,
+      'hash': hash,
+    };
+  }
+
+  static String _generatePayHereHash({
+    required String orderId,
+    required String amount,
+    required String currency,
+  }) {
+    final hashedSecret = md5
+        .convert(utf8.encode(_payHereMerchantSecret))
+        .toString()
+        .toUpperCase();
+
+    return md5
+        .convert(
+          utf8.encode(
+            '$_payHereMerchantId$orderId$amount$currency$hashedSecret',
+          ),
+        )
+        .toString()
+        .toUpperCase();
+  }
+
+  /// Process PayHere payment through the official in-app Flutter SDK.
+  static Future<String> processPayHereSdkPayment({
+    required double amount,
+    required String orderId,
+    required List<CartItem> items,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String address,
+    required String city,
+    String country = 'Sri Lanka',
+  }) {
+    final itemNames = items.isEmpty
+        ? 'Fashion Items'
+        : items.map((item) => item.title).join(', ');
+
+    final paymentObject = <String, dynamic>{
+      'sandbox': _payHereUseSandbox,
+      'merchant_id': _payHereMerchantId,
+      'notify_url': _payHereNotifyUrl,
+      'order_id': orderId,
+      'items': itemNames,
+      'amount': amount,
+      'currency': 'LKR',
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'phone': phone,
+      'address': address,
+      'city': city,
+      'country': country,
+      'delivery_address': address,
+      'delivery_city': city,
+      'delivery_country': country,
+      'custom_1': '',
+      'custom_2': '',
+    };
+
+    final completer = Completer<String>();
+
+    PayHere.startPayment(
+      paymentObject,
+      (paymentId) {
+        if (!completer.isCompleted) {
+          completer.complete(paymentId);
+        }
+      },
+      (error) {
+        if (!completer.isCompleted) {
+          completer.completeError(Exception(error));
+        }
+      },
+      () {
+        if (!completer.isCompleted) {
+          completer.completeError(Exception('Payment cancelled'));
+        }
+      },
+    );
+
+    return completer.future;
   }
 
   /// Process PayPal Payment
@@ -118,7 +255,7 @@ class PaymentService {
           'purchase_units': [
             {
               'reference_id': orderId,
-              'amount': {'currency_code': 'USD', 'value': amount},
+              'amount': {'currency_code': 'LKR', 'value': amount},
             },
           ],
           'payer': {'email_address': customerEmail},

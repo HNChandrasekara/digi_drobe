@@ -50,14 +50,15 @@ class AdminUserManagementScreen extends StatelessWidget {
                   border: Border.all(
                     color: isDark
                         ? AppColors.dividerDark
-                        : Colors.grey.withOpacity(0.2),
+                        : Colors.grey.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundColor:
-                          AppColors.primaryMaroon.withOpacity(0.1),
+                      backgroundColor: AppColors.primaryMaroon.withValues(
+                        alpha: 0.1,
+                      ),
                       backgroundImage: user.photoUrl != null
                           ? NetworkImage(user.photoUrl!)
                           : null,
@@ -67,7 +68,8 @@ class AdminUserManagementScreen extends StatelessWidget {
                                   ? user.displayName[0].toUpperCase()
                                   : '?',
                               style: const TextStyle(
-                                  color: AppColors.primaryMaroon),
+                                color: AppColors.primaryMaroon,
+                              ),
                             )
                           : null,
                     ),
@@ -76,25 +78,29 @@ class AdminUserManagementScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(user.displayName,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold)),
-                          Text(user.email,
-                              style: TextStyle(
-                                  color: isDark
-                                      ? Colors.white70
-                                      : Colors.black54,
-                                  fontSize: 12)),
+                          Text(
+                            user.displayName,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            user.email,
+                            style: TextStyle(
+                              color: isDark ? Colors.white70 : Colors.black54,
+                              fontSize: 12,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 4),
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: user.isAdmin
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.blue.withOpacity(0.1),
+                            ? Colors.red.withValues(alpha: 0.1)
+                            : Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -102,34 +108,38 @@ class AdminUserManagementScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color:
-                              user.isAdmin ? Colors.red : Colors.blue,
+                          color: user.isAdmin ? Colors.red : Colors.blue,
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert_rounded,
-                          size: 20, color: Colors.grey),
+                      icon: const Icon(
+                        Icons.more_vert_rounded,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
                       onSelected: (value) async {
                         if (value == 'make_admin') {
-                          await UserProfileService()
-                              .setRole(user.uid, 'admin');
+                          await UserProfileService().setRole(user.uid, 'admin');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content: Text(
-                                      '${user.displayName} is now an admin')),
+                                content: Text(
+                                  '${user.displayName} is now an admin',
+                                ),
+                              ),
                             );
                           }
                         } else if (value == 'make_user') {
-                          await UserProfileService()
-                              .setRole(user.uid, 'user');
+                          await UserProfileService().setRole(user.uid, 'user');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  content: Text(
-                                      '${user.displayName} is now a user')),
+                                content: Text(
+                                  '${user.displayName} is now a user',
+                                ),
+                              ),
                             );
                           }
                         }
