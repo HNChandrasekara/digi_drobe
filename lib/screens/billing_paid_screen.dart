@@ -111,10 +111,8 @@ class BillingPaidScreen extends StatelessWidget {
               SizedBox(
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.popUntil(
-                    context,
-                    (route) => route.isFirst,
-                  ),
+                  onPressed: () =>
+                      Navigator.popUntil(context, (route) => route.isFirst),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryMaroon,
                     foregroundColor: Colors.white,

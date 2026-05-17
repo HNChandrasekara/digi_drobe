@@ -293,7 +293,9 @@ class _HomeContentState extends State<HomeContent> {
             isDark,
             () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ThriftStoreScreen()),
+              MaterialPageRoute(
+                builder: (context) => const ThriftStoreScreen(),
+              ),
             ),
           ),
         ),

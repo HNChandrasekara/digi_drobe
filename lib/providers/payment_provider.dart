@@ -90,7 +90,8 @@ class PaymentProvider extends ChangeNotifier {
 
     try {
       if (_selectedMethod == PaymentMethod.payHere) {
-        final paymentId = 'MOCK-PAYHERE-${DateTime.now().millisecondsSinceEpoch}';
+        final paymentId =
+            'MOCK-PAYHERE-${DateTime.now().millisecondsSinceEpoch}';
 
         await _savePaidOrder(
           orderId: orderId,
