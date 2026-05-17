@@ -50,13 +50,15 @@ class AdminUserManagementScreen extends StatelessWidget {
                   border: Border.all(
                     color: isDark
                         ? AppColors.dividerDark
-                        : Colors.grey.withOpacity(0.2),
+                        : Colors.grey.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundColor: AppColors.primaryMaroon.withOpacity(0.1),
+                      backgroundColor: AppColors.primaryMaroon.withValues(
+                        alpha: 0.1,
+                      ),
                       backgroundImage: user.photoUrl != null
                           ? NetworkImage(user.photoUrl!)
                           : null,
@@ -97,8 +99,8 @@ class AdminUserManagementScreen extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: user.isAdmin
-                            ? Colors.red.withOpacity(0.1)
-                            : Colors.blue.withOpacity(0.1),
+                            ? Colors.red.withValues(alpha: 0.1)
+                            : Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(

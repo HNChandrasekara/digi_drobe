@@ -128,7 +128,7 @@ class MyApp extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: Material(
-                      color: Colors.orange.withOpacity(0.8),
+                      color: Colors.orange.withValues(alpha: 0.8),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         child: Text(
@@ -205,7 +205,7 @@ class MyApp extends StatelessWidget {
         titleSmall: TextStyle(color: AppColors.textSecondary),
       ),
       iconTheme: const IconThemeData(color: AppColors.iconColor),
-      dividerColor: Colors.black.withOpacity(0.1),
+      dividerColor: Colors.black.withValues(alpha: 0.1),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: AppColors.primaryMaroon,
         foregroundColor: Colors.white,

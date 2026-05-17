@@ -113,7 +113,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.green),
                         ),
@@ -292,7 +292,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              color: AppColors.primaryMaroon.withOpacity(0.08),
+              color: AppColors.primaryMaroon.withValues(alpha: 0.08),
               shape: BoxShape.circle,
               image: photoUrl != null && photoUrl.isNotEmpty
                   ? DecorationImage(
@@ -432,22 +432,22 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               borderSide: BorderSide(
                 color: isDark
                     ? AppColors.dividerDark
-                    : Colors.grey.withOpacity(0.3),
+                    : Colors.grey.withValues(alpha: 0.3),
               ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
                 color: isDark
-                    ? AppColors.dividerDark.withOpacity(0.5)
-                    : Colors.grey.withOpacity(0.2),
+                    ? AppColors.dividerDark.withValues(alpha: 0.5)
+                    : Colors.grey.withValues(alpha: 0.2),
               ),
             ),
             filled: !enabled || isDark,
             fillColor: !enabled
                 ? (isDark
                       ? AppColors.surfaceDark
-                      : Colors.grey.withOpacity(0.05))
+                      : Colors.grey.withValues(alpha: 0.05))
                 : (isDark ? AppColors.cardDark : Colors.white),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,

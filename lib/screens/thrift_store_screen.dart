@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/thrift_provider.dart';
+import '../providers/cart_provider.dart';
 import '../models/thrift_item.dart';
 import '../utils/colors.dart';
 import 'add_thrift_item_screen.dart';
+import 'cart_screen.dart';
 
 class ThriftStoreScreen extends StatefulWidget {
   const ThriftStoreScreen({super.key});
@@ -28,7 +30,8 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_shopping_cart_rounded),
+            icon: const Icon(Icons.sell_rounded),
+            tooltip: 'Sell Item',
             onPressed: () {
               Navigator.push(
                 context,
@@ -37,6 +40,49 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
                 ),
               );
             },
+          ),
+          Consumer<CartProvider>(
+            builder: (context, cart, _) => Stack(
+              alignment: Alignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.shopping_cart_rounded),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CartScreen(),
+                      ),
+                    );
+                  },
+                ),
+                if (cart.itemCount > 0)
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryMaroon,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '${cart.itemCount}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),
@@ -110,7 +156,7 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
@@ -130,7 +176,7 @@ class _ThriftStoreScreenState extends State<ThriftStoreScreen> {
                   item.imageUrl != null && item.imageUrl!.isNotEmpty
                       ? Image.network(item.imageUrl!, fit: BoxFit.cover)
                       : Container(
-                          color: AppColors.primaryMaroon.withOpacity(0.1),
+                          color: AppColors.primaryMaroon.withValues(alpha: 0.1),
                           child: const Icon(
                             Icons.shopping_bag_outlined,
                             size: 50,

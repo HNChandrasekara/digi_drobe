@@ -52,6 +52,7 @@ dependencies:
   model_viewer_plus: ^1.10.0
   cloud_firestore: ^6.4.0
   firebase_storage: ^13.4.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

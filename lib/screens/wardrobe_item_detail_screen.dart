@@ -84,8 +84,8 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.black.withOpacity(0.6)
-                        : Colors.white.withOpacity(0.9),
+                        ? Colors.black.withValues(alpha: 0.6)
+                        : Colors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -104,7 +104,7 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.red.shade600.withOpacity(0.9),
+                      color: Colors.red.shade600.withValues(alpha: 0.9),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -182,7 +182,7 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primaryMaroon.withOpacity(0.12),
+                      color: AppColors.primaryMaroon.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -268,7 +268,7 @@ class WardrobeItemDetailScreen extends StatelessWidget {
                   Divider(
                     color: isDark
                         ? AppColors.dividerDark
-                        : Colors.black.withOpacity(0.08),
+                        : Colors.black.withValues(alpha: 0.08),
                   ),
                   const SizedBox(height: 16),
 

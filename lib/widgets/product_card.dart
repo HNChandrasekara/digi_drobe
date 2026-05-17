@@ -19,7 +19,7 @@ class ProductCard extends StatelessWidget {
         side: BorderSide(
           color: isDark
               ? AppColors.dividerDark
-              : Colors.black.withOpacity(0.05),
+              : Colors.black.withValues(alpha: 0.05),
           width: 0.5,
         ),
       ),

@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:provider/provider.dart';
 import '../models/wardrobe_item.dart';
@@ -36,19 +36,23 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
   ];
 
   Uint8List? _selectedImageBytes;
-  String? _selectedImageExt;
+  String? _selectedImageName;
   bool _isLoading = false;
 
   Future<void> _pickImage() async {
-    final result = await FilePicker.pickFiles(
-      type: FileType.image,
-      withData: true,
+    final ImagePicker picker = ImagePicker();
+    // Compress image automatically to 85% quality and max 1080px
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+      maxWidth: 1080,
     );
 
-    if (result != null && result.files.isNotEmpty) {
+    if (image != null) {
+      final bytes = await image.readAsBytes();
       setState(() {
-        _selectedImageBytes = result.files.first.bytes;
-        _selectedImageExt = result.files.first.extension;
+        _selectedImageBytes = bytes;
+        _selectedImageName = image.name;
       });
     }
   }
@@ -62,19 +66,31 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
       String? imageUrl;
       if (_selectedImageBytes != null) {
         try {
-          final extension = _selectedImageExt ?? 'jpg';
+          final extension =
+              _selectedImageName?.split('.').last.toLowerCase() ?? 'jpg';
+          final contentType = (extension == 'jpg' || extension == 'jpeg')
+              ? 'image/jpeg'
+              : (extension == 'png' ? 'image/png' : 'image/$extension');
+
           final fileName =
               'wardrobe_${DateTime.now().millisecondsSinceEpoch}.$extension';
 
-          final storage = FirebaseStorage.instance;
+          final storage = FirebaseStorage.instanceFor(
+            bucket: 'gs://digidrobe-f0de3.firebasestorage.app',
+          );
           final ref = storage.ref().child('wardrobe_images/$fileName');
 
-          final metadata = SettableMetadata(contentType: 'image/$extension');
+          final metadata = SettableMetadata(contentType: contentType);
+
+          debugPrint(
+            'DEBUG: Starting upload to wardrobe_images/$fileName with type $contentType',
+          );
 
           final TaskSnapshot snapshot = await ref.putData(
             _selectedImageBytes!,
             metadata,
           );
+
           imageUrl = await snapshot.ref.getDownloadURL();
           debugPrint('DEBUG: Image uploaded successfully: $imageUrl');
         } catch (storageError) {
@@ -89,6 +105,9 @@ class _AddClothingScreenState extends State<AddClothingScreen> {
               ),
             );
           }
+          // Stop the save process if image upload failed but an image was selected
+          setState(() => _isLoading = false);
+          return;
         }
       }
 

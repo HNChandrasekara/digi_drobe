@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../utils/colors.dart';
+import '../providers/cart_provider.dart';
+import '../screens/cart_screen.dart';
 
 class CustomHeader extends StatelessWidget {
   final String userName;
@@ -22,7 +25,7 @@ class CustomHeader extends StatelessWidget {
               Text(
                 'DigiDrobe',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: AppColors.primaryMaroon, // Brand color stays the same
+                  color: AppColors.primaryMaroon,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -1.0,
                 ),
@@ -40,12 +43,58 @@ class CustomHeader extends StatelessWidget {
           ),
           Row(
             children: [
+              Consumer<CartProvider>(
+                builder: (context, cart, _) {
+                  return Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CartScreen(),
+                            ),
+                          );
+                        },
+                        child: _buildIconButton(
+                          Icons.shopping_cart_rounded,
+                          isDark,
+                        ),
+                      ),
+                      if (cart.itemCount > 0)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primaryMaroon,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '${cart.itemCount}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(width: 12),
               GestureDetector(
                 onTap: onProfileTap,
                 child: _buildIconButton(Icons.settings_rounded, isDark),
               ),
-              const SizedBox(width: 12),
-              _buildIconButton(Icons.tune_rounded, isDark),
             ],
           ),
         ],

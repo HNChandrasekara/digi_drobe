@@ -111,7 +111,9 @@ class AdminDashboardScreen extends StatelessWidget {
         color: isDark ? AppColors.cardDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AppColors.dividerDark : Colors.grey.withOpacity(0.2),
+          color: isDark
+              ? AppColors.dividerDark
+              : Colors.grey.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -161,7 +163,7 @@ class AdminDashboardScreen extends StatelessWidget {
           border: Border.all(
             color: isDark
                 ? AppColors.dividerDark
-                : Colors.grey.withOpacity(0.2),
+                : Colors.grey.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
@@ -169,7 +171,7 @@ class AdminDashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primaryMaroon.withOpacity(0.1),
+                color: AppColors.primaryMaroon.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: AppColors.primaryMaroon),

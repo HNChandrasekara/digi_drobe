@@ -76,7 +76,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                   height: 4,
                   decoration: BoxDecoration(
                     color: isDark
-                        ? AppColors.textSecondaryDark.withOpacity(0.4)
+                        ? AppColors.textSecondaryDark.withValues(alpha: 0.4)
                         : AppColors.systemGray2,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -233,7 +233,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -263,7 +263,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryMaroon.withOpacity(0.85),
+                        color: AppColors.primaryMaroon.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -328,7 +328,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                                   ? [
                                       BoxShadow(
                                         color: AppColors.primaryMaroon
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         blurRadius: 8,
                                         offset: const Offset(0, 4),
                                       ),
@@ -387,7 +387,9 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primaryMaroon.withOpacity(0.35),
+                            color: AppColors.primaryMaroon.withValues(
+                              alpha: 0.35,
+                            ),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -466,7 +468,7 @@ class _VirtualFittingRoomScreenState extends State<VirtualFittingRoomScreen> {
           Icon(
             Icons.circle,
             size: 6,
-            color: AppColors.primaryMaroon.withOpacity(0.5),
+            color: AppColors.primaryMaroon.withValues(alpha: 0.5),
           ),
           const SizedBox(width: 8),
           Expanded(

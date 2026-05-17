@@ -29,7 +29,7 @@ class FeatureCard extends StatelessWidget {
           side: BorderSide(
             color: isDark
                 ? AppColors.dividerDark
-                : Colors.black.withOpacity(0.05),
+                : Colors.black.withValues(alpha: 0.05),
             width: 0.5,
           ),
         ),
@@ -44,7 +44,7 @@ class FeatureCard extends StatelessWidget {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryMaroon.withOpacity(0.08),
+                    color: AppColors.primaryMaroon.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -87,8 +87,8 @@ class FeatureCard extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   color: isDark
-                      ? AppColors.textSecondaryDark.withOpacity(0.5)
-                      : AppColors.systemGray2.withOpacity(0.5),
+                      ? AppColors.textSecondaryDark.withValues(alpha: 0.5)
+                      : AppColors.systemGray2.withValues(alpha: 0.5),
                   size: 16,
                 ),
               ],

@@ -1,15 +1,27 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../utils/colors.dart';
 import '../../models/product.dart';
 import '../../services/product_service.dart';
+import '../../firebase_options.dart';
 
-class AdminProductManagementScreen extends StatelessWidget {
+class AdminProductManagementScreen extends StatefulWidget {
   const AdminProductManagementScreen({super.key});
+
+  @override
+  State<AdminProductManagementScreen> createState() =>
+      _AdminProductManagementScreenState();
+}
+
+class _AdminProductManagementScreenState
+    extends State<AdminProductManagementScreen> {
+  final ProductService _productService = ProductService();
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final productService = ProductService();
 
     return Scaffold(
       appBar: AppBar(
@@ -20,12 +32,12 @@ class AdminProductManagementScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add_rounded),
-            onPressed: () => _showProductDialog(context, null, productService),
+            onPressed: () => _showProductDialog(context, null),
           ),
         ],
       ),
       body: StreamBuilder<List<Product>>(
-        stream: productService.getProductsStream(),
+        stream: _productService.getProductsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -57,7 +69,7 @@ class AdminProductManagementScreen extends StatelessWidget {
                   border: Border.all(
                     color: isDark
                         ? AppColors.dividerDark
-                        : Colors.grey.withOpacity(0.2),
+                        : Colors.grey.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Row(
@@ -66,7 +78,7 @@ class AdminProductManagementScreen extends StatelessWidget {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.grey.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: product.imageUrl != null
@@ -117,8 +129,7 @@ class AdminProductManagementScreen extends StatelessWidget {
                         size: 20,
                         color: Colors.grey,
                       ),
-                      onPressed: () =>
-                          _showProductDialog(context, product, productService),
+                      onPressed: () => _showProductDialog(context, product),
                     ),
                     IconButton(
                       icon: const Icon(
@@ -126,8 +137,7 @@ class AdminProductManagementScreen extends StatelessWidget {
                         size: 20,
                         color: Colors.redAccent,
                       ),
-                      onPressed: () =>
-                          _confirmDelete(context, product, productService),
+                      onPressed: () => _confirmDelete(context, product),
                     ),
                   ],
                 ),
@@ -139,11 +149,7 @@ class AdminProductManagementScreen extends StatelessWidget {
     );
   }
 
-  void _showProductDialog(
-    BuildContext context,
-    Product? existing,
-    ProductService service,
-  ) {
+  void _showProductDialog(BuildContext context, Product? existing) {
     final titleC = TextEditingController(text: existing?.title ?? '');
     final priceC = TextEditingController(
       text: existing != null ? '${existing.price}' : '',
@@ -151,60 +157,177 @@ class AdminProductManagementScreen extends StatelessWidget {
     final descC = TextEditingController(text: existing?.description ?? '');
     final catC = TextEditingController(text: existing?.category ?? '');
     final brandC = TextEditingController(text: existing?.brand ?? '');
-    final imgC = TextEditingController(text: existing?.imageUrl ?? '');
     final stockC = TextEditingController(
       text: existing?.stock != null ? '${existing!.stock}' : '',
     );
 
+    Uint8List? selectedImageBytes;
+    String? selectedImageName;
+    bool isUploading = false;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(existing == null ? 'Add Product' : 'Edit Product'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _dialogField(titleC, 'Title'),
-              _dialogField(priceC, 'Price', isNum: true),
-              _dialogField(descC, 'Description', maxLines: 3),
-              _dialogField(catC, 'Category'),
-              _dialogField(brandC, 'Brand'),
-              _dialogField(imgC, 'Image URL'),
-              _dialogField(stockC, 'Stock', isNum: true),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryMaroon,
-              foregroundColor: Colors.white,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            title: Text(existing == null ? 'Add Product' : 'Edit Product'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final picker = ImagePicker();
+                      final image = await picker.pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 80,
+                      );
+                      if (image != null) {
+                        final bytes = await image.readAsBytes();
+                        debugPrint('DEBUG: Selected image path: ${image.path}');
+                        setDialogState(() {
+                          selectedImageBytes = bytes;
+                          selectedImageName = image.name;
+                        });
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 120,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.grey.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: selectedImageBytes != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.memory(
+                                selectedImageBytes!,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : existing?.imageUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                existing!.imageUrl!,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add_a_photo_outlined, size: 32),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Select Product Image',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ),
+                  _dialogField(titleC, 'Title'),
+                  _dialogField(priceC, 'Price', isNum: true),
+                  _dialogField(descC, 'Description', maxLines: 3),
+                  _dialogField(catC, 'Category'),
+                  _dialogField(brandC, 'Brand'),
+                  _dialogField(stockC, 'Stock', isNum: true),
+                ],
+              ),
             ),
-            onPressed: () async {
-              final product = Product(
-                id: existing?.id ?? '',
-                title: titleC.text.trim(),
-                price: double.tryParse(priceC.text.trim()) ?? 0,
-                description: descC.text.trim(),
-                category: catC.text.trim(),
-                brand: brandC.text.trim(),
-                imageUrl: imgC.text.trim().isEmpty ? null : imgC.text.trim(),
-                stock: int.tryParse(stockC.text.trim()),
-              );
-              if (existing == null) {
-                await service.addProduct(product);
-              } else {
-                await service.updateProduct(product);
-              }
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: Text(existing == null ? 'Add' : 'Save'),
-          ),
-        ],
+            actions: [
+              TextButton(
+                onPressed: isUploading ? null : () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryMaroon,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: isUploading
+                    ? null
+                    : () async {
+                        setDialogState(() => isUploading = true);
+                        try {
+                          String? finalImageUrl = existing?.imageUrl;
+
+                          if (selectedImageBytes != null) {
+                            final ext =
+                                selectedImageName?.split('.').last ?? 'jpg';
+                            final fileName =
+                                'product_${DateTime.now().millisecondsSinceEpoch}.$ext';
+
+                            final storage = FirebaseStorage.instanceFor(
+                              bucket:
+                                  'gs://digidrobe-f0de3.firebasestorage.app',
+                            );
+                            final ref = storage.ref().child(
+                              'product_images/$fileName',
+                            );
+
+                            await ref.putData(
+                              selectedImageBytes!,
+                              SettableMetadata(contentType: 'image/$ext'),
+                            );
+                            finalImageUrl = await ref.getDownloadURL();
+                            debugPrint(
+                              'DEBUG: Uploaded image URL: $finalImageUrl',
+                            );
+                          }
+
+                          final product = Product(
+                            id: existing?.id ?? '',
+                            title: titleC.text.trim(),
+                            price: double.tryParse(priceC.text.trim()) ?? 0,
+                            description: descC.text.trim(),
+                            category: catC.text.trim(),
+                            brand: brandC.text.trim(),
+                            imageUrl: finalImageUrl,
+                            stock: int.tryParse(stockC.text.trim()),
+                          );
+
+                          debugPrint(
+                            'DEBUG: Saving product data: ${product.toJson()}',
+                          );
+
+                          if (existing == null) {
+                            await _productService.addProduct(product);
+                          } else {
+                            await _productService.updateProduct(product);
+                          }
+                          if (context.mounted) Navigator.pop(context);
+                        } catch (e) {
+                          debugPrint('DEBUG: Error saving product: $e');
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')),
+                            );
+                          }
+                        } finally {
+                          setDialogState(() => isUploading = false);
+                        }
+                      },
+                child: isUploading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(existing == null ? 'Add' : 'Save'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -233,11 +356,7 @@ class AdminProductManagementScreen extends StatelessWidget {
     );
   }
 
-  void _confirmDelete(
-    BuildContext context,
-    Product product,
-    ProductService service,
-  ) {
+  void _confirmDelete(BuildContext context, Product product) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -254,7 +373,7 @@ class AdminProductManagementScreen extends StatelessWidget {
               foregroundColor: Colors.white,
             ),
             onPressed: () async {
-              await service.deleteProduct(product.id);
+              await _productService.deleteProduct(product.id);
               if (context.mounted) Navigator.pop(context);
             },
             child: const Text('Delete'),

@@ -150,7 +150,22 @@ class CartScreen extends StatelessWidget {
                           : AppColors.textPrimary,
                       height: 1.4,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  if (item.brand != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        item.brand!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 8),
                   Text(
                     '\$${item.price.toStringAsFixed(2)}',
@@ -169,7 +184,7 @@ class CartScreen extends StatelessWidget {
                       _qtyButton(
                         icon: Icons.remove,
                         isDark: isDark,
-                        onTap: () => cart.decrementItem(item.productId),
+                        onTap: () => cart.decreaseQuantity(item.productId),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -187,7 +202,7 @@ class CartScreen extends StatelessWidget {
                       _qtyButton(
                         icon: Icons.add,
                         isDark: isDark,
-                        onTap: () => cart.addItem(item),
+                        onTap: () => cart.increaseQuantity(item),
                       ),
                     ],
                   ),
@@ -201,7 +216,7 @@ class CartScreen extends StatelessWidget {
                   Icons.delete_outline_rounded,
                   color: isDark
                       ? AppColors.textSecondaryDark
-                      : Colors.black.withOpacity(0.7),
+                      : Colors.black.withValues(alpha: 0.7),
                   size: 24,
                 ),
                 onPressed: () => cart.removeItem(item.productId),
@@ -244,7 +259,7 @@ class CartScreen extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),

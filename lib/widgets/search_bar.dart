@@ -79,7 +79,7 @@ class _DigiSearchBarState extends State<DigiSearchBar> {
                   ? AppColors.primaryMaroon
                   : (isDarkMode
                         ? AppColors.dividerDark
-                        : Colors.black.withOpacity(0.05)),
+                        : Colors.black.withValues(alpha: 0.05)),
               width: _isFocused ? 2 : 1,
             ),
           ),

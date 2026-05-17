@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CartItem {
   final String productId;
   final String title;
+  final String? brand;
   final String? imageUrl;
   final double price;
   int quantity;
@@ -10,6 +11,7 @@ class CartItem {
   CartItem({
     required this.productId,
     required this.title,
+    this.brand,
     this.imageUrl,
     required this.price,
     this.quantity = 1,
@@ -20,6 +22,7 @@ class CartItem {
     return CartItem(
       productId: data['productId'] as String? ?? doc.id,
       title: data['title'] as String? ?? '',
+      brand: data['brand'] as String?,
       imageUrl: data['imageUrl'] as String?,
       price: (data['price'] as num?)?.toDouble() ?? 0.0,
       quantity: (data['quantity'] as num?)?.toInt() ?? 1,
@@ -29,6 +32,7 @@ class CartItem {
   Map<String, dynamic> toFirestore() => {
     'productId': productId,
     'title': title,
+    'brand': brand,
     'imageUrl': imageUrl,
     'price': price,
     'quantity': quantity,

@@ -108,6 +108,6 @@ class AboutScreen extends StatelessWidget {
   }
 
   Widget _buildSocialIcon(IconData icon) {
-    return Icon(icon, size: 20, color: Colors.black.withOpacity(0.7));
+    return Icon(icon, size: 20, color: Colors.black.withValues(alpha: 0.7));
   }
 }

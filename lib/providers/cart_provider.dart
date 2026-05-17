@@ -16,6 +16,9 @@ class CartProvider extends ChangeNotifier {
   int get itemCount => _items.fold(0, (sum, i) => sum + i.quantity);
   double get total => _items.fold(0.0, (sum, i) => sum + i.subtotal);
 
+  // Check if we should use local mock data
+  bool get _shouldUseMock =>
+      AuthService().isMockMode || AuthService().currentUser == null;
   String? get _uid => AuthService().currentUser?.uid;
 
   CartProvider() {
@@ -23,8 +26,14 @@ class CartProvider extends ChangeNotifier {
   }
 
   void _listenToCart() {
+    if (_shouldUseMock) {
+      debugPrint('CartProvider: Using local memory for cart (Mock Mode)');
+      return;
+    }
+
     final uid = _uid;
     if (uid == null) return;
+
     _isLoading = true;
     notifyListeners();
     _sub?.cancel();
@@ -36,7 +45,8 @@ class CartProvider extends ChangeNotifier {
             _isLoading = false;
             notifyListeners();
           },
-          onError: (_) {
+          onError: (e) {
+            debugPrint('CartProvider: Stream error: $e');
             _isLoading = false;
             notifyListeners();
           },
@@ -49,24 +59,64 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<void> addItem(CartItem item) async {
+    if (_shouldUseMock) {
+      final index = _items.indexWhere((i) => i.productId == item.productId);
+      if (index != null && index >= 0) {
+        _items[index].quantity += 1;
+      } else {
+        _items.add(item);
+      }
+      notifyListeners();
+      return;
+    }
+
     final uid = _uid;
     if (uid == null) return;
     await _service.addItem(uid, item);
   }
 
+  Future<void> increaseQuantity(CartItem item) => addItem(item);
+  Future<void> decreaseQuantity(String productId) => decrementItem(productId);
+  Future<void> removeFromCart(String productId) => removeItem(productId);
+
   Future<void> removeItem(String productId) async {
+    if (_shouldUseMock) {
+      _items.removeWhere((i) => i.productId == productId);
+      notifyListeners();
+      return;
+    }
+
     final uid = _uid;
     if (uid == null) return;
     await _service.removeItem(uid, productId);
   }
 
   Future<void> decrementItem(String productId) async {
+    if (_shouldUseMock) {
+      final index = _items.indexWhere((i) => i.productId == productId);
+      if (index != null && index >= 0) {
+        if (_items[index].quantity > 1) {
+          _items[index].quantity -= 1;
+        } else {
+          _items.removeAt(index);
+        }
+      }
+      notifyListeners();
+      return;
+    }
+
     final uid = _uid;
     if (uid == null) return;
     await _service.decrementItem(uid, productId);
   }
 
   Future<void> clearCart() async {
+    if (_shouldUseMock) {
+      _items.clear();
+      notifyListeners();
+      return;
+    }
+
     final uid = _uid;
     if (uid == null) return;
     await _service.clearCart(uid);

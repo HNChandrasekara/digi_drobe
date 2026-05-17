@@ -150,7 +150,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                   ? []
                   : [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
+                        color: Colors.black.withValues(alpha: 0.06),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -212,7 +212,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
             ? []
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -325,7 +325,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                     ? []
                     : [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -516,7 +516,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                 ? []
                 : [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.07),
+                      color: Colors.black.withValues(alpha: 0.07),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -592,7 +592,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.55),
+                            color: Colors.black.withValues(alpha: 0.55),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -668,7 +668,7 @@ class _WardrobeScreenState extends State<WardrobeScreen>
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: AppColors.primaryMaroon.withOpacity(0.1),
+                color: AppColors.primaryMaroon.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(

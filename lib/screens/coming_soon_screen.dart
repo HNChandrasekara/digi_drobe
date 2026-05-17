@@ -96,7 +96,9 @@ class ComingSoonScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryMaroon.withOpacity(0.1),
+                              color: AppColors.primaryMaroon.withValues(
+                                alpha: 0.1,
+                              ),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(

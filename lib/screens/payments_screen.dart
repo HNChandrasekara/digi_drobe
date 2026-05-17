@@ -117,11 +117,11 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         border: Border.all(
           color: isDark
               ? AppColors.dividerDark
-              : Colors.black.withOpacity(0.05),
+              : Colors.black.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.02),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -213,7 +213,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryMaroon.withOpacity(0.05)
+              ? AppColors.primaryMaroon.withValues(alpha: 0.05)
               : (isDark ? AppColors.cardDark : Colors.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
@@ -221,7 +221,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                 ? AppColors.primaryMaroon
                 : (isDark
                       ? AppColors.dividerDark
-                      : Colors.black.withOpacity(0.05)),
+                      : Colors.black.withValues(alpha: 0.05)),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -233,7 +233,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                   ? AppColors.primaryMaroon
                   : (isDark
                         ? AppColors.textSecondaryDark
-                        : Colors.black.withOpacity(0.6)),
+                        : Colors.black.withValues(alpha: 0.6)),
               size: 24,
             ),
             const SizedBox(width: 16),
@@ -272,7 +272,7 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
           top: BorderSide(
             color: isDark
                 ? AppColors.dividerDark
-                : Colors.black.withOpacity(0.05),
+                : Colors.black.withValues(alpha: 0.05),
             width: 1,
           ),
         ),

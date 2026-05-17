@@ -127,7 +127,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 color: isDark ? AppColors.cardDark : AppColors.systemGray6,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.1),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -190,18 +190,18 @@ class _CommunityScreenState extends State<CommunityScreen> {
           ),
         ),
         child: Container(
-          height: 80,
+          constraints: const BoxConstraints(minHeight: 80),
           decoration: BoxDecoration(
             color: isDark
                 ? AppColors.cardDark
-                : const Color(0xFFD9D9D9).withOpacity(0.5),
+                : const Color(0xFFD9D9D9).withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(15),
             border: isDark
                 ? Border.all(color: AppColors.dividerDark, width: 0.5)
                 : null,
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Row(
               children: [
                 Expanded(
@@ -211,6 +211,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     children: [
                       Text(
                         channel.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -219,6 +221,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                               : AppColors.textPrimary,
                         ),
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         '${channel.memberCount} members',
                         style: TextStyle(
@@ -240,6 +243,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       backgroundColor: AppColors.primaryMaroon,
                       foregroundColor: Colors.white,
                       elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),

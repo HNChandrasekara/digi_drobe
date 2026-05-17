@@ -105,7 +105,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                   ),
                 ],
@@ -203,7 +203,7 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: AppColors.primaryMaroon.withOpacity(0.15),
+                color: AppColors.primaryMaroon.withValues(alpha: 0.15),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -228,7 +228,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     ? AppColors.primaryMaroon
                     : (isDark
                           ? AppColors.cardDark
-                          : const Color(0xFFD9D9D9).withOpacity(0.5)),
+                          : const Color(0xFFD9D9D9).withValues(alpha: 0.5)),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
                   topRight: const Radius.circular(18),
@@ -280,12 +280,12 @@ class _ChatScreenState extends State<ChatScreen> {
           color: isDark ? AppColors.cardDark : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
-            color: AppColors.primaryMaroon.withOpacity(0.3),
+            color: AppColors.primaryMaroon.withValues(alpha: 0.3),
             width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: Colors.black.withValues(alpha: 0.02),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),

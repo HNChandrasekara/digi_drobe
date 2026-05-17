@@ -54,7 +54,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
               border: Border.all(
                 color: isDark
                     ? AppColors.dividerDark
-                    : Colors.black.withOpacity(0.1),
+                    : Colors.black.withValues(alpha: 0.1),
               ),
             ),
             child: Row(
@@ -63,7 +63,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                   Icons.brush_outlined,
                   color: isDark
                       ? AppColors.textSecondaryDark
-                      : Colors.black.withOpacity(0.6),
+                      : Colors.black.withValues(alpha: 0.6),
                   size: 22,
                 ),
                 const SizedBox(width: 16),
@@ -88,7 +88,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                           fontSize: 13,
                           color: isDark
                               ? AppColors.textSecondaryDark
-                              : Colors.black.withOpacity(0.6),
+                              : Colors.black.withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -119,7 +119,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
           border: Border.all(
             color: isDark
                 ? AppColors.dividerDark
-                : Colors.black.withOpacity(0.1),
+                : Colors.black.withValues(alpha: 0.1),
           ),
         ),
         child: Column(
@@ -159,7 +159,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                 icon,
                 color: isDark
                     ? AppColors.textSecondaryDark
-                    : Colors.black.withOpacity(0.6),
+                    : Colors.black.withValues(alpha: 0.6),
                 size: 22,
               ),
               const SizedBox(width: 16),
@@ -188,7 +188,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
             endIndent: 20,
             color: isDark
                 ? AppColors.dividerDark
-                : Colors.black.withOpacity(0.1),
+                : Colors.black.withValues(alpha: 0.1),
           ),
       ],
     );
@@ -205,7 +205,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
           border: Border.all(
             color: isDark
                 ? AppColors.dividerDark
-                : Colors.black.withOpacity(0.1),
+                : Colors.black.withValues(alpha: 0.1),
           ),
         ),
         child: Row(
@@ -214,7 +214,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
               Icons.translate_rounded,
               color: isDark
                   ? AppColors.textSecondaryDark
-                  : Colors.black.withOpacity(0.6),
+                  : Colors.black.withValues(alpha: 0.6),
               size: 22,
             ),
             const SizedBox(width: 16),
@@ -239,7 +239,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                       fontSize: 13,
                       color: isDark
                           ? AppColors.textSecondaryDark
-                          : Colors.black.withOpacity(0.6),
+                          : Colors.black.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -262,7 +262,7 @@ class _AppPreferenceScreenState extends State<AppPreferenceScreen> {
                 Icons.arrow_forward_ios_rounded,
                 color: isDark
                     ? AppColors.textSecondaryDark
-                    : Colors.black.withOpacity(0.3),
+                    : Colors.black.withValues(alpha: 0.3),
                 size: 16,
               ),
             ),
