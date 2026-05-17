@@ -80,9 +80,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(
-                    child: _field('First name', _firstNameCtrl, isDark),
-                  ),
+                  Expanded(child: _field('First name', _firstNameCtrl, isDark)),
                   const SizedBox(width: 12),
                   Expanded(child: _field('Last name', _lastNameCtrl, isDark)),
                 ],
